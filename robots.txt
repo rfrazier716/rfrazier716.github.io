@@ -1,0 +1,4 @@
+Sitemap: https://rfrazier716.github.io/sitemapindex.xml
+
+User-Agent: *
+Host: rfrazier716.github.io
