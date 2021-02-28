@@ -1,0 +1,8 @@
+/.venv/
+.idea
+
+# Nikola Related Gitignores
+cache
+.doit.db*
+__pycache__
+output

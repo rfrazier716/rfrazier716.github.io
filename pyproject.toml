@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "site"
+version = "0.1.0"
+description = "static github io site"
+authors = ["RyanFrazier <rfrazier716@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+Nikola = {extras = ["extras"], version = "^8.1.3"}
+
+[tool.poetry.dev-dependencies]
+tox = "^3.21.4"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
