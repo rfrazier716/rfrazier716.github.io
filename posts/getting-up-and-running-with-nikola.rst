@@ -6,7 +6,7 @@
 .. link: 
 .. description: 
 .. type: text
-.. status: draft
+.. status: published
 
 
 I have no background in web development or design, which is probably as good of a disclosure as any when writing a post about deploying a website. What I do have, however, is a desire to set up a site to share my various projects/software, or at least document it so I don't forget what I was working on 6 months down the road. It needed to be easy to set up, free to host, and give me full control to customize the site and add features as needed (just because I don't currently know web design doesn't mean I won't try to pick it up down the road).
