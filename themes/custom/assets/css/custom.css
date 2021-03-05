@@ -1,0 +1,14 @@
+.follow-icons {
+    float:right
+}
+
+.follow-icon {
+    color: var(--primary);
+    transition: color 0.5s ease;
+}
+
+a.follow-icon:hover{
+    color: var(--info);
+    transition: color 0.5s ease;
+    text-decoration: none;
+}

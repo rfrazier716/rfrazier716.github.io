@@ -24,8 +24,13 @@ SITE_URL = "https://rfrazier716.github.io/"
 # This is the URL where Nikola's output will be deployed.
 # If not set, defaults to SITE_URL
 # BASE_URL = "https://rfrazier716.github.io/"
-BLOG_EMAIL = "rfrazier716 (at gmail)"
+BLOG_EMAIL = "rfrazier716+site@gmail.com"
 BLOG_DESCRIPTION = "Ramblings of an Optical Engineer"  # (translatable)
+
+GITHUB_URL="https://github.com/rfrazier716"
+TWITTER_URL="https://twitter.com/FotonixAndGizmo"
+INSTAGRAM_URL="https://www.instagram.com/fotonix716/"
+
 
 # Nikola is multilingual!
 #
@@ -248,6 +253,7 @@ POSTS = (
     ("posts/*.html", "posts", "post.tmpl"),
 )
 PAGES = (
+    ("pages/index.html","", "page.tmpl"), # this is a custom one for the homepage
     ("pages/*.rst", "pages", "page.tmpl"),
     ("pages/*.md", "pages", "page.tmpl"),
     ("pages/*.txt", "pages", "page.tmpl"),
@@ -559,7 +565,7 @@ HIDDEN_CATEGORIES = []
 # the posts themselves. If set to False, it will be just a list of links.
 # AUTHOR_PAGES_ARE_INDEXES = False
 
-# Set descriptions for author pages to make them more interesting. The
+# Set descriptions for author pages to make them more inteRresting. The
 # default is no description. The value is used in the meta description
 # and displayed underneath the author list or index page’s title.
 # AUTHOR_PAGES_DESCRIPTIONS = {
@@ -581,7 +587,7 @@ HIDDEN_AUTHORS = ['Guest']
 # Final location for the main blog page and sibling paginated pages is
 # output / TRANSLATION[lang] / INDEX_PATH / index-*.html
 # (translatable)
-# INDEX_PATH = ""
+INDEX_PATH = "posts"
 
 # Optional HTML that displayed on “main” blog index.html files.
 # May be used for a greeting. (translatable)
@@ -983,7 +989,18 @@ LICENSE = ""
 
 # A small copyright notice for the page footer (in HTML).
 # (translatable)
-CONTENT_FOOTER = 'Contents &copy; {date}         <a href="mailto:{email}">{author}</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         {license}'
+CONTENT_FOOTER = """
+Contents &copy; {date}         <a href="mailto:{email}">{author}</a> 
+- Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         {license}
+"""+"""
+<span class="follow-icons">
+
+  <a href=mailto:rfrazier716+site@example.com class="fas fa-envelope-square fa-2x follow-icon"></a>
+  <a href={github} class="fab fa-github-square fa-2x follow-icon"></a>
+  <a href={insta} class="fab fa-instagram-square fa-2x follow-icon"></a>
+  <a href={twitter} class="fab fa-twitter-square fa-2x follow-icon"></a>
+</span>
+""".format(github=GITHUB_URL, insta=INSTAGRAM_URL, twitter = TWITTER_URL)
 
 # Things that will be passed to CONTENT_FOOTER.format().  This is done
 # for translatability, as dicts are not formattable.  Nikola will
@@ -1155,6 +1172,7 @@ MARKDOWN_EXTENSIONS = ['markdown.extensions.fenced_code', 'markdown.extensions.c
 # the default right now)
 # (translatable)
 SOCIAL_BUTTONS_CODE = """
+<script src="https://kit.fontawesome.com/b9c0b6e7c8.js" crossorigin="anonymous"></script>
 <!-- Go to www.addthis.com/dashboard to customize your tools -->
 <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-603c029f21971de0"></script>
 """
