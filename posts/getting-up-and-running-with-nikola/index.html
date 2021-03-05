@@ -46,21 +46,12 @@ bg-dark
                 </li>
 <li class="nav-item">
 <a href="../../pages/projects/" class="nav-link">Projects</a>
-            </li>
-<li class="nav-item dropdown">
-<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Blog</a>
-            <div class="dropdown-menu">
-                    <a href="../../archive.html" class="dropdown-item">All</a>
-                    <a href="../../categories/cat_programming/" class="dropdown-item">Programming</a>
-                    <a href="../../categories/cat_gaming/" class="dropdown-item">Video Games</a>
-                    <a href="../../categories/cat_misc/" class="dropdown-item">Misc</a>
-            </div>
+                </li>
+<li class="nav-item">
+<a href="../" class="nav-link">Blog</a>
                 </li>
 <li class="nav-item">
 <a href="../../pages/about" class="nav-link">About</a>
-                </li>
-<li class="nav-item">
-<a href="../../categories/" class="nav-link">Tags</a>
 
                 
             </li>
@@ -94,6 +85,7 @@ bg-dark
     </header><div class="e-content entry-content" itemprop="articleBody text">
     <div>
 <p>I have no background in web development or design, which is probably as good of a disclosure as any when writing a post about deploying a website. What I do have, however, is a desire to set up a site to share my various projects/software, or at least document it so I don't forget what I was working on 6 months down the road. It needed to be easy to set up, free to host, and give me full control to customize the site and add features as needed (just because I don't currently know web design doesn't mean I won't try to pick it up down the road).</p>
+<!-- TEASER_END -->
 <p>Enter Nikola! I first heard about this at the end of a Real Python podcast where it was described as a quick start static website generator using Python and restructured text. This sounded like a great way to dip my toe into making a website that was somewhere between using an online suite and hand-writing HTML. I know I could have started a blog on Wordpress or Medium, abstracted away all the details, and potentially have had a prettier blog in less time, but where's the fun in that! the fact that Nikola was based around Python was also attractive. I'm a big advocate for Python, it's become my go-to programming language at work (previously it was Mathematica as well as a lot of LabView but that's a topic for a different day) and anywhere I can use it to round out my programming capabilities I'm happy to give it a try.</p>
 <p>At work I maintain a data analysis library for our group, which includes writing and hosting documentation on our internal GitLab, so I was already familiar with .rst files. In fact, Nikola feels like an extension of using Sphinx but with more control over the structure over the final site. As an added bonus, it has built in hooks to deploy to github pages, checking the box for "free to host".</p>
 <div class="section" id="some-quick-tips">
@@ -110,32 +102,32 @@ bg-dark
 <dd>
 <p>Almost immediately after building the site and opening it in a browser, I wanted to customize the navigation bar links at the top of the page. Nikola's documentation has a section for this, but something that wasn't listed is that any internal links need to be start with a '/' or they'll be handled as relative links to whatever page you're on. This resulted in my links working from the homepage, but if I navigated to a different page the they would break.</p>
 <p>In retrospect this is pretty obvious, but it still tripped me up for a solid 20 minutes more than necessary.</p>
-<pre class="code python"><a name="rest_code_a59fc15bd4034597beef5e5e46502aef-1"></a><span class="n">NAVIGATION_LINKS</span> <span class="o">=</span> <span class="p">{</span>
-<a name="rest_code_a59fc15bd4034597beef5e5e46502aef-2"></a>    <span class="n">DEFAULT_LANG</span><span class="p">:</span> <span class="p">(</span>
-<a name="rest_code_a59fc15bd4034597beef5e5e46502aef-3"></a>        <span class="p">(</span><span class="s1">'/'</span><span class="p">,</span> <span class="s1">'Home'</span><span class="p">),</span>
-<a name="rest_code_a59fc15bd4034597beef5e5e46502aef-4"></a>        <span class="p">(</span><span class="s1">'/pages/projects/'</span><span class="p">,</span> <span class="s2">"Projects"</span><span class="p">),</span>
-<a name="rest_code_a59fc15bd4034597beef5e5e46502aef-5"></a>        <span class="p">((</span>
-<a name="rest_code_a59fc15bd4034597beef5e5e46502aef-6"></a>            <span class="p">(</span><span class="s2">"/archive.html"</span><span class="p">,</span> <span class="s2">"All"</span><span class="p">),</span> <span class="c1"># This link will work from any page</span>
-<a name="rest_code_a59fc15bd4034597beef5e5e46502aef-7"></a>            <span class="p">(</span><span class="s2">"archive.html"</span><span class="p">,</span> <span class="s2">"All"</span><span class="p">),</span> <span class="c1"># This link will break if you're not on the homepage</span>
-<a name="rest_code_a59fc15bd4034597beef5e5e46502aef-8"></a>            <span class="p">(</span><span class="s2">"/categories/cat_programming/"</span><span class="p">,</span> <span class="s2">"Programming"</span><span class="p">),</span>
-<a name="rest_code_a59fc15bd4034597beef5e5e46502aef-9"></a>            <span class="p">(</span><span class="s2">"/categories/cat_gaming/"</span><span class="p">,</span> <span class="s2">"Video Games"</span><span class="p">),</span>
-<a name="rest_code_a59fc15bd4034597beef5e5e46502aef-10"></a>            <span class="p">(</span><span class="s2">"/categories/cat_misc/"</span><span class="p">,</span> <span class="s2">"Misc"</span><span class="p">),</span>
-<a name="rest_code_a59fc15bd4034597beef5e5e46502aef-11"></a>        <span class="p">),</span>
-<a name="rest_code_a59fc15bd4034597beef5e5e46502aef-12"></a>        <span class="s2">"Blog"</span><span class="p">),</span>
-<a name="rest_code_a59fc15bd4034597beef5e5e46502aef-13"></a>        <span class="p">(</span><span class="s1">'/pages/about'</span><span class="p">,</span> <span class="s2">"About"</span><span class="p">),</span>
-<a name="rest_code_a59fc15bd4034597beef5e5e46502aef-14"></a>        <span class="p">(</span><span class="s2">"/categories/"</span><span class="p">,</span> <span class="s2">"Tags"</span><span class="p">),</span>
-<a name="rest_code_a59fc15bd4034597beef5e5e46502aef-15"></a>    <span class="p">),</span>
-<a name="rest_code_a59fc15bd4034597beef5e5e46502aef-16"></a><span class="p">}</span>
+<pre class="code python"><a name="rest_code_b6d56e40046b4180882991ebfecd842b-1"></a><span class="n">NAVIGATION_LINKS</span> <span class="o">=</span> <span class="p">{</span>
+<a name="rest_code_b6d56e40046b4180882991ebfecd842b-2"></a>    <span class="n">DEFAULT_LANG</span><span class="p">:</span> <span class="p">(</span>
+<a name="rest_code_b6d56e40046b4180882991ebfecd842b-3"></a>        <span class="p">(</span><span class="s1">'/'</span><span class="p">,</span> <span class="s1">'Home'</span><span class="p">),</span>
+<a name="rest_code_b6d56e40046b4180882991ebfecd842b-4"></a>        <span class="p">(</span><span class="s1">'/pages/projects/'</span><span class="p">,</span> <span class="s2">"Projects"</span><span class="p">),</span>
+<a name="rest_code_b6d56e40046b4180882991ebfecd842b-5"></a>        <span class="p">((</span>
+<a name="rest_code_b6d56e40046b4180882991ebfecd842b-6"></a>            <span class="p">(</span><span class="s2">"/archive.html"</span><span class="p">,</span> <span class="s2">"All"</span><span class="p">),</span> <span class="c1"># This link will work from any page</span>
+<a name="rest_code_b6d56e40046b4180882991ebfecd842b-7"></a>            <span class="p">(</span><span class="s2">"archive.html"</span><span class="p">,</span> <span class="s2">"All"</span><span class="p">),</span> <span class="c1"># This link will break if you're not on the homepage</span>
+<a name="rest_code_b6d56e40046b4180882991ebfecd842b-8"></a>            <span class="p">(</span><span class="s2">"/categories/cat_programming/"</span><span class="p">,</span> <span class="s2">"Programming"</span><span class="p">),</span>
+<a name="rest_code_b6d56e40046b4180882991ebfecd842b-9"></a>            <span class="p">(</span><span class="s2">"/categories/cat_gaming/"</span><span class="p">,</span> <span class="s2">"Video Games"</span><span class="p">),</span>
+<a name="rest_code_b6d56e40046b4180882991ebfecd842b-10"></a>            <span class="p">(</span><span class="s2">"/categories/cat_misc/"</span><span class="p">,</span> <span class="s2">"Misc"</span><span class="p">),</span>
+<a name="rest_code_b6d56e40046b4180882991ebfecd842b-11"></a>        <span class="p">),</span>
+<a name="rest_code_b6d56e40046b4180882991ebfecd842b-12"></a>        <span class="s2">"Blog"</span><span class="p">),</span>
+<a name="rest_code_b6d56e40046b4180882991ebfecd842b-13"></a>        <span class="p">(</span><span class="s1">'/pages/about'</span><span class="p">,</span> <span class="s2">"About"</span><span class="p">),</span>
+<a name="rest_code_b6d56e40046b4180882991ebfecd842b-14"></a>        <span class="p">(</span><span class="s2">"/categories/"</span><span class="p">,</span> <span class="s2">"Tags"</span><span class="p">),</span>
+<a name="rest_code_b6d56e40046b4180882991ebfecd842b-15"></a>    <span class="p">),</span>
+<a name="rest_code_b6d56e40046b4180882991ebfecd842b-16"></a><span class="p">}</span>
 </pre>
 </dd>
 <dt>You Can Hide the "Source" Link That Shows Up on the Top Right of Your Pages</dt>
 <dd>
 <p>By default each page and blog post will have a hyperlink to the source in the top right corner. Since the site is hosted from a public repository and anybody who wants to can look at the source, I wanted to disable that feature. Turns out it's also an option in the conf.py called <code class="docutils literal">SHOW_SOURCELINK</code>, and needs to be set to False.</p>
-<pre class="code python"><a name="rest_code_5bfd627869c543fd8c71257dfc98e13d-1"></a><span class="c1"># Show link to source for the posts?</span>
-<a name="rest_code_5bfd627869c543fd8c71257dfc98e13d-2"></a><span class="n">SHOW_SOURCELINK</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># Set this to False to disable source links</span>
-<a name="rest_code_5bfd627869c543fd8c71257dfc98e13d-3"></a><span class="c1"># Copy the source files for your pages?</span>
-<a name="rest_code_5bfd627869c543fd8c71257dfc98e13d-4"></a><span class="c1"># Setting it to False implies SHOW_SOURCELINK = False</span>
-<a name="rest_code_5bfd627869c543fd8c71257dfc98e13d-5"></a><span class="n">COPY_SOURCES</span> <span class="o">=</span> <span class="kc">False</span>
+<pre class="code python"><a name="rest_code_ab139d93eb294e9d9831761d4b0a72c5-1"></a><span class="c1"># Show link to source for the posts?</span>
+<a name="rest_code_ab139d93eb294e9d9831761d4b0a72c5-2"></a><span class="n">SHOW_SOURCELINK</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># Set this to False to disable source links</span>
+<a name="rest_code_ab139d93eb294e9d9831761d4b0a72c5-3"></a><span class="c1"># Copy the source files for your pages?</span>
+<a name="rest_code_ab139d93eb294e9d9831761d4b0a72c5-4"></a><span class="c1"># Setting it to False implies SHOW_SOURCELINK = False</span>
+<a name="rest_code_ab139d93eb294e9d9831761d4b0a72c5-5"></a><span class="n">COPY_SOURCES</span> <span class="o">=</span> <span class="kc">False</span>
 </pre>
 </dd>
 <dt>You're Allowed to Add Build Directories To Your .gitignore</dt>
@@ -152,7 +144,18 @@ bg-dark
             <li><a class="tag p-category" href="../../categories/nikola/" rel="tag">nikola</a></li>
             <li><a class="tag p-category" href="../../categories/rst/" rel="tag">rst</a></li>
         </ul></nav></aside></article><!--End of body content--><footer id="footer">
-            Contents © 2021         <a href="mailto:rfrazier716%20(at%20gmail)">Ryan Frazier</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+Contents © 2021         <a href="mailto:rfrazier716+site@gmail.com">Ryan Frazier</a> 
+- Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+
+<span class="follow-icons">
+
+  <a href="mailto:rfrazier716+site@example.com" class="fas fa-envelope-square fa-2x follow-icon"></a>
+  <a href="https://github.com/rfrazier716" class="fab fa-github-square fa-2x follow-icon"></a>
+  <a href="https://www.instagram.com/fotonix716/" class="fab fa-instagram-square fa-2x follow-icon"></a>
+  <a href="https://twitter.com/FotonixAndGizmo" class="fab fa-twitter-square fa-2x follow-icon"></a>
+</span>
+
             
             
         </footer>
@@ -160,7 +163,7 @@ bg-dark
 </div>
 
 
-        <script src="../../assets/js/all-nocdn.js"></script><!-- Go to www.addthis.com/dashboard to customize your tools --><script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-603c029f21971de0"></script><script>
+        <script src="../../assets/js/all-nocdn.js"></script><script src="https://kit.fontawesome.com/b9c0b6e7c8.js" crossorigin="anonymous"></script><!-- Go to www.addthis.com/dashboard to customize your tools --><script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-603c029f21971de0"></script><script>
     baguetteBox.run('div#content', {
         ignoreClass: 'islink',
         captions: function(element){var i=element.getElementsByTagName('img')[0];return i===undefined?'':i.alt;}});

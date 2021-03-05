@@ -1,0 +1,44 @@
+.follow-icons {
+    float:right
+}
+
+.follow-icon {
+    color: var(--primary);
+    transition: color 0.5s ease;
+}
+
+a.follow-icon:hover{
+    color: var(--info);
+    transition: color 0.5s ease;
+    text-decoration: none;
+}
+
+.fav-stack{
+    text-align: center;
+    color: var(--gray-dark);
+}
+
+.fav-icon,
+.fav-index{
+    color: var(--gray-dark);
+    transition: color 0.1s ease;
+
+}
+
+a.fav-link:hover{
+    text-decoration: None;
+}
+
+a:hover .fav-icon,
+a:hover .fav-index{
+    color: var(--primary);
+    transition: color 0.1s ease;
+}
+
+.featured-display{
+    text-align: center;
+}
+
+#home-jumbo{
+    padding: 10;
+}
