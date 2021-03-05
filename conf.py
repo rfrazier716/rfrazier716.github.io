@@ -147,15 +147,8 @@ NAVIGATION_LINKS = {
     DEFAULT_LANG: (
         ('/', 'Home'),
         ('/pages/projects/', "Projects"),
-        ((
-             ("/archive.html", "All"),
-             ("/categories/cat_programming/", "Programming"),
-             ("/categories/cat_gaming/", "Video Games"),
-             ("/categories/cat_misc/", "Misc"),
-         ),
-         "Blog"),
-        ('/pages/about', "About"),
-        ("/categories/", "Tags"),
+        ('/posts/', "Blog"),
+        ('/pages/about', "About")
     ),
 }
 
@@ -946,7 +939,7 @@ IMAGE_FOLDERS = {'images': 'images'}
 # )
 
 # Show teasers (instead of full posts) in indexes? Defaults to False.
-# INDEX_TEASERS = False
+INDEX_TEASERS = True
 
 # HTML fragments with the Read more... links.
 # The following tags exist and are replaced for you:
