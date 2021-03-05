@@ -102,32 +102,32 @@ bg-dark
 <dd>
 <p>Almost immediately after building the site and opening it in a browser, I wanted to customize the navigation bar links at the top of the page. Nikola's documentation has a section for this, but something that wasn't listed is that any internal links need to be start with a '/' or they'll be handled as relative links to whatever page you're on. This resulted in my links working from the homepage, but if I navigated to a different page the they would break.</p>
 <p>In retrospect this is pretty obvious, but it still tripped me up for a solid 20 minutes more than necessary.</p>
-<pre class="code python"><a name="rest_code_b6d56e40046b4180882991ebfecd842b-1"></a><span class="n">NAVIGATION_LINKS</span> <span class="o">=</span> <span class="p">{</span>
-<a name="rest_code_b6d56e40046b4180882991ebfecd842b-2"></a>    <span class="n">DEFAULT_LANG</span><span class="p">:</span> <span class="p">(</span>
-<a name="rest_code_b6d56e40046b4180882991ebfecd842b-3"></a>        <span class="p">(</span><span class="s1">'/'</span><span class="p">,</span> <span class="s1">'Home'</span><span class="p">),</span>
-<a name="rest_code_b6d56e40046b4180882991ebfecd842b-4"></a>        <span class="p">(</span><span class="s1">'/pages/projects/'</span><span class="p">,</span> <span class="s2">"Projects"</span><span class="p">),</span>
-<a name="rest_code_b6d56e40046b4180882991ebfecd842b-5"></a>        <span class="p">((</span>
-<a name="rest_code_b6d56e40046b4180882991ebfecd842b-6"></a>            <span class="p">(</span><span class="s2">"/archive.html"</span><span class="p">,</span> <span class="s2">"All"</span><span class="p">),</span> <span class="c1"># This link will work from any page</span>
-<a name="rest_code_b6d56e40046b4180882991ebfecd842b-7"></a>            <span class="p">(</span><span class="s2">"archive.html"</span><span class="p">,</span> <span class="s2">"All"</span><span class="p">),</span> <span class="c1"># This link will break if you're not on the homepage</span>
-<a name="rest_code_b6d56e40046b4180882991ebfecd842b-8"></a>            <span class="p">(</span><span class="s2">"/categories/cat_programming/"</span><span class="p">,</span> <span class="s2">"Programming"</span><span class="p">),</span>
-<a name="rest_code_b6d56e40046b4180882991ebfecd842b-9"></a>            <span class="p">(</span><span class="s2">"/categories/cat_gaming/"</span><span class="p">,</span> <span class="s2">"Video Games"</span><span class="p">),</span>
-<a name="rest_code_b6d56e40046b4180882991ebfecd842b-10"></a>            <span class="p">(</span><span class="s2">"/categories/cat_misc/"</span><span class="p">,</span> <span class="s2">"Misc"</span><span class="p">),</span>
-<a name="rest_code_b6d56e40046b4180882991ebfecd842b-11"></a>        <span class="p">),</span>
-<a name="rest_code_b6d56e40046b4180882991ebfecd842b-12"></a>        <span class="s2">"Blog"</span><span class="p">),</span>
-<a name="rest_code_b6d56e40046b4180882991ebfecd842b-13"></a>        <span class="p">(</span><span class="s1">'/pages/about'</span><span class="p">,</span> <span class="s2">"About"</span><span class="p">),</span>
-<a name="rest_code_b6d56e40046b4180882991ebfecd842b-14"></a>        <span class="p">(</span><span class="s2">"/categories/"</span><span class="p">,</span> <span class="s2">"Tags"</span><span class="p">),</span>
-<a name="rest_code_b6d56e40046b4180882991ebfecd842b-15"></a>    <span class="p">),</span>
-<a name="rest_code_b6d56e40046b4180882991ebfecd842b-16"></a><span class="p">}</span>
+<pre class="code python"><a name="rest_code_a1ad19fe497b468ea2920273c92c9ec1-1"></a><span class="n">NAVIGATION_LINKS</span> <span class="o">=</span> <span class="p">{</span>
+<a name="rest_code_a1ad19fe497b468ea2920273c92c9ec1-2"></a>    <span class="n">DEFAULT_LANG</span><span class="p">:</span> <span class="p">(</span>
+<a name="rest_code_a1ad19fe497b468ea2920273c92c9ec1-3"></a>        <span class="p">(</span><span class="s1">'/'</span><span class="p">,</span> <span class="s1">'Home'</span><span class="p">),</span>
+<a name="rest_code_a1ad19fe497b468ea2920273c92c9ec1-4"></a>        <span class="p">(</span><span class="s1">'/pages/projects/'</span><span class="p">,</span> <span class="s2">"Projects"</span><span class="p">),</span>
+<a name="rest_code_a1ad19fe497b468ea2920273c92c9ec1-5"></a>        <span class="p">((</span>
+<a name="rest_code_a1ad19fe497b468ea2920273c92c9ec1-6"></a>            <span class="p">(</span><span class="s2">"/archive.html"</span><span class="p">,</span> <span class="s2">"All"</span><span class="p">),</span> <span class="c1"># This link will work from any page</span>
+<a name="rest_code_a1ad19fe497b468ea2920273c92c9ec1-7"></a>            <span class="p">(</span><span class="s2">"archive.html"</span><span class="p">,</span> <span class="s2">"All"</span><span class="p">),</span> <span class="c1"># This link will break if you're not on the homepage</span>
+<a name="rest_code_a1ad19fe497b468ea2920273c92c9ec1-8"></a>            <span class="p">(</span><span class="s2">"/categories/cat_programming/"</span><span class="p">,</span> <span class="s2">"Programming"</span><span class="p">),</span>
+<a name="rest_code_a1ad19fe497b468ea2920273c92c9ec1-9"></a>            <span class="p">(</span><span class="s2">"/categories/cat_gaming/"</span><span class="p">,</span> <span class="s2">"Video Games"</span><span class="p">),</span>
+<a name="rest_code_a1ad19fe497b468ea2920273c92c9ec1-10"></a>            <span class="p">(</span><span class="s2">"/categories/cat_misc/"</span><span class="p">,</span> <span class="s2">"Misc"</span><span class="p">),</span>
+<a name="rest_code_a1ad19fe497b468ea2920273c92c9ec1-11"></a>        <span class="p">),</span>
+<a name="rest_code_a1ad19fe497b468ea2920273c92c9ec1-12"></a>        <span class="s2">"Blog"</span><span class="p">),</span>
+<a name="rest_code_a1ad19fe497b468ea2920273c92c9ec1-13"></a>        <span class="p">(</span><span class="s1">'/pages/about'</span><span class="p">,</span> <span class="s2">"About"</span><span class="p">),</span>
+<a name="rest_code_a1ad19fe497b468ea2920273c92c9ec1-14"></a>        <span class="p">(</span><span class="s2">"/categories/"</span><span class="p">,</span> <span class="s2">"Tags"</span><span class="p">),</span>
+<a name="rest_code_a1ad19fe497b468ea2920273c92c9ec1-15"></a>    <span class="p">),</span>
+<a name="rest_code_a1ad19fe497b468ea2920273c92c9ec1-16"></a><span class="p">}</span>
 </pre>
 </dd>
 <dt>You Can Hide the "Source" Link That Shows Up on the Top Right of Your Pages</dt>
 <dd>
 <p>By default each page and blog post will have a hyperlink to the source in the top right corner. Since the site is hosted from a public repository and anybody who wants to can look at the source, I wanted to disable that feature. Turns out it's also an option in the conf.py called <code class="docutils literal">SHOW_SOURCELINK</code>, and needs to be set to False.</p>
-<pre class="code python"><a name="rest_code_ab139d93eb294e9d9831761d4b0a72c5-1"></a><span class="c1"># Show link to source for the posts?</span>
-<a name="rest_code_ab139d93eb294e9d9831761d4b0a72c5-2"></a><span class="n">SHOW_SOURCELINK</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># Set this to False to disable source links</span>
-<a name="rest_code_ab139d93eb294e9d9831761d4b0a72c5-3"></a><span class="c1"># Copy the source files for your pages?</span>
-<a name="rest_code_ab139d93eb294e9d9831761d4b0a72c5-4"></a><span class="c1"># Setting it to False implies SHOW_SOURCELINK = False</span>
-<a name="rest_code_ab139d93eb294e9d9831761d4b0a72c5-5"></a><span class="n">COPY_SOURCES</span> <span class="o">=</span> <span class="kc">False</span>
+<pre class="code python"><a name="rest_code_eb302505ad7d469c9891a8c0a4076af6-1"></a><span class="c1"># Show link to source for the posts?</span>
+<a name="rest_code_eb302505ad7d469c9891a8c0a4076af6-2"></a><span class="n">SHOW_SOURCELINK</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># Set this to False to disable source links</span>
+<a name="rest_code_eb302505ad7d469c9891a8c0a4076af6-3"></a><span class="c1"># Copy the source files for your pages?</span>
+<a name="rest_code_eb302505ad7d469c9891a8c0a4076af6-4"></a><span class="c1"># Setting it to False implies SHOW_SOURCELINK = False</span>
+<a name="rest_code_eb302505ad7d469c9891a8c0a4076af6-5"></a><span class="n">COPY_SOURCES</span> <span class="o">=</span> <span class="kc">False</span>
 </pre>
 </dd>
 <dt>You're Allowed to Add Build Directories To Your .gitignore</dt>
