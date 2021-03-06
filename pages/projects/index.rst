@@ -1,5 +1,5 @@
 .. title: Projects
-.. slug: projects
+.. slug: index
 .. date: 2021-02-28 12:32:05 UTC-05:00
 .. tags: 
 .. category: 
