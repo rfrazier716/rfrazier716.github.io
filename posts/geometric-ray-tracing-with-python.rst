@@ -14,9 +14,8 @@ Ray tracing is subset of programming that has always fascinated me. Every time y
 
 In this post, I'll give an overview of what a ray tracer is and where they're used in the real world. I'll cover the base components that make up a ray trace, how a ray trace state-machine is structured, and give implementation examples with Python, showing how a couple linear algebra tricks can speed up your ray trace considerably. At the end I'll highlight next steps, which will be covered in future posts, that will extend the basic example into a fully capable ray tracer.
 
-.. class:: alert alert-primary float-md-right
-
 .. contents::
+    :class: alert alert-primary float-md-right
 
 Brush Up on the Basics
 =======================
@@ -34,11 +33,27 @@ Surfaces
 Ray Tracers in Computer Graphics
 ---------------------------------
 
-Ray Casting
-````````````
+Ray Casting, Ray Tracing, and Path Tracing
+```````````````````````````````````````````
+ray casting, ray tracing, and path tracing have muddled definitions depending on the sources. Despite having their own unique wikipedia pages, ray casting and tracing are effectively the same thing, with ray casting being used in the context of CAD software and early "3D" videogames, and ray tracing used when describing rendering scenes.
 
-Rendering 
-``````````
+.. class:: alert alert-secondary float-md-center
+
+    Roth invented the term "ray casting" before hearing of “ray tracing”, but they are essentially the same. His development of ray casting at GM Research Labs occurred concurrently with Turner Whitted’s ray tracing work at Bell Labs. - wikipedia_
+
+    .. _wikipedia: https://en.wikipedia.org/wiki/Ray_tracing_(graphics)
+
+In a ray cast/trace, a set of rays is projected from the camera to find the nearest intersected surface. From there additional rays may be generated to calculate lighting, but in some cases it is not necessary.
+
+.. class:: alert alert-primary
+    
+    TODO: add an image of a shaded sphere and wolfenstein 3D, noting how both use ray tracing at their cores to generate images
+
+Path tracing distinguishes itself from the other two by using random sampling to more accurately recreate the path light takes from a source to the observer. At every ray-surface intersection, one or more child rays are generated from a random distribution based on the material properties of the intersected surface. These child rays in turn propagate through the system to intersect new surfaces. This process is repeated until the rays intersect a light source, pixel value is calculated from all the surface intersections in the ray's history, as well as the color of the intersected light source. Since a single ray cannot intersect all light sources, multiple rays are are generated for every pixel of the final image, where the final pixel color is the average value of all ray paths. 
+
+
+Video Games and Real Time Ray Tracing
+``````````````````````````````````````
 
 Ray Tracers in Engineering
 ---------------------------
