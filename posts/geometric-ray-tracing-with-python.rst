@@ -49,7 +49,17 @@ In a ray cast/trace, a set of rays is projected from the camera to find the near
     
     TODO: add an image of a shaded sphere and wolfenstein 3D, noting how both use ray tracing at their cores to generate images
 
-Path tracing distinguishes itself from the other two by using random sampling to more accurately recreate the path light takes from a source to the observer. At every ray-surface intersection, one or more child rays are generated from a random distribution based on the material properties of the intersected surface. These child rays in turn propagate through the system to intersect new surfaces. This process is repeated until the rays intersect a light source, pixel value is calculated from all the surface intersections in the ray's history, as well as the color of the intersected light source. Since a single ray cannot intersect all light sources, multiple rays are are generated for every pixel of the final image, where the final pixel color is the average value of all ray paths. 
+Path tracing distinguishes itself from the other two by using random sampling to more accurately recreate the path light takes from a source to the observer. At every ray-surface intersection, one or more child rays are generated from a random distribution based on the material properties of the intersected surface. These child rays in turn propagate through the system to intersect new surfaces. This process is repeated until the rays intersect a light source, and the pixel value is calculated from all the surface intersections in the ray's history. Since a single ray cannot intersect all light sources, multiple rays are are generated for every pixel of the final image, where the final pixel color is the average value of all ray paths. 
+
+The random nature of path tracing makes renders look noisey, or "speckled", if not enough test rays are generated, and take longer to render compared to traditional ray traces. The advantage is a significantly more realistic looking final image, where features like `soft shadows`_, caustics_, and bokah_ naturally form as light explores random paths.
+
+.. _`soft shadows`: https://en.wikipedia.org/wiki/Hard_and_soft_light
+.. _caustics: https://en.wikipedia.org/wiki/Caustic_(optics)
+.. _bokah: https://en.wikipedia.org/wiki/Bokeh
+
+.. class:: alert alert-primary
+    
+    TODO: add image of sphere in blender with differnet rays per pixel showing noise
 
 
 Video Games and Real Time Ray Tracing
