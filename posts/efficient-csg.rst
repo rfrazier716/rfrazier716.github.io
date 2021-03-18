@@ -11,6 +11,9 @@
 .. role:: py(code)
    :language: python
 
+.. contents::
+    :class: alert alert-primary float-md-right
+
 Extending for an Arbitrary number of Surface Intersections
 ===========================================================
 
@@ -70,7 +73,7 @@ Take a look at the union operator and corresponding count values. Notice that un
         csg_hits = np.where(mask, hit_array, np.inf)
         return csg_hits
 
-A couple things from this code might pop out: (1) why specify the axis when rolling a 1D array, and (2) why does csg_hits need the same dimension as hit_array, padded with np.inf, instead of just returning the valid hits. Both of these are addressed in **PUT THE SECTION HEADER HERE**. 
+A couple things from this code might pop out: (1) why specify the axis when rolling a 1D array, and (2) why does csg_hits need the same dimension as hit_array, padded with np.inf, instead of just returning the valid hits. Both of these are addressed in `Extending To 2D Matrices`_. 
 
 * put a comment here about plugging it into test cases and check that it's passing *
 
@@ -92,7 +95,9 @@ Again it's important to make sure the function tests pass before continuing.
 The Difference Operator
 ------------------------
 
-The difference operator is unique from the union and intersection operator. Both union and intersection have analogs in boolean algebra, where a union is defined as :code:`A|B` and in intersection is :code:`A & B`. Boolean algebra, however, does not have the concept of subtraction. Not only that, but we can't use the clever tricks from the count array, since we need to know which surface is the subtracting surface, and the count array only tracks how many closed surfaces the ray is inside. Instead of coming up with an entirely new method just for differences, we're going to redefine what a difference means to it fits with the existing functions. Instead of thinking of A-B as shape B cutting away from shape A, think of it as the intersection of A with the infinitely large volume of space where B *does not* exist, called :math:`\bar{B}`. 
+The difference operator is unique from the union and intersection operator. Both union and intersection have analogs in boolean algebra, (or the binary equivalent *and* and *or* operators). Boolean algebra, however, does not have the concept of subtraction. Not only that, but we can't use the clever tricks from the count array, since we need to know which surface is the subtracting surface, and the count array only tracks how many closed surfaces the ray is inside. Instead of coming up with an entirely new method just for differences, we're going to redefine what a difference means so it it behaves like a boolean operation.
+
+Instead of thinking of A-B as shape B cutting away from shape A, think of it as the intersection of A with the infinitely large volume of space where B *does not* exist, called :math:`\bar{B}`. 
 
 .. class:: alert alert-primary
 
@@ -118,14 +123,100 @@ With those observations in hand we're ready to create the count array for the di
 
 Here the xor operator is inverting the array mask for any indices in the argsort that reference the right_array. **INCLUDE XOR TRUTH TABLE???**
 
+
+.. _`Extending To 2D Matrices`:
+
+Extending To 2D Matrices
+==========================
+
+PyRayT can perform reasonably fast ray tracing because under the hood every ray is stored in a 2x4xn matrix that gets intersected with each surface. This allows me to bypass python for loops in favor of heavily optimized numpy functions that are calling compiled C and fortran libraries. Fortunately, by specifying axes and preserving array sizes, the csg function can be readily extended to 2D matrices, where every column represents the ordered hits for an individual ray with the given surface.
+
+The only thing we need to change is how the arrays are concatenated. If a 1D array is passed, they can be concatenated along the zero axis, but 2D arrays need to be stacked column-wise
+
+.. code:: python
+
+    if array1.ndim == 1:  
+        # if 1D arrays were passed, concatenate
+        merged_array = np.concatenate(array1, array2)
+    else:
+        # otherwise stack them where each column represents a unique ray's hits
+        merged_array = np.vstack((array1, array2))
+
+
 The Full Function 
 ==================
 
-** Do something here about passing test cases**
+The complete function is shown below. There's an additional helper class `Operation` that inherits from Enum used to select the which CSG operation is performed (I prefer Enums over string arguments for anything end users won't see). Also, there's an optional argument :code:`sort_output` that sets if the returned array is sorted along the hit axis. The reason for this option is to eliminate unnecessary :code:`np.sort()` calls on large arrays that slow down the final program.
 
-Extending for 2D Matrices
-==========================
+.. code:: python
 
-Potential Speed ups
---------------------
+    from enum import Enum
+
+    class Operation(Enum):
+        UNION = 1
+        INTERSECT = 2
+        DIFFERENCE = 3
+
+    def array_csg(array1: np.ndarray, array2: np.ndarray, operation: Operation, sort_output=True):
+        """
+        Given two arrays and an operation, returns a new array which is the CSG operation acting on the array.
+        If the array is thought of as intersection points between a ray and a two objects being combined with a CSG
+        operation, the returned array is the valid hits for the resulting object. Function assumes both arrays are sorted and have
+        an even number of axis=0 elements
+
+        :param array1: The sorted hits array for the first surface
+        :param array2: The sorted hits array for the second surface
+        :param operation: The operation being performed on the two surfaces
+        :type operation: Operation
+        :param sort_output: whether the returned matrix should be sorted or not
+        :return: A filtered array of hits that are valid for the CSG operation. Invalid hits are masked with np.inf.
+        """
+
+        # create the merged array from the two inputs
+        if array1.ndim == 1:
+            # if 1D arrays were passed, concatenate
+            merged_array = np.concatenate(array1, array2)
+
+        else:
+            # otherwise stack them where each column represents a unique ray's hits
+            merged_array = np.vstack((array1, array2))
+
+        # sort the array along the hit axis
+        merged_argsort = np.argsort(merged_array, axis=0)
+        merged_array = merged_array[merged_argsort, np.arange(merged_array.shape[-1])]
+
+        # create the hit_count array
+        if operation == Operation.UNION or operation == Operation.INTERSECT:
+            merged_mask = np.where(merged_argsort & 1, -1, 1)
+            ray_hit_path = np.cumsum(merged_mask, axis=0)
+
+        elif operation == Operation.DIFFERENCE:
+            merged_mask = np.where(np.logical_xor(merged_argsort & 1, merged_argsort >= array1.shape[0]), -1, 1)
+            ray_hit_path = np.cumsum(merged_mask, axis=0) + 1
+
+        else:
+            raise ValueError(f"operation {operation} is invalid")
+
+        # Perform the CSG operations
+        if operation == Operation.UNION:
+            ray_hit_path = np.where(ray_hit_path > 1, 1, ray_hit_path)
+            ray_hit_path = np.diff(ray_hit_path, axis=0, prepend=0)
+            csg_hits = np.where(ray_hit_path != 0, merged_array, np.inf)
+
+        elif operation == Operation.INTERSECT or operation == Operation.DIFFERENCE:
+            is_two = (ray_hit_path == 2)
+            mask = np.logical_or(is_two, np.roll(is_two, 1, axis=0))
+            csg_hits = np.where(mask, merged_array, np.inf)
+
+        # return the valid hits
+        return np.sort(csg_hits, axis=0) if sort_output else csg_hits
+
+Verifying Test Cases 
+---------------------
+
+The last step is to make sure the test cases all pass. I'll be using UnitTest ...
+
+
+CSG In Action 
+==============
 
