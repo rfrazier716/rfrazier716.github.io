@@ -1,8 +1,8 @@
-.. title: Efficient CSG
+.. title: Rendering Constructive Solid Geometry With Python
 .. slug: efficient-csg
 .. date: 2021-03-15 07:35:26 UTC-04:00
-.. tags: 
-.. category: 
+.. tags: ray tracing, python, csg, constructive solid geometry, rendering, numpy, pyrayt
+.. category: Programming
 .. link: 
 .. description: 
 .. type: text
@@ -11,7 +11,13 @@
 .. role:: py(code)
    :language: python
 
-I recently hit a road block with my ray tracer: cubes, cylinders, and spheres rendered fine, but there wasn't an easy way to create arbitrary shapes whose intersection and normal functions I hadn't already hard coded. Since PyRayT's end use is for optical design, at the bare minimum it needed a flexible way to create lenses and mirrors. Flipping through Jamis Bucks' "The Ray Tracer Challenge", it turns out the last chapter "Constructive Solid Geometry" (CSG) addresses my needs perfectly! However, Buck's equations for CSG were unnecessarily complicated, and would slow down PyRayT excessively. In this post I'll be covering my algorithm for implementing constructive solid geometry in a ray tracer, as well as it implementation in Python using numpy.
+I recently hit a road block with my `ray tracer`_: cubes, cylinders, and spheres rendered fine, but there wasn't an easy way to create arbitrary shapes whose intersection and normal functions I hadn't already hard coded. Since PyRayT's end use is for optical design, at the bare minimum it needed a flexible way to create lenses and mirrors. Flipping through Jamis Bucks' `The Ray Tracer Challenge`_, it turns out the last chapter *Constructive Solid Geometry* (CSG) addresses my needs perfectly! However, Buck's equations for CSG did not blend well with PyRayTs flow of rendering multiple rays at once. Today I'll be covering my own algorithm for adding constructive solid geometry to a ray tracer, as well as its implementation in Python using numpy_.
+
+.. _`The Ray Tracer Challenge`: https://pragprog.com/titles/jbtracer/the-ray-tracer-challenge/
+.. _`ray tracer`: https://github.com/rfrazier716/PyRayT
+.. _numpy: https://numpy.org
+
+.. TEASER_END
 
 .. contents::
     :class: alert alert-primary col-md-4
@@ -20,79 +26,66 @@ I recently hit a road block with my ray tracer: cubes, cylinders, and spheres re
 CSG In a Nutshell
 ==================
 
-An easy way to create complex surfaces from basic shapes, constructive solid geometry is based around three fundamental operations: union, intersect, and difference. Each operation acts on two shapes, resulting in a new shape that is a combination of the two. multiple csg operations can be chained together, creating increasingly intricate shapes while using significantly less surfaces than an equivalent triangular mesh. 
+An easy way to create complex surfaces from basic shapes, constructive solid geometry is based around three fundamental operations: union, intersect, and difference. Each operation acts on two shapes, resulting in a new shape that is a combination of the two. multiple CSG operations can be chained together, creating increasingly intricate shapes while using significantly less surfaces than an equivalent triangular mesh. 
 
-Union
-    definition
+.. figure:: /images/efficient_csg/csg_operations.png
+    :align: center
+    :width: 800
 
-Intersection 
-    definition
-
-Difference
-    Definition
+    The three base operations for Constructive Solid Geometry. **Union (∪)** combines both shapes, **intersection (∩)** returns only the common volume of both spaces, and **difference (-)** subtracts the second shape from the first.
 
 What It Means for Ray Tracing
 ------------------------------
 
-Ray tracing with CSG's is surprisingly straightforward. When you render a scene with a CSG object in it, the ray is intersected with each sub-surface that makes up the object, returning a full set of 'hit' points that need to be filtered. The CSG object then needs to look at both sets of hits and decide which ones are valid for the boolean operation being performed on the surfaces. These hits are then returned to the renderer so it can determine the closest surface that the ray interacts with.
+Ray tracing with CSG's is surprisingly straightforward. When a ray is interesected with a CSG object, it is really intersected with the set of surfaces that make up the object. The job of the CSG algorithm is to take those two sets of intersections and filter them out so that only valid ones remain. These hits are then returned to the renderer so it can determine the closest surface that the ray interacts with.
+
+.. figure:: /images/efficient_csg/example_hits.png
+    :align: center
+    :width: 600
+
+    An example of rendering the union of two surfaces. While each sub-shape returns a full set of intersections, the filter function discards points a1 and b0 since they are inside of the new object. 
+
+Writing a function to sort valid CSG hits turns out to be nontrivial. for every ray-surface hit, the function needs to determine if the hit occurred inside the opposite surface. This is easy enough for convex surfaces that have at most two intersections per ray, but as the number of intersections grows, basic methods for checking fall apart or slow down significantly.
 
 .. figure:: /images/efficient_csg/csg_timeline.png
     :align: center
     :width: 500
 
-despite the ray tracing being straightforward, writing a function to sort valid CSG hits turns out to be more complex. for every ray-surface hit, the function needs to determine if the hit occurred inside the opposite surface. This is easy enough for convex surfaces that have at most two intersections per ray, but as the surfaces become more complex basic methods for checking intersections overlap. 
-
-Below is a simplified snapshot of the `intersect` function for CSGObjects in PyRayT, showing where the sorting function is called
-
-.. code:: python
-
-    def intersect(self, rays):
-        l_hits = self._l_child.intersect(rays)
-        r_hits = self._r_child.intersect(rays)
-
-        # this is the function we'll be implementing
-        csg_hits = array_csg(l_hits, r_hits, self._operation)
-
-        return csg_hits
+    Complex hit arrays for two surfaces A & B, and the expected hit arrays for CSG Operations on those surfaces. 
 
 
-A Scalable Algorithm to Filter Hits
-===========================================================
+Writing a Function to Filter Hits
+==================================
 
-Brushing up on the Fundamentals 
---------------------------------
-
-Before writing the general algorithm, I'm going to make some assertions about the hits vectors and the surfaces being operated on:
+Every method I found to filter out csg intersections involved iterating over all hits in a set, and internally keeping track of two booleans that determine if the ray is inside of each surface at a given hit. By contrast, this approach operates on the entire array at once, but leverages a couple assumptions about the surfaces being intersected:
 
 Both surfaces are closed surfaces
     *"A closed surface is a surface that is compact and without boundary."* While this definition is accurate, it's not exactly intuitive to imagine what surfaces are closed and which are open. I visualize closed surfaces as "if I were to look at this surface from any angle, can I tell if it's hollow without cutting it open". If the answer is no, it's closed, otherwise it's an open surface with a boundary.
 
-    .. image:: /images/efficient_csg/solid_bodies_crop.png
-        :align: center
-        :width: 500
-
-    By asserting that all surfaces are closed surfaces, you can also claim that **each hit array has an even number of elements**. Since Rays extend from time :math:`-\infty` of :math:`\infty`, any ray that enters a surface *must* exit the surface. Even if the surface has infinite volume, the ray will then enter and exit at :math:`+/-\infty`. 
+    By asserting that all surfaces are closed surfaces, you can also claim that **each hit array has an even number of elements**. Since Rays extend from time :math:`-\infty` of :math:`\infty`, any ray that enters a surface *must* exit the surface. Even if the surface has infinite volume, the ray will then enter and exit at :math:`\mp\infty`. 
     
     Additionally, CSG becomes meaningless if the surfaces are not closed. Imagine subtracting an infinitely thin plane from a sphere. Since planes have no depth you don't remove any material from the sphere, and end up with the same shape you started with!
 
 The hit arrays are sorted
-    Sorts are expensive to perform on large arrays, and I want PyRayT to be as fast as possible (while still being able to leverage Python to quickly develop code). The intersection functions in PyRayT are always set up to return sorted arrays, so this assumption prevents an additional, unnecessary sort. However, *The arrays must be sorted for this algorithm to work.* If your intersections don't return sorted hits, make sure to sort the arrays before passing them.
+    We'll use the position of intersections in their respective arrays to determine if the ray is entering or exiting the surface. In order for it to work, both input arrays must be sorted.
 
 Odd indexed hits enter the surface, even valued hits leave the surface
-    Since we know that the hit arrays are sorted, and that rays extend to infinity, the first element each hit array *must* be the ray entering the respective surface. It's also impossible for the ray to enter the surface again without first leaving it. so the next hit represents the ray leaving the surface. This alternating pattern continues for the entire hit array.
+    Since the intersection arrays are sorted, and include all hits from :math:`-\infty` to :math:`\infty`, the first element each hit array *must* be the ray entering the respective surface. It's also impossible for the ray to enter the surface again without first leaving it. so the next hit represents the ray leaving the surface. This alternating pattern continues for the entire hit array.
 
 The surface_count vector
 ----------------------------------
 
-We'll create two additional arrays to help validate hits: a sorted array of all hits for both surfaces, and an array that tracks how many surfaces the ray is inside of at each hit, called :code:`surface_count`.
+There's two additional arrays we'll use validate hits: a sorted array of all hits for both surfaces, and an array that tracks how many surfaces the ray is inside of at each hit, called surface_count.
 
-.. image:: /images/efficient_csg/surface_count.png
+.. figure:: /images/efficient_csg/surface_count.png
     :align: center
     :width: 500
 
+    The same intersection arrays from above and the corresponding surface_count array
+
 To create surface_count we'll do the following
 
-#. Create a concatenated array of both hit arrays (But do not sort it yet)
+#. Create a concatenated array of both hit arrays (but do not sort it yet)
 #. Take the argsort of the concatenated array
 #. create a new array with the same dimension as the concatenated array. For each index in the new array, assign +1 if the value in the equivalent argsort index is even, and -1 if is odd
 #. take the cumulative sum of the +/-1 array, this is the surface count array.
@@ -108,9 +101,12 @@ The +/-1 array is being used as an indicator for if a hit is entering or exiting
     merged_mask = np.where(merged_argsort & 1, -1, 1)
     surface_count = np.cumsum(merged_mask, axis=0)
 
+Union
+------
 
-The Union Operator
--------------------
+.. image:: /images/efficient_csg/union_count.png
+    :align: center
+    :width: 500
 
 Take a look at the union operator and corresponding count values. Notice that union hits are any any index (n) where count[n-1]==0 and count[n]==1, or count[n-1]==1 and count[n]==0. This is the same as taking the exclusive or (XOR) of the array with a copy of itself shifted down by one row. From above we know that the last value of the count array has to be 0 (at :math:`t=\infty` the ray must have exited all surfaces), so the shifted array will always have be all zeros in the zeroth row. Numpy gives us all the function calls needed to efficiently perform xor on our count array, shown below. 
 
@@ -121,8 +117,12 @@ Take a look at the union operator and corresponding count values. Notice that un
 
 A couple things from this code might pop out: (1) why specify the axis when rolling a 1D array, and (2) why does csg_hits need the same dimension as hit_array, padded with np.inf, instead of just returning the valid hits. Both of these are addressed in `Extending To 2D Matrices`_. 
 
-The Intersection Operator
---------------------------
+Intersection
+-------------
+
+.. image:: /images/efficient_csg/intersection_count.png
+    :align: center
+    :width: 500
 
 The intersection operator can be handled in a similar manner. Looking at the count array, an intersection hit occurs at any index (n) where count[n] == 2 or count[n-1] == 2. This time we'll use numpy's :code:`logical_or` function to create the mask
 
@@ -132,10 +132,10 @@ The intersection operator can be handled in a similar manner. Looking at the cou
     mask = np.logical_or(is_two, np.roll(is_two, 1, axis=0))
     csg_hits = np.where(mask, merged_array, np.inf)
 
-Again it's important to make sure the function tests pass before continuing. 
+The intersection operator has an interesting "blip" at t=5. This is because both surfaces have a hit at 5, but in one case the ray is entering the surface, and the other it is exiting. With integer math this becomes a 'zero thickness' shell, but it can cause unintended results when the hits are floating-points and the surfaces overlap by a small amount. 
 
-The Difference Operator
-------------------------
+Difference
+-----------
 
 The difference operator is unique from the union and intersection operator. Both union and intersection have analogs in boolean algebra, (or the binary equivalent *and* and *or* operators). Boolean algebra, however, does not have the concept of subtraction. Not only that, but we can't use the clever tricks from the count array, since we need to know which surface is the subtracting surface, and the count array only tracks how many closed surfaces the ray is inside. Instead of coming up with an entirely new method just for differences, we're going to redefine what a difference means so it it behaves like a boolean operation.
 
@@ -169,15 +169,15 @@ With those observations in hand we're ready to create the count array for the di
     count_array = np.where(np.logical_xor(merged_argsort&1, merged_argsort>=left_array.shape[-1]))
     count_array = np.cumsum(count_array)+1
 
-Here the xor operator is inverting the array mask for any indices in the argsort that reference the right_array. **INCLUDE XOR TRUTH TABLE???**
+Here the xor operator is inverting the array mask for any indices in the argsort that reference the right_array.
 
 
 .. _`Extending To 2D Matrices`:
 
 Extending To 2D Matrices
-==========================
+-------------------------
 
-PyRayT can perform reasonably fast ray tracing because under the hood every ray is stored in a 2x4xn matrix that gets intersected with each surface. This allows me to bypass python for loops in favor of heavily optimized numpy functions that are calling compiled C and fortran libraries. Fortunately, by specifying axes and preserving array sizes, the csg function can be readily extended to 2D matrices, where every column represents the ordered hits for an individual ray with the given surface.
+PyRayT can perform reasonably fast ray tracing because under the hood every ray is stored in a 2x4xn matrix that gets intersected with each surface. This allows me to bypass Python for loops in favor of heavily optimized numpy functions. Fortunately, by specifying axes and preserving array sizes, the csg function can be readily extended to 2D matrices, where every column represents the ordered hits for an individual ray with the given surface.
 
 The only thing we need to change is how the arrays are concatenated. If a 1D array is passed, they can be concatenated along the zero axis, but 2D arrays need to be stacked column-wise
 
@@ -207,11 +207,37 @@ The complete function is shown below. There's an additional helper class `Operat
 Verifying Test Cases 
 ---------------------
 
-The last step is to make sure the test cases all pass. I'll be using UnitTest ...
+Before passing this function off as complete, we need to make sure it passes some basic unit tests. I'll be using Python's UnitTest framework to make sure that the two hit arrays plotted above return the correct values for union, intersection, and difference.
 
 .. include:: files/efficient_csg/test_cases.py
     :code: python
 
-CSG In Action 
-==============
+With those tests passing, we're one step closer to a fully fledged Python ray tracer!
+
+Conclusion
+===========
+
+.. raw:: html
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 my-auto">
+            <p>
+                Constructive Solid Geometry can extend the functionality of a ray tracer by building complex shapes from basic primitives, but rendering them requires an additional step to filter out which intersections are valid. Thanks to numpy, it's easy to write this function without reverting to Python for loops, and the same function can be used to process multiple ray-surface intersections at once.
+            </p>
+            <p>
+                In PyRayT, all lenses are CSG intersections of two spheres (defining the focus) and a cylinder that sets the aperture. This has sped up development time and is significantly easier than writing custom functions for each optical component.
+            </div>
+            <div class="col-md-4">
+                <img src="/images/efficient_csg/csg_in_action.png" alt="a cool looking, albeit meaningless example of CSG in action">
+            </div>
+        </div>
+    </div>
+
+.. class:: alert alert-primary
+
+    You may have noticed the shading in these CSG surfaces seems a bit *off*. They're rendered with what's called a `Gooch shader`_, which is specifically designed to be non-photorealistic. In my next post I'll discuss adding Gooch shading to PyRayT, and it's tradeoffs compared to other shader models.
+
+.. _`Gooch shader`: https://en.wikipedia.org/wiki/Gooch_shading
+
 
