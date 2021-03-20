@@ -7,15 +7,15 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <sitemap>
   <loc>https://rfrazier716.github.io/categories/cat_programming.xml</loc>
-  <lastmod>2021-03-20T20:24:00Z</lastmod>
+  <lastmod>2021-03-20T21:18:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://rfrazier716.github.io/categories/constructive-solid-geometry.xml</loc>
-  <lastmod>2021-03-20T20:24:00Z</lastmod>
+  <lastmod>2021-03-20T21:18:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://rfrazier716.github.io/categories/csg.xml</loc>
-  <lastmod>2021-03-20T20:24:00Z</lastmod>
+  <lastmod>2021-03-20T21:18:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://rfrazier716.github.io/categories/github.xml</loc>
@@ -27,23 +27,23 @@
  </sitemap>
  <sitemap>
   <loc>https://rfrazier716.github.io/categories/numpy.xml</loc>
-  <lastmod>2021-03-20T20:24:00Z</lastmod>
+  <lastmod>2021-03-20T21:18:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://rfrazier716.github.io/categories/pyrayt.xml</loc>
-  <lastmod>2021-03-20T20:24:00Z</lastmod>
+  <lastmod>2021-03-20T21:18:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://rfrazier716.github.io/categories/python.xml</loc>
-  <lastmod>2021-03-20T20:24:00Z</lastmod>
+  <lastmod>2021-03-20T21:18:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://rfrazier716.github.io/categories/ray-tracing.xml</loc>
-  <lastmod>2021-03-20T20:24:00Z</lastmod>
+  <lastmod>2021-03-20T21:18:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://rfrazier716.github.io/categories/rendering.xml</loc>
-  <lastmod>2021-03-20T20:24:00Z</lastmod>
+  <lastmod>2021-03-20T21:18:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://rfrazier716.github.io/categories/rst.xml</loc>
@@ -51,14 +51,14 @@
  </sitemap>
  <sitemap>
   <loc>https://rfrazier716.github.io/galleries/rss.xml</loc>
-  <lastmod>2021-03-07T03:12:00Z</lastmod>
+  <lastmod>2021-03-20T21:22:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://rfrazier716.github.io/rss.xml</loc>
-  <lastmod>2021-03-20T20:24:00Z</lastmod>
+  <lastmod>2021-03-20T21:18:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://rfrazier716.github.io/sitemap.xml</loc>
-  <lastmod>2021-03-20T20:24:00Z</lastmod>
+  <lastmod>2021-03-20T21:22:00Z</lastmod>
  </sitemap>
 </sitemapindex>

@@ -78,7 +78,7 @@ bg-dark
         </div>
     </header><div class="p-summary entry-summary">
     <div>
-<p>I recently hit a road block with my <a class="reference external" href="https://github.com/rfrazier716/PyRayT">ray tracer</a>: cubes, cylinders, and spheres rendered fine, but there wasn't an easy way to create arbitrary shapes whose intersection and normal functions I hadn't already hard coded. Since PyRayT's end use is for optical design, at the bare minimum it needed a flexible way to create lenses and mirrors. Flipping through Jamis Bucks' <a class="reference external" href="https://pragprog.com/titles/jbtracer/the-ray-tracer-challenge/">The Ray Tracer Challenge</a>, it turns out the last chapter <em>Constructive Solid Geometry</em> (CSG) addressed my needs perfectly! However, Buck's equations for CSG did not blend well with PyRayTs flow of rendering multiple rays at once. Today I'll be covering my own algorithm for adding constructive solid geometry to a ray tracer, as well as its implementation in Python using <a class="reference external" href="https://numpy.org">numpy</a>.</p>
+<p>I recently hit a road block with my <a class="reference external" href="https://github.com/rfrazier716/PyRayT">ray tracer</a>: cubes, cylinders, and spheres rendered fine, but there wasn't an easy way to create arbitrary shapes whose intersection and normal functions I hadn't already hard coded. Since <a class="reference external" href="https://github.com/rfrazier716/PyRayT">PyRayT's</a> end use is for optical design, at the bare minimum it needed a flexible way to create lenses and mirrors. Flipping through Jamis Bucks' <a class="reference external" href="https://pragprog.com/titles/jbtracer/the-ray-tracer-challenge/">The Ray Tracer Challenge</a>, it turns out the last chapter <em>Constructive Solid Geometry</em> (CSG) addressed my needs perfectly! However, Buck's equations for CSG did not blend well with PyRayTs flow of rendering multiple rays at once. Today I'll be covering my own algorithm for adding constructive solid geometry to a ray tracer, as well as its implementation in Python using <a class="reference external" href="https://numpy.org">NumPy</a>.</p>
 <p class="more"><a href="efficient-csg/">Read more…</a></p>
 </div>
     </div>
@@ -115,7 +115,7 @@ Contents © 2021         <a href="mailto:rfrazier716+site@gmail.com">Ryan Frazie
 
 <span class="follow-icons">
 
-  <a href="mailto:rfrazier716+site@example.com" class="fas fa-envelope-square fa-2x follow-icon"></a>
+  <a href="mailto:rfrazier716+site@gmail.com" class="fas fa-envelope-square fa-2x follow-icon"></a>
   <a href="https://github.com/rfrazier716" class="fab fa-github-square fa-2x follow-icon"></a>
   <a href="https://www.instagram.com/fotonix716/" class="fab fa-instagram-square fa-2x follow-icon"></a>
   <a href="https://twitter.com/FotonixAndGizmo" class="fab fa-twitter-square fa-2x follow-icon"></a>
