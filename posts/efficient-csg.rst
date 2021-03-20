@@ -12,7 +12,7 @@
 .. role:: py(code)
    :language: python
 
-I recently hit a road block with my `ray tracer`_: cubes, cylinders, and spheres rendered fine, but there wasn't an easy way to create arbitrary shapes whose intersection and normal functions I hadn't already hard coded. Since PyRayT's end use is for optical design, at the bare minimum it needed a flexible way to create lenses and mirrors. Flipping through Jamis Bucks' `The Ray Tracer Challenge`_, it turns out the last chapter *Constructive Solid Geometry* (CSG) addresses my needs perfectly! However, Buck's equations for CSG did not blend well with PyRayTs flow of rendering multiple rays at once. Today I'll be covering my own algorithm for adding constructive solid geometry to a ray tracer, as well as its implementation in Python using numpy_.
+I recently hit a road block with my `ray tracer`_: cubes, cylinders, and spheres rendered fine, but there wasn't an easy way to create arbitrary shapes whose intersection and normal functions I hadn't already hard coded. Since PyRayT's end use is for optical design, at the bare minimum it needed a flexible way to create lenses and mirrors. Flipping through Jamis Bucks' `The Ray Tracer Challenge`_, it turns out the last chapter *Constructive Solid Geometry* (CSG) addressed my needs perfectly! However, Buck's equations for CSG did not blend well with PyRayTs flow of rendering multiple rays at once. Today I'll be covering my own algorithm for adding constructive solid geometry to a ray tracer, as well as its implementation in Python using numpy_.
 
 .. _`The Ray Tracer Challenge`: https://pragprog.com/titles/jbtracer/the-ray-tracer-challenge/
 .. _`ray tracer`: https://github.com/rfrazier716/PyRayT

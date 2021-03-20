@@ -5,7 +5,8 @@
 .. category: Programming
 .. link: 
 .. description: 
-.. type: draft
+.. type: text
+.. status: draft
 
 
 Ray tracing is subset of programming that has always fascinated me. Every time you see a computer generated image, from video games to CAD software, ray tracing took place under the hood. The biggest hurdle I've always found with learning about ray tracers, though, is it's tightly coupled with graphics API's such as openGL and DirectX, and the actual algorithms are abstracted away from the user.
