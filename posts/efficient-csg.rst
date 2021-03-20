@@ -237,7 +237,7 @@ Conclusion
 
 .. class:: alert alert-primary
 
-    You may have noticed the shading in these CSG surfaces seems a bit *off*. They're rendered with what's called a `Gooch shader`_, which is specifically designed to be non-photorealistic. In my next post I'll discuss adding Gooch shading to PyRayT, and it's tradeoffs compared to other shader models.
+    You may have noticed the shading in these CSG surfaces seems a bit *off*. They're rendered with what's called a `Gooch shader`_, which is specifically designed to be non-photorealistic. In my next post I'll discuss adding Gooch shading to PyRayT, and its tradeoffs compared to other shader models.
 
 .. _`Gooch shader`: https://en.wikipedia.org/wiki/Gooch_shading
 
