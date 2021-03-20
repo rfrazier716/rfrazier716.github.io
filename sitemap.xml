@@ -7,7 +7,7 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
   <loc>https://rfrazier716.github.io/</loc>
-  <lastmod>2021-03-18T12:11:00Z</lastmod>
+  <lastmod>2021-03-20T20:15:00Z</lastmod>
  </url>
  <url>
   <loc>https://rfrazier716.github.io/2021/</loc>
@@ -82,24 +82,8 @@
   <lastmod>2021-03-06T22:00:00Z</lastmod>
  </url>
  <url>
-  <loc>https://rfrazier716.github.io/pages/about/</loc>
-  <lastmod>2021-03-05T21:29:00Z</lastmod>
- </url>
- <url>
-  <loc>https://rfrazier716.github.io/pages/projects/</loc>
-  <lastmod>2021-03-05T21:29:00Z</lastmod>
- </url>
- <url>
-  <loc>https://rfrazier716.github.io/pages/resume/</loc>
-  <lastmod>2021-03-05T21:29:00Z</lastmod>
- </url>
- <url>
   <loc>https://rfrazier716.github.io/posts/</loc>
   <lastmod>2021-03-16T11:48:00Z</lastmod>
- </url>
- <url>
-  <loc>https://rfrazier716.github.io/posts/creating-a-geometric-ray-tracer-with-python/</loc>
-  <lastmod>2021-03-06T22:00:00Z</lastmod>
  </url>
  <url>
   <loc>https://rfrazier716.github.io/posts/efficient-csg/</loc>
@@ -120,10 +104,6 @@
  <url>
   <loc>https://rfrazier716.github.io/projects/</loc>
   <lastmod>2021-03-06T22:00:00Z</lastmod>
- </url>
- <url>
-  <loc>https://rfrazier716.github.io/projects/projects/</loc>
-  <lastmod>2021-03-06T21:58:00Z</lastmod>
  </url>
  <url>
   <loc>https://rfrazier716.github.io/projects/pyrayt/</loc>
