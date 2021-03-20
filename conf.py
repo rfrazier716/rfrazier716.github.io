@@ -986,7 +986,7 @@ Contents &copy; {date}         <a href="mailto:{email}">{author}</a>
 """+"""
 <span class="follow-icons">
 
-  <a href=mailto:rfrazier716+site@example.com class="fas fa-envelope-square fa-2x follow-icon"></a>
+  <a href=mailto:rfrazier716+site@gmail.com class="fas fa-envelope-square fa-2x follow-icon"></a>
   <a href={github} class="fab fa-github-square fa-2x follow-icon"></a>
   <a href={insta} class="fab fa-instagram-square fa-2x follow-icon"></a>
   <a href={twitter} class="fab fa-twitter-square fa-2x follow-icon"></a>
