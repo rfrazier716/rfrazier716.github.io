@@ -7,6 +7,7 @@
 .. description: 
 .. type: text
 .. has_math: true
+.. status: published
 
 .. role:: py(code)
    :language: python
