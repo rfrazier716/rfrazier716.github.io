@@ -11,71 +11,115 @@
 .. role:: py(code)
    :language: python
 
-.. contents::
-    :class: alert alert-primary float-md-right
+I recently hit a road block with my ray tracer: cubes, cylinders, and spheres rendered fine, but there wasn't an easy way to create arbitrary shapes whose intersection and normal functions I hadn't already hard coded. Since PyRayT's end use is for optical design, at the bare minimum it needed a flexible way to create lenses and mirrors. Flipping through Jamis Bucks' "The Ray Tracer Challenge", it turns out the last chapter "Constructive Solid Geometry" (CSG) addresses my needs perfectly! However, Buck's equations for CSG were unnecessarily complicated, and would slow down PyRayT excessively. In this post I'll be covering my algorithm for implementing constructive solid geometry in a ray tracer, as well as it implementation in Python using numpy.
 
-Extending for an Arbitrary number of Surface Intersections
+.. contents::
+    :class: alert alert-primary col-md-4
+
+
+CSG In a Nutshell
+==================
+
+An easy way to create complex surfaces from basic shapes, constructive solid geometry is based around three fundamental operations: union, intersect, and difference. Each operation acts on two shapes, resulting in a new shape that is a combination of the two. multiple csg operations can be chained together, creating increasingly intricate shapes while using significantly less surfaces than an equivalent triangular mesh. 
+
+Union
+    definition
+
+Intersection 
+    definition
+
+Difference
+    Definition
+
+What It Means for Ray Tracing
+------------------------------
+
+Ray tracing with CSG's is surprisingly straightforward. When you render a scene with a CSG object in it, the ray is intersected with each sub-surface that makes up the object, returning a full set of 'hit' points that need to be filtered. The CSG object then needs to look at both sets of hits and decide which ones are valid for the boolean operation being performed on the surfaces. These hits are then returned to the renderer so it can determine the closest surface that the ray interacts with.
+
+.. figure:: /images/efficient_csg/csg_timeline.png
+    :align: center
+    :width: 500
+
+despite the ray tracing being straightforward, writing a function to sort valid CSG hits turns out to be more complex. for every ray-surface hit, the function needs to determine if the hit occurred inside the opposite surface. This is easy enough for convex surfaces that have at most two intersections per ray, but as the surfaces become more complex basic methods for checking intersections overlap. 
+
+Below is a simplified snapshot of the `intersect` function for CSGObjects in PyRayT, showing where the sorting function is called
+
+.. code:: python
+
+    def intersect(self, rays):
+        l_hits = self._l_child.intersect(rays)
+        r_hits = self._r_child.intersect(rays)
+
+        # this is the function we'll be implementing
+        csg_hits = array_csg(l_hits, r_hits, self._operation)
+
+        return csg_hits
+
+
+A Scalable Algorithm to Filter Hits
 ===========================================================
 
-Unfortunately, the above logic falls apart as soon as any surface returns more than two intersections. In the circle case above if they ray went through the top of the circles instead of the middle, it would need to return four hits instead of just two. Additionally there would be no overlap between the hit vectors of the two circles. Now imagine a case where you want to combine two general surfaces, who themselves are the results of many CSG operations. If we applied the logic above, each hit array would need to be broken into discrete pairs and compared to the other shapes pairs, an expensive operation that does not scale well as the number of hits grows. 
+Brushing up on the Fundamentals 
+--------------------------------
 
-Before writing the general algorithm, we're going to make some assumptions about our hits vectors and the surfaces being operated on:
+Before writing the general algorithm, I'm going to make some assertions about the hits vectors and the surfaces being operated on:
 
 Both surfaces are closed surfaces
-    write note
+    *"A closed surface is a surface that is compact and without boundary."* While this definition is accurate, it's not exactly intuitive to imagine what surfaces are closed and which are open. I visualize closed surfaces as "if I were to look at this surface from any angle, can I tell if it's hollow without cutting it open". If the answer is no, it's closed, otherwise it's an open surface with a boundary.
 
-Each hit array has an even number of elements
-    write note
+    .. image:: /images/efficient_csg/solid_bodies_crop.png
+        :align: center
+        :width: 500
+
+    By asserting that all surfaces are closed surfaces, you can also claim that **each hit array has an even number of elements**. Since Rays extend from time :math:`-\infty` of :math:`\infty`, any ray that enters a surface *must* exit the surface. Even if the surface has infinite volume, the ray will then enter and exit at :math:`+/-\infty`. 
+    
+    Additionally, CSG becomes meaningless if the surfaces are not closed. Imagine subtracting an infinitely thin plane from a sphere. Since planes have no depth you don't remove any material from the sphere, and end up with the same shape you started with!
 
 The hit arrays are sorted
-    write note
+    Sorts are expensive to perform on large arrays, and I want PyRayT to be as fast as possible (while still being able to leverage Python to quickly develop code). The intersection functions in PyRayT are always set up to return sorted arrays, so this assumption prevents an additional, unnecessary sort. However, *The arrays must be sorted for this algorithm to work.* If your intersections don't return sorted hits, make sure to sort the arrays before passing them.
 
 Odd indexed hits enter the surface, even valued hits leave the surface
-    write note
+    Since we know that the hit arrays are sorted, and that rays extend to infinity, the first element each hit array *must* be the ray entering the respective surface. It's also impossible for the ray to enter the surface again without first leaving it. so the next hit represents the ray leaving the surface. This alternating pattern continues for the entire hit array.
 
-
-
-.. class:: alert alert-primary
-    TODO: put a picture of the wavedrom trace with A, B and then A+B, A-B, A&B, and a count of how many surfaces are interacted
-
-
-
-> Put gherkin test case here
-
-Creating a surface count vector
+The surface_count vector
 ----------------------------------
 
-The first step is to generate the surface count vector, so that we can track if the ray is inside one, both, or neither surfaces. 
+We'll create two additional arrays to help validate hits: a sorted array of all hits for both surfaces, and an array that tracks how many surfaces the ray is inside of at each hit, called :code:`surface_count`.
 
-#. Make a new array of hits that is the concatenation of both hit arrays
-#. Make a second array of alternating +/-1 the length of the concatenated array.
-#. Sort both arrays by the concatenated hits array
-#. Take the cumulative sum of the +/-1 array.
+.. image:: /images/efficient_csg/surface_count.png
+    :align: center
+    :width: 500
 
-The +/-1 in the second array is being used as an indicator for if a hit is entering or exiting one of the two surfaces, since both arrays have an even number of elements and (as mentioned above) every odd value in a hit array must enter a surface, and every even hit must exit, the array can be quickly constructed with alternating values. After sorting both arrays by the concatenated hits array, the count array still represents when the rays enter and exit a surface, but now it's sorted by time. Finally, the accumulated count array recreates our surface count vector, tracking how many surfaces the ray is currently in.
+To create surface_count we'll do the following
 
+#. Create a concatenated array of both hit arrays (But do not sort it yet)
+#. Take the argsort of the concatenated array
+#. create a new array with the same dimension as the concatenated array. For each index in the new array, assign +1 if the value in the equivalent argsort index is even, and -1 if is odd
+#. take the cumulative sum of the +/-1 array, this is the surface count array.
+#. sort the concatenated hit array
 
-.. class:: alert alert-primary
+The +/-1 array is being used as an indicator for if a hit is entering or exiting one of the two surfaces. Since both arrays have an even number of elements, every odd value of the concatenated array must enter a surface, and every even hit must exit. numpy's :code:`where`, combined with argsort and cumsum are all we need to create surface_count. Once we have that we're ready to tackle the first of our Boolean operators.
 
-    TODO: put a picture in of the accumulation steps/a code example
+.. code:: python
 
-Using the surface count vector we can now handle the boolean union and difference operations
+    merged_array = np.concatenate((array1, array2))
+    merged_argsort = np.argsort(merged_array, axis=0)
+    merged_array = merged_array[merged_argsort]
+    merged_mask = np.where(merged_argsort & 1, -1, 1)
+    surface_count = np.cumsum(merged_mask, axis=0)
+
 
 The Union Operator
 -------------------
 
-Take a look at the union operator and corresponding count values. Notice that union hits are any any index (n) where count[n-1]==0 and count[n]==1, or count[n-1]==1 and count[n]==0. This is the same as taking the exclusive or (XOR) of the array with a copy of itself shifted down by one row. From above we know that the last value of the count array has to be 0 (at :math:`t=\inf` the ray must have exited all surfaces), so the shifted array will always have be all zeros in the zeroth row. Numpy gives us all the function calls needed to efficiently perform xor on our count array, shown below. 
+Take a look at the union operator and corresponding count values. Notice that union hits are any any index (n) where count[n-1]==0 and count[n]==1, or count[n-1]==1 and count[n]==0. This is the same as taking the exclusive or (XOR) of the array with a copy of itself shifted down by one row. From above we know that the last value of the count array has to be 0 (at :math:`t=\infty` the ray must have exited all surfaces), so the shifted array will always have be all zeros in the zeroth row. Numpy gives us all the function calls needed to efficiently perform xor on our count array, shown below. 
 
 .. code:: python
 
-    def csg_union(hit_array: np.ndarray, count_array:  np.ndarray) -> np.ndarray:
-        mask = np.logical_xor(count_array, np.roll(count_array, 1 axis=0))
-        csg_hits = np.where(mask, hit_array, np.inf)
-        return csg_hits
+    surface_count = np.logical_xor(surface_count, np.roll(surface_count,1,axis=0))
+    csg_hits = np.where(surface_count != 0, merged_array, np.inf)
 
 A couple things from this code might pop out: (1) why specify the axis when rolling a 1D array, and (2) why does csg_hits need the same dimension as hit_array, padded with np.inf, instead of just returning the valid hits. Both of these are addressed in `Extending To 2D Matrices`_. 
-
-* put a comment here about plugging it into test cases and check that it's passing *
 
 The Intersection Operator
 --------------------------
@@ -84,11 +128,9 @@ The intersection operator can be handled in a similar manner. Looking at the cou
 
 .. code:: python
 
-    def csg_intersection(hit_array: np.ndarray, count_array:  np.ndarray) -> np.ndarray:
-        is_two = np.where(count_array==2)
-        mask = np.logical_or(is_two, np.roll(is_two, 1 axis=0))
-        csg_hits = np.where(mask, hit_array, np.inf)
-        return csg_hits
+    is_two = (surface_count == 2)
+    mask = np.logical_or(is_two, np.roll(is_two, 1, axis=0))
+    csg_hits = np.where(mask, merged_array, np.inf)
 
 Again it's important to make sure the function tests pass before continuing. 
 
@@ -99,11 +141,17 @@ The difference operator is unique from the union and intersection operator. Both
 
 Instead of thinking of A-B as shape B cutting away from shape A, think of it as the intersection of A with the infinitely large volume of space where B *does not* exist, called :math:`\bar{B}`. 
 
-.. class:: alert alert-primary
+.. image:: /images/efficient_csg/csg_difference.png
+    :align: center
+    :width: 900
 
-    TODO: put a 2d example of boolean subtraction and intersection with negative space
+Defining the function in this way lets us reuse the the same principle as the intersection operator, but first the count array has to be redefined for an inverted shape. An inverted shape still has to follow the assumptions from above, but instead of the ray entering and exiting the shape at the first and last hit, it enters the shape at :math:`-\infty` and *exits* the shape at the first hit in the hit array. Similarly, the ray *enters* the shape at the last hit of the hit array, and exits at :math:`\infty`. 
 
-Defining the function in this way lets us reuse the the same principle as the intersection operator, but first the count array has to be redefined for an inverted shape. An inverted shape still has to follow the assumptions from above, but instead of the ray entering and exiting the shape at the first and last hit, it enters the shape at :math:`-\infty` and *exits* the shape at the first hit in the hit array. Similarly, the ray *enters* the shape at the last hit of the hit array, and exits at :math:`\infty`. Instead of padding the array with :math:`+/-\infty` and sorting, the following observations will make it so we don't have to resize the array.
+.. image:: /images/efficient_csg/inverted_difference.png
+    :align: center
+    :width: 500
+
+Instead of padding the array with :math:`+/-\infty` and sorting, the following observations will make it so we don't have to resize the array.
 
 * The hit at :math:`-\infty` will always be the first hit in the sorted hits array, meaning the first value in the cumulative sum will *always* be a 1. This is the same as adding 1 to the count array and ignoring the hit at :math:`-\infty`.
 
@@ -135,12 +183,17 @@ The only thing we need to change is how the arrays are concatenated. If a 1D arr
 
 .. code:: python
 
-    if array1.ndim == 1:  
+    if array1.ndim == 1:
         # if 1D arrays were passed, concatenate
-        merged_array = np.concatenate(array1, array2)
+        merged_array = np.concatenate((array1, array2))
+        merged_argsort = np.argsort(merged_array, axis=0)
+        merged_array = merged_array[merged_argsort]
+
     else:
         # otherwise stack them where each column represents a unique ray's hits
         merged_array = np.vstack((array1, array2))
+        merged_argsort = np.argsort(merged_array, axis=0)
+        merged_array = merged_array[merged_argsort, np.arange(merged_array.shape[-1])]
 
 
 The Full Function 
@@ -148,74 +201,16 @@ The Full Function
 
 The complete function is shown below. There's an additional helper class `Operation` that inherits from Enum used to select the which CSG operation is performed (I prefer Enums over string arguments for anything end users won't see). Also, there's an optional argument :code:`sort_output` that sets if the returned array is sorted along the hit axis. The reason for this option is to eliminate unnecessary :code:`np.sort()` calls on large arrays that slow down the final program.
 
-.. code:: python
-
-    from enum import Enum
-
-    class Operation(Enum):
-        UNION = 1
-        INTERSECT = 2
-        DIFFERENCE = 3
-
-    def array_csg(array1: np.ndarray, array2: np.ndarray, operation: Operation, sort_output=True):
-        """
-        Given two arrays and an operation, returns a new array which is the CSG operation acting on the array.
-        If the array is thought of as intersection points between a ray and a two objects being combined with a CSG
-        operation, the returned array is the valid hits for the resulting object. Function assumes both arrays are sorted and have
-        an even number of axis=0 elements
-
-        :param array1: The sorted hits array for the first surface
-        :param array2: The sorted hits array for the second surface
-        :param operation: The operation being performed on the two surfaces
-        :type operation: Operation
-        :param sort_output: whether the returned matrix should be sorted or not
-        :return: A filtered array of hits that are valid for the CSG operation. Invalid hits are masked with np.inf.
-        """
-
-        # create the merged array from the two inputs
-        if array1.ndim == 1:
-            # if 1D arrays were passed, concatenate
-            merged_array = np.concatenate(array1, array2)
-
-        else:
-            # otherwise stack them where each column represents a unique ray's hits
-            merged_array = np.vstack((array1, array2))
-
-        # sort the array along the hit axis
-        merged_argsort = np.argsort(merged_array, axis=0)
-        merged_array = merged_array[merged_argsort, np.arange(merged_array.shape[-1])]
-
-        # create the hit_count array
-        if operation == Operation.UNION or operation == Operation.INTERSECT:
-            merged_mask = np.where(merged_argsort & 1, -1, 1)
-            ray_hit_path = np.cumsum(merged_mask, axis=0)
-
-        elif operation == Operation.DIFFERENCE:
-            merged_mask = np.where(np.logical_xor(merged_argsort & 1, merged_argsort >= array1.shape[0]), -1, 1)
-            ray_hit_path = np.cumsum(merged_mask, axis=0) + 1
-
-        else:
-            raise ValueError(f"operation {operation} is invalid")
-
-        # Perform the CSG operations
-        if operation == Operation.UNION:
-            ray_hit_path = np.where(ray_hit_path > 1, 1, ray_hit_path)
-            ray_hit_path = np.diff(ray_hit_path, axis=0, prepend=0)
-            csg_hits = np.where(ray_hit_path != 0, merged_array, np.inf)
-
-        elif operation == Operation.INTERSECT or operation == Operation.DIFFERENCE:
-            is_two = (ray_hit_path == 2)
-            mask = np.logical_or(is_two, np.roll(is_two, 1, axis=0))
-            csg_hits = np.where(mask, merged_array, np.inf)
-
-        # return the valid hits
-        return np.sort(csg_hits, axis=0) if sort_output else csg_hits
+.. include:: files/efficient_csg/csg.py
+    :code: python
 
 Verifying Test Cases 
 ---------------------
 
 The last step is to make sure the test cases all pass. I'll be using UnitTest ...
 
+.. include:: files/efficient_csg/test_cases.py
+    :code: python
 
 CSG In Action 
 ==============
