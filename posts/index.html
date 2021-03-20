@@ -11,6 +11,7 @@
 <meta name="generator" content="Nikola (getnikola.com)">
 <link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../rss.xml">
 <link rel="canonical" href="https://rfrazier716.github.io/posts/">
+<link rel="icon" href="../favicon.ico" sizes="16x16">
 <!--[if lt IE 9]><script src="../assets/js/html5.js"></script><![endif]-->
 </head>
 <body>
@@ -37,13 +38,13 @@ bg-dark
 <a href="../" class="nav-link">Home</a>
                 </li>
 <li class="nav-item">
-<a href="../pages/projects/" class="nav-link">Projects</a>
+<a href="../projects/" class="nav-link">Projects</a>
                 </li>
 <li class="nav-item active">
 <a href="." class="nav-link">Blog <span class="sr-only">(active)</span></a>
                 </li>
 <li class="nav-item">
-<a href="../pages/about" class="nav-link">About</a>
+<a href="../about/" class="nav-link">About</a>
 
                 
             </li>
@@ -65,7 +66,52 @@ bg-dark
 
     
 <div class="postindex">
-    <article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="getting-up-and-running-with-nikola/" class="u-url">Getting Up and Running with Nikola</a></h1>
+    <article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="efficient-csg/" class="u-url">Rendering Constructive Solid Geometry With Python</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                Ryan Frazier
+            </span></p>
+            <p class="dateline">
+            <a href="efficient-csg/" rel="bookmark">
+            <time class="published dt-published" datetime="2021-03-15T07:35:26-04:00" itemprop="datePublished" title="2021-03-15 07:35">2021-03-15 07:35</time></a>
+            </p>
+        </div>
+    </header><div class="p-summary entry-summary">
+    <div>
+<p>I recently hit a road block with my <a class="reference external" href="https://github.com/rfrazier716/PyRayT">ray tracer</a>: cubes, cylinders, and spheres rendered fine, but there wasn't an easy way to create arbitrary shapes whose intersection and normal functions I hadn't already hard coded. Since PyRayT's end use is for optical design, at the bare minimum it needed a flexible way to create lenses and mirrors. Flipping through Jamis Bucks' <a class="reference external" href="https://pragprog.com/titles/jbtracer/the-ray-tracer-challenge/">The Ray Tracer Challenge</a>, it turns out the last chapter <em>Constructive Solid Geometry</em> (CSG) addresses my needs perfectly! However, Buck's equations for CSG did not blend well with PyRayTs flow of rendering multiple rays at once. Today I'll be covering my own algorithm for adding constructive solid geometry to a ray tracer, as well as its implementation in Python using <a class="reference external" href="https://numpy.org">numpy</a>.</p>
+<p class="more"><a href="efficient-csg/">Read more…</a></p>
+</div>
+    </div>
+    </article><article class="h-entry post-draft" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="off-axis-elliptical-mirrors/" class="u-url">Off Axis Elliptical Mirrors</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                Ryan Frazier
+            </span></p>
+            <p class="dateline">
+            <a href="off-axis-elliptical-mirrors/" rel="bookmark">
+            <time class="published dt-published" datetime="2021-03-08T19:28:56-05:00" itemprop="datePublished" title="2021-03-08 19:28">2021-03-08 19:28</time></a>
+            </p>
+        </div>
+    </header><div class="p-summary entry-summary">
+    <p>Write your post here.</p>
+    </div>
+    </article><article class="h-entry post-draft" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="geometric-ray-tracing-with-python/" class="u-url">Geometric Ray Tracing with Python</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                Ryan Frazier
+            </span></p>
+            <p class="dateline">
+            <a href="geometric-ray-tracing-with-python/" rel="bookmark">
+            <time class="published dt-published" datetime="2021-03-06T16:51:24-05:00" itemprop="datePublished" title="2021-03-06 16:51">2021-03-06 16:51</time></a>
+            </p>
+        </div>
+    </header><div class="p-summary entry-summary">
+    <div>
+<p>Ray tracing is subset of programming that has always fascinated me. Every time you see a computer generated image, from video games to CAD software, ray tracing took place under the hood. The biggest hurdle I've always found with learning about ray tracers, though, is it's tightly coupled with graphics API's such as openGL and DirectX, and the actual algorithms are abstracted away from the user.</p>
+<p class="more"><a href="geometric-ray-tracing-with-python/"> …</a></p>
+</div>
+    </div>
+    </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="getting-up-and-running-with-nikola/" class="u-url">Getting Up and Running with Nikola</a></h1>
         <div class="metadata">
             <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
                 Ryan Frazier
@@ -88,11 +134,10 @@ bg-dark
 
 
 
-
-
-        <!--End of body content-->
-
-        <footer id="footer">
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha384-3lJUsx1TJHt7BA4udB5KPnDrlkO8T6J6v/op7ui0BbCjvZ9WqV4Xm6DTP6kQ/iBH" crossorigin="anonymous"></script><script type="text/x-mathjax-config">
+        MathJax.Hub.Config({tex2jax: {inlineMath: [['$latex ','$'], ['\\(','\\)']]}});
+        </script><!--End of body content--><footer id="footer">
             
 Contents © 2021         <a href="mailto:rfrazier716+site@gmail.com">Ryan Frazier</a> 
 - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         

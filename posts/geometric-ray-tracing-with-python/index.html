@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#
+" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Geometric Ray Tracing with Python | Fotonix &amp; Gizmo</title>
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://rfrazier716.github.io/posts/geometric-ray-tracing-with-python/">
+<link rel="icon" href="../../favicon.ico" sizes="16x16">
+<!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]--><meta name="author" content="Ryan Frazier">
+<link rel="prev" href="../getting-up-and-running-with-nikola/" title="Getting Up and Running with Nikola" type="text/html">
+<link rel="next" href="../off-axis-elliptical-mirrors/" title="Off Axis Elliptical Mirrors" type="text/html">
+<meta property="og:site_name" content="Fotonix &amp; Gizmo">
+<meta property="og:title" content="Geometric Ray Tracing with Python">
+<meta property="og:url" content="https://rfrazier716.github.io/posts/geometric-ray-tracing-with-python/">
+<meta property="og:description" content="Ray tracing is subset of programming that has always fascinated me. Every time you see a computer generated image, from video games to CAD software, ray tracing took place under the hood. The biggest ">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-03-06T16:51:24-05:00">
+<meta property="article:tag" content="adventures in ray tracing">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-expand-md static-top mb-4
+navbar-dark
+bg-dark
+"><div class="container">
+<!-- This keeps the margins nice -->
+        <a class="navbar-brand" href="../../">
+
+            <span id="blog-title">Fotonix &amp; Gizmo</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="bs-navbar">
+            <ul class="navbar-nav mr-auto">
+<li class="nav-item">
+<a href="../../" class="nav-link">Home</a>
+                </li>
+<li class="nav-item">
+<a href="../../projects/" class="nav-link">Projects</a>
+                </li>
+<li class="nav-item">
+<a href="../" class="nav-link">Blog</a>
+                </li>
+<li class="nav-item">
+<a href="../../about/" class="nav-link">About</a>
+
+                
+            </li>
+</ul>
+<ul class="navbar-nav navbar-right"></ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        
+        
+        
+<article class="post-draft h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Geometric Ray Tracing with Python</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard p-author h-card"><span class="byline-name fn p-name" itemprop="author">
+                    Ryan Frazier
+            </span></p>
+            <p class="dateline">
+            <a href="." rel="bookmark">
+            <time class="published dt-published" datetime="2021-03-06T16:51:24-05:00" itemprop="datePublished" title="2021-03-06 16:51">2021-03-06 16:51</time></a>
+            </p>
+            
+
+        </div>
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<p>Ray tracing is subset of programming that has always fascinated me. Every time you see a computer generated image, from video games to CAD software, ray tracing took place under the hood. The biggest hurdle I've always found with learning about ray tracers, though, is it's tightly coupled with graphics API's such as openGL and DirectX, and the actual algorithms are abstracted away from the user.</p>
+<!-- TEASER_END: -->
+<p>In this post, I'll give an overview of what a ray tracer is and where they're used in the real world. I'll cover the base components that make up a ray trace, how a ray trace state-machine is structured, and give implementation examples with Python, showing how a couple linear algebra tricks can speed up your ray trace considerably. At the end I'll highlight next steps, which will be covered in future posts, that will extend the basic example into a fully capable ray tracer.</p>
+<div class="contents alert alert-primary float-md-right topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li>
+<p><a class="reference internal" href="#brush-up-on-the-basics" id="id1">Brush Up on the Basics</a></p>
+<ul>
+<li>
+<p><a class="reference internal" href="#what-is-a-ray-tracer" id="id2">What is a Ray Tracer?</a></p>
+<ul>
+<li>
+<p><a class="reference internal" href="#ray-tracers-in-computer-graphics" id="id3">Ray Tracers in Computer Graphics</a></p>
+<ul>
+<li><p><a class="reference internal" href="#ray-casting-ray-tracing-and-path-tracing" id="id4">Ray Casting, Ray Tracing, and Path Tracing</a></p></li>
+<li><p><a class="reference internal" href="#video-games-and-real-time-ray-tracing" id="id5">Video Games and Real Time Ray Tracing</a></p></li>
+</ul>
+</li>
+<li>
+<p><a class="reference internal" href="#ray-tracers-in-engineering" id="id6">Ray Tracers in Engineering</a></p>
+<ul>
+<li><p><a class="reference internal" href="#limitations" id="id7">Limitations</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><a class="reference internal" href="#the-ray-tracer-program-flow" id="id8">The Ray Tracer Program Flow</a></p>
+<ul>
+<li><p><a class="reference internal" href="#generation" id="id9">Generation</a></p></li>
+<li><p><a class="reference internal" href="#intersection" id="id10">Intersection</a></p></li>
+<li><p><a class="reference internal" href="#interaction" id="id11">Interaction</a></p></li>
+</ul>
+</li>
+<li>
+<p><a class="reference internal" href="#a-basic-python-implementation" id="id12">A Basic Python implementation</a></p>
+<ul>
+<li><p><a class="reference internal" href="#using-nested-loops" id="id13">Using Nested Loops</a></p></li>
+<li><p><a class="reference internal" href="#using-matrices" id="id14">Using Matrices</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#next-steps" id="id15">Next Steps</a></p></li>
+</ul>
+</div>
+<div class="section" id="brush-up-on-the-basics">
+<h2><a class="toc-backref" href="#id1">Brush Up on the Basics</a></h2>
+<div class="section" id="what-is-a-ray-tracer">
+<h3><a class="toc-backref" href="#id2">What is a Ray Tracer?</a></h3>
+<p>Stripped to its core, a ray tracer is nothing more than a geometry solver, whose goal is to find the intersection of a set of rays with surfaces in space. Most often, however, ray tracers are used to simulate light's interaction with real world objects, either for rendering or analytic purposes. Regardless of the final application, all ray tracers rely on two fundamental pieces to function:</p>
+<dl class="simple">
+<dt>Rays</dt>
+<dd>
+<p>Rays are used to represent light, and are composed of two vectors: position and direction. Position is the</p>
+</dd>
+<dt>Surfaces</dt>
+<dd>
+<p>Put Definition of a Surface</p>
+</dd>
+</dl>
+<div class="section" id="ray-tracers-in-computer-graphics">
+<h4><a class="toc-backref" href="#id3">Ray Tracers in Computer Graphics</a></h4>
+<div class="section" id="ray-casting-ray-tracing-and-path-tracing">
+<h5><a class="toc-backref" href="#id4">Ray Casting, Ray Tracing, and Path Tracing</a></h5>
+<p>ray casting, ray tracing, and path tracing have muddled definitions depending on the sources. Despite having their own unique wikipedia pages, ray casting and tracing are effectively the same thing, with ray casting being used in the context of CAD software and early "3D" videogames, and ray tracing used when describing rendering scenes.</p>
+<p class="alert alert-secondary float-md-center">Roth invented the term "ray casting" before hearing of “ray tracing”, but they are essentially the same. His development of ray casting at GM Research Labs occurred concurrently with Turner Whitted’s ray tracing work at Bell Labs. - <a class="reference external" href="https://en.wikipedia.org/wiki/Ray_tracing_(graphics)">wikipedia</a></p>
+<p>In a ray cast/trace, a set of rays is projected from the camera to find the nearest intersected surface. From there additional rays may be generated to calculate lighting, but in some cases it is not necessary.</p>
+<p class="alert alert-primary">TODO: add an image of a shaded sphere and wolfenstein 3D, noting how both use ray tracing at their cores to generate images</p>
+<p>Path tracing distinguishes itself from the other two by using random sampling to more accurately recreate the path light takes from a source to the observer. At every ray-surface intersection, one or more child rays are generated from a random distribution based on the material properties of the intersected surface. These child rays in turn propagate through the system to intersect new surfaces. This process is repeated until the rays intersect a light source, and the pixel value is calculated from all the surface intersections in the ray's history. Since a single ray cannot intersect all light sources, multiple rays are are generated for every pixel of the final image, where the final pixel color is the average value of all ray paths.</p>
+<p>The random nature of path tracing makes renders look noisey, or "speckled", if not enough test rays are generated, and take longer to render compared to traditional ray traces. The advantage is a significantly more realistic looking final image, where features like <a class="reference external" href="https://en.wikipedia.org/wiki/Hard_and_soft_light">soft shadows</a>, <a class="reference external" href="https://en.wikipedia.org/wiki/Caustic_(optics)">caustics</a>, and <a class="reference external" href="https://en.wikipedia.org/wiki/Bokeh">bokah</a> naturally form as light explores random paths.</p>
+<p class="alert alert-primary">TODO: add image of sphere in blender with differnet rays per pixel showing noise</p>
+</div>
+<div class="section" id="video-games-and-real-time-ray-tracing">
+<h5><a class="toc-backref" href="#id5">Video Games and Real Time Ray Tracing</a></h5>
+</div>
+</div>
+<div class="section" id="ray-tracers-in-engineering">
+<h4><a class="toc-backref" href="#id6">Ray Tracers in Engineering</a></h4>
+<p>In optical design, ray tracers are used to simulate how light propagates through an optical system, such as a camera or microscope. Unlike renderers, the output of engineering ray traces is typically a collection of ray segments, and tracks information such as intensity, which surface was intersected, and optical length. Often rays will have unique IDs so a single ray can be traced through an entire system.</p>
+<p>The goal of these types of ray tracers is not to create an image, but instead to provide an accurate model of how light interacts with the environment. So shortcuts and approximations that can be used for rendering are not implemented (e.g. the Phong reflection model).</p>
+<div class="section" id="limitations">
+<h5><a class="toc-backref" href="#id7">Limitations</a></h5>
+<p>While the goal of an these ray traces is to create an accurate physical model, limitations arise from the fact that ray tracers ignore the wave nature of light. wave effects: interference, diffraction, polarization etc. can all be added on top of a "geometric" ray trace, but are limited in their applications (you wouldn't use a ray tracer to design a single mode waveguide, for example). When the full wave-nature of light needs to be modeled, finite element solvers like ComSol and Lumerical are the most accurate, but significantly slower. It is up to the system designer to know which parts of their system fall into the domain of wave optics vs. geometric optics.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="the-ray-tracer-program-flow">
+<h2><a class="toc-backref" href="#id8">The Ray Tracer Program Flow</a></h2>
+<p>The ray tracing state machine is composed of three repeating steps: generation, intersection, and interaction.</p>
+<div class="section" id="generation">
+<h3><a class="toc-backref" href="#id9">Generation</a></h3>
+<p>The first step is to generate an initial set of rays being propagated through the system. In renderers, they rays are generated by the camera, with one or more rays for every pixel of the final render, and travel backwards through the scene, and calculating lighting for the surfaces they intersect. Called <em>backwards ray tracing</em>, this method is more efficient for renders because every ray ends up as part of the final image. If instead rays were generated from light sources and traced through the system, most of them would never reach the camera and would waste CPU cycles. In a forward ray tracer, the initial set of rays is instead generated by the light sources, and are traced through the system, typically terminating when they hit an absorber or detector. Forward ray tracing is common in engineering because efficiency is a key metric in most optical designs, and the designer needs to know what percentage of light makes it onto their detector. #reword maybe?</p>
+</div>
+<div class="section" id="intersection">
+<h3><a class="toc-backref" href="#id10">Intersection</a></h3>
+<p>The next step is find the nearest surface that each ray intersects. This is done by calculating the intersection distance of the ray with every surface in the trace. The surface with the smallest <em>positive</em> valued distance is the intersected surface (the value must be positive because rays cannot travel backwards). Common surfaces such as spheres and planes have well documented equations to calculate intersections. More complex surfaces can be discretized into triangular meshes, and the ray checks for an intersection with each triangle.</p>
+<p>It's easy to see that as the number of intersections that needs to be calculated is the product of the number of rays multiplied by the number of surfaces. Bounding boxes and convex hulls can be used to significantly speed up ray traces by surrounding a large amount of "subsurfaces" in a single large surface whose intersection is easier to calculate, only if your ray intersects the bounding surface will the intersections of all subsurfaces be checked, otherwise they're ignored.</p>
+</div>
+<div class="section" id="interaction">
+<h3><a class="toc-backref" href="#id11">Interaction</a></h3>
+<p>Finally, after the software has found the nearest surfaces for each ray, it calls an interaction function. This tells the software what to do with the .... ? In rendering this step involves calling a shader and updating a pixel value in the final image, but it does not have to be limited to just that. in PyRayT, for example, the interaction of a ray with a surface creates a new ray, representing the light's trajectory after interacting with the surface. In idtech1 games the rays did not interact with the surfaces at all, instead the hit distance was used to calculate how tall to draw the walls of the level, giving the illusion of 3D depth to a 2D game.</p>
+</div>
+</div>
+<div class="section" id="a-basic-python-implementation">
+<h2><a class="toc-backref" href="#id12">A Basic Python implementation</a></h2>
+<div class="section" id="using-nested-loops">
+<h3><a class="toc-backref" href="#id13">Using Nested Loops</a></h3>
+</div>
+<div class="section" id="using-matrices">
+<h3><a class="toc-backref" href="#id14">Using Matrices</a></h3>
+</div>
+</div>
+<div class="section" id="next-steps">
+<h2><a class="toc-backref" href="#id15">Next Steps</a></h2>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags">
+<li><a class="tag p-category" href="../../categories/adventures-in-ray-tracing/" rel="tag">adventures in ray tracing</a></li>
+        </ul>
+<ul class="pager hidden-print">
+<li class="previous">
+                <a href="../getting-up-and-running-with-nikola/" rel="prev" title="Getting Up and Running with Nikola">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../off-axis-elliptical-mirrors/" rel="next" title="Off Axis Elliptical Mirrors">Next post</a>
+            </li>
+        </ul></nav></aside></article><!--End of body content--><footer id="footer">
+            
+Contents © 2021         <a href="mailto:rfrazier716+site@gmail.com">Ryan Frazier</a> 
+- Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+
+<span class="follow-icons">
+
+  <a href="mailto:rfrazier716+site@example.com" class="fas fa-envelope-square fa-2x follow-icon"></a>
+  <a href="https://github.com/rfrazier716" class="fab fa-github-square fa-2x follow-icon"></a>
+  <a href="https://www.instagram.com/fotonix716/" class="fab fa-instagram-square fa-2x follow-icon"></a>
+  <a href="https://twitter.com/FotonixAndGizmo" class="fab fa-twitter-square fa-2x follow-icon"></a>
+</span>
+
+            
+            
+        </footer>
+</div>
+</div>
+
+
+        <script src="../../assets/js/all-nocdn.js"></script><script src="https://kit.fontawesome.com/b9c0b6e7c8.js" crossorigin="anonymous"></script><!-- Go to www.addthis.com/dashboard to customize your tools --><script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-603c029f21971de0"></script><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element){var i=element.getElementsByTagName('img')[0];return i===undefined?'':i.alt;}});
+    </script>
+</body>
+</html>

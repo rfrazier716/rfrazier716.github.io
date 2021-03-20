@@ -927,3 +927,8 @@ a:hover .fav-index{
 #home-jumbo{
     padding: 10;
 }
+
+.figure .caption{
+    font-style: italic;
+    size: 0.8em;
+}
