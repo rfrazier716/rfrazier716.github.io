@@ -950,7 +950,7 @@ a:hover .fav-index{
 }
 
 .card-img-top {
-    width: 100%;
-    height: 12vw;
+    max-height: 200px;
+    min-height: 150px;
     object-fit: cover;
 }
