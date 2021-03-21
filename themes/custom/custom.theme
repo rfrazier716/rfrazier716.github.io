@@ -1,6 +1,6 @@
 [Theme]
-engine = mako
-parent = bootstrap4
+engine = jinja
+parent = bootstrap4-jinja
 author = The Nikola Contributors
 author_url = https://getnikola.com/
 license = MIT

@@ -7,11 +7,16 @@
 .. description: 
 .. type: text
 .. status: published
+.. previewimage: /images/teaser_html.jpg
 
 
-I have no background in web development or design, which is probably as good of a disclosure as any when writing a post about deploying a website. What I do have, however, is a desire to set up a site to share my various projects/software, or at least document it so I don't forget what I was working on 6 months down the road. It needed to be easy to set up, free to host, and give me full control to customize the site and add features as needed (just because I don't currently know web design doesn't mean I won't try to pick it up down the road).
+I have no background in web development or design, which is probably as good of a disclosure as any when writing a post about deploying a website.
 
 .. TEASER_END
+
+What I do have, however, is a desire to set up a site to share my various projects/software, or at least document it so I don't forget what I was working on 6 months down the road. It needed to be easy to set up, free to host, and give me full control to customize the site and add features as needed (just because I don't currently know web design doesn't mean I won't try to pick it up down the road).
+
+
 
 Enter Nikola! I first heard about this at the end of a Real Python podcast where it was described as a quick start static website generator using Python and restructured text. This sounded like a great way to dip my toe into making a website that was somewhere between using an online suite and hand-writing HTML. I know I could have started a blog on Wordpress or Medium, abstracted away all the details, and potentially have had a prettier blog in less time, but where's the fun in that! the fact that Nikola was based around Python was also attractive. I'm a big advocate for Python, it's become my go-to programming language at work (previously it was Mathematica as well as a lot of LabView but that's a topic for a different day) and anywhere I can use it to round out my programming capabilities I'm happy to give it a try.
 

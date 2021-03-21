@@ -8,6 +8,7 @@
 .. type: text
 .. has_math: true
 .. status: published
+.. previewimage: /images/efficient_csg/csg_in_action.png
 
 .. role:: py(code)
    :language: python

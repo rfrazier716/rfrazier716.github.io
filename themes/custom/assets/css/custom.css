@@ -47,3 +47,13 @@ a:hover .fav-index{
     font-style: italic;
     size: 0.8em;
 }
+
+.btn-read-more{
+    text-align: center;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 12vw;
+    object-fit: cover;
+}

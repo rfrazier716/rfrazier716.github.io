@@ -1,0 +1,60 @@
+{#  -*- coding: utf-8 -*- #}
+{% import 'index_helper.tmpl' as helper with context %}
+{% import 'math_helper.tmpl' as math with context %}
+{% import 'comments_helper.tmpl' as comments with context %}
+{% import 'pagination_helper.tmpl' as pagination with context %}
+{% import 'feeds_translations_helper.tmpl' as feeds_translations with context %}
+{% extends 'base.tmpl' %}
+
+{% block extra_head %}
+    {{ super() }}
+    {% if posts and (permalink == '/' or permalink == '/' + index_file) %}
+        <link rel="prefetch" href="{{ posts[0].permalink() }}" type="text/html">
+    {% endif %}
+    {{ math.math_styles_ifposts(posts) }}
+{% endblock %}
+
+{% block content %}
+{% block content_header %}
+    {{ feeds_translations.translation_link(kind) }}
+{% endblock %}
+{% if 'main_index' in pagekind %}
+    {{ front_index_header }}
+{% endif %}
+{% if page_links %}
+    {{ pagination.page_navigation(current_page, page_links, prevlink, nextlink, prev_next_links_reversed) }}
+{% endif %}
+<div class="container">
+<div class="row h-100">
+{% for post in posts%}
+        <div class="col-sm-12 col-lg-4 mb-4">
+        <div class="card h-100">
+            <img class="card-img-top img-fluid" src={{post.previewimage}} alt="Card image cap">
+            <div class="card-body">
+                <h4 class="card-title">
+                <a href={{post.permalink()}}>{{post.title()|e}}</a></h4>
+                <p class="card-text text-muted">
+                By: 
+                {% if author_pages_generated %}
+                    <a href="{{ _link('author', post.author()) }}" class="card text">{{ post.author()|e }}</a>
+                {% else %}
+                    {{ post.author()|e }}
+                {% endif %}
+                on 
+                <time class="published dt-published" datetime="{{ post.formatted_date('webiso') }}" itemprop="datePublished" title="{{ post.formatted_date(date_format)|e }}">{{ post.formatted_date(date_format)|e }}</time>
+                </p>
+                
+                <p class="card-text">{{post.text(strip_html=True, show_read_more_link=False)[:180].rsplit(' ',1)[0]+' ...'}}</p>
+                <div class="btn-read-more">
+                    <a href={{post.permalink()}} class="btn btn-primary">Read More</a>
+                </div>
+            </div>
+        </div>
+        </div>
+{% endfor %}
+</div>
+</div>
+{{ helper.html_pager() }}
+{{ comments.comment_link_script() }}
+{{ math.math_scripts_ifposts(posts) }}
+{% endblock %}

@@ -24,7 +24,7 @@ SITE_URL = "https://rfrazier716.github.io/"
 # This is the URL where Nikola's output will be deployed.
 # If not set, defaults to SITE_URL
 # BASE_URL = "https://rfrazier716.github.io/"
-BLOG_EMAIL = "rfrazier716+site@gmail.com"
+BLOG_EMAIL = "ryan@fotonixx.com"
 BLOG_DESCRIPTION = "Ramblings of an Optical Engineer"  # (translatable)
 
 GITHUB_URL="https://github.com/rfrazier716"
@@ -147,7 +147,7 @@ NAVIGATION_LINKS = {
     DEFAULT_LANG: (
         ('/', 'Home'),
         ('/projects/', "Projects"),
-        ('/posts/', "Blog"),
+        #('/posts/', "Blog"),
         ('/about/', "About")
     ),
 }
@@ -579,7 +579,7 @@ HIDDEN_AUTHORS = ['Guest']
 # Final location for the main blog page and sibling paginated pages is
 # output / TRANSLATION[lang] / INDEX_PATH / index-*.html
 # (translatable)
-INDEX_PATH = "posts"
+INDEX_PATH = ""
 
 # Optional HTML that displayed on “main” blog index.html files.
 # May be used for a greeting. (translatable)
