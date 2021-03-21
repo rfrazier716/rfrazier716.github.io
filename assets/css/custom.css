@@ -52,7 +52,7 @@ a:hover .fav-index{
     text-align: center;
 }
 
-.card-img-top {
+.index-image {
     max-height: 200px;
     min-height: 150px;
     object-fit: cover;
