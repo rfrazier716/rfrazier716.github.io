@@ -29,7 +29,7 @@
 {% for post in posts%}
         <div class="col-sm-12 col-lg-4 mb-4">
         <div class="card h-100">
-            <img class="card-img-top img-fluid" src={{post.previewimage}} alt="Card image cap">
+            <img class="index-image card-img-top img-fluid" src={{post.previewimage}} alt="Card image cap">
             <div class="card-body">
                 <h4 class="card-title">
                 <a href={{post.permalink()}}>{{post.title()|e}}</a></h4>
