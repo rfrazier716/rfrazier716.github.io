@@ -19,7 +19,7 @@
  </url>
  <url>
   <loc>https://rfrazier716.github.io/archive.html</loc>
-  <lastmod>2021-03-21T15:07:00Z</lastmod>
+  <lastmod>2021-03-24T23:16:00Z</lastmod>
  </url>
  <url>
   <loc>https://rfrazier716.github.io/categories/</loc>
@@ -84,6 +84,10 @@
  <url>
   <loc>https://rfrazier716.github.io/posts/getting-up-and-running-with-nikola/</loc>
   <lastmod>2021-03-06T22:00:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://rfrazier716.github.io/posts/speeding-up-numpy-sorts/</loc>
+  <lastmod>2021-03-24T01:07:00Z</lastmod>
  </url>
  <url>
   <loc>https://rfrazier716.github.io/projects/</loc>
