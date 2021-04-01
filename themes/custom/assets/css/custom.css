@@ -57,3 +57,7 @@ a:hover .fav-index{
     min-height: 150px;
     object-fit: cover;
 }
+
+.post-index-card .card-title {
+    text-align: center
+}
