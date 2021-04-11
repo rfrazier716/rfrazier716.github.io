@@ -29,6 +29,10 @@ Fast forward to now: I'm trying to incorporate OpenGL rendering into my `ray tra
 .. contents:: 
     :class: alert alert-primary ml-0
 
+.. contents:: Quick Links
+    :depth: 2
+    :class: alert alert-primary ml-0
+
 What's So Special About Binary Space?
 ======================================
 

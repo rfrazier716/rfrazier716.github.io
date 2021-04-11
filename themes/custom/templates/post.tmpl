@@ -7,6 +7,19 @@
 {% import 'tags.tmpl' as tags with context%}
 {% extends 'base.tmpl' %}
 
+{% macro quick_nav_helper()%}
+    <div class="sticky-top" id="sticky-right" style="top: 1.5rem">
+        <div class ="mx-2" id="quick-nav"></div>
+        <div class="addthis_inline_share_toolbox mx-auto"></div>
+    </div>
+
+    <script>
+        document.getElementById('quick-nav').appendChild(
+        document.getElementById('quick-links')
+        );
+    </script>
+{% endmacro %}
+
 {% block extra_head %}
     {{ super() }}
     {% if post.meta('keywords') %}
@@ -33,7 +46,6 @@
 <article class="post-{{ post.meta('type') }} h-entry hentry postpage " itemscope="itemscope" itemtype="http://schema.org/Article">
     <div class="row">
         <div class="col-lg-8 col-md-12">
-            <img src={{post.previewimage}} alt="Preview Image" class="rounded mb-6">
             {{ pheader.html_post_header() }}
             <div class="e-content entry-content" itemprop="articleBody text">
             {{ post.text() }}
@@ -41,12 +53,7 @@
         </div>
 
         <div class="col-lg-4 col-md-12">
-            <div class="sticky-top">
-                <div class="alert alert-secondary sticky-top">
-                    <p> Hello World </p>
-                </div>
-                <div class="addthis_inline_share_toolbox sticky-top"></div>
-            </div>
+            {{quick_nav_helper()}}
         </div>
     </div>
     <aside class="postpromonav">
