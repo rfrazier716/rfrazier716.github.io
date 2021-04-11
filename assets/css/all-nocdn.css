@@ -1002,3 +1002,7 @@ sticky-top addthis_inline_share_toolbox{
 #logo{
     height: 2em;
 }
+
+.at-share-btn-elements {
+    text-align: center;
+}

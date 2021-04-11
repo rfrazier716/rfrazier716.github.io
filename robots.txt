@@ -1,4 +1,4 @@
-Sitemap: https://rfrazier716.github.io/sitemapindex.xml
+Sitemap: https://www.fotonixx.com/sitemapindex.xml
 
 User-Agent: *
-Host: rfrazier716.github.io
+Host: www.fotonixx.com
