@@ -44,23 +44,20 @@ Binary space partitioning divides an n-dimensional space into segments that are 
     :align: center
     :width: 600
     
-    Construction of a bsp tree by repeatedly subdividing a collection of surfaces. edges labeled + are in front of the previous node, and - are behind.
+    Construction of a BSP tree by repeatedly subdividing a collection of surfaces. Edges labeled + are in front of the previous node, and - are behind.
 
-The most popular use for BSP trees is solving the `which surface problem`_ in computer graphics, notably for the `painter's algorithm`_. As the painter's algorithm draws the entire set of surfaces from back to front, it needs to be able to quickly sort the surfaces from any viewpoint. BSP trees allow for the computationally expensive sorting to happen just once. When the scene needs to be rendered the tree is traveresed in linear time from the current viewpoint and a sorted list of surfaces is generated. It's worth noting this only works for static surfaces, which made it ideal for rendering Doom's level maps. As soon as an individual surface is transformed, however, the entire tree needs to be regenerated. 
+The most popular use for BSP trees is for `visible surface determination`_ in computer graphics, notably for the `painter's algorithm`_. As the painter's algorithm draws the entire set of surfaces from back to front, it needs to be able to quickly sort the surfaces from any viewpoint. BSP trees allow for the computationally expensive sorting to happen just once. When the scene needs to be rendered the tree is traversed in linear time from the current viewpoint and a sorted list of surfaces is generated. It's worth noting this only works for static surfaces, which made it ideal for rendering Doom's level maps. As soon as an individual surface is transformed, however, the entire tree needs to be regenerated. 
 
-.. _`which surface problem`: https://en.wikipedia.org/wiki/Hidden-surface_determination
+.. _`visible surface determination`: https://en.wikipedia.org/wiki/Hidden-surface_determination
 .. _`painter's algorithm`: https://en.wikipedia.org/wiki/Painter%27s_algorithm
 
-A less famous use of BSP trees is performing constructive solid geometry operations on discrete polygonal meshes. This application uses two separate BSP trees, one for each object the operations are being applied to. the trees are then 'projected' onto each other, resulting in a set of surfaces from one object that are entirely in the other. depending on the operation (union, intersection, or difference), certain surfaces are discarded, and the remaining ones make up the new shape. The actual CSG algorithm is beyond the scope of this post, but the documentation and code for the `csg.js`_ library provides a basic explanation. 
+A less famous use of BSP trees is performing constructive solid geometry (CSG) operations on discrete polygonal meshes. This application uses two separate BSP trees, one for each object the operations are being applied to. The trees are then 'projected' onto each other, resulting in a set of surfaces from one object that are entirely in the other. Depending on the operation (union, intersection, or difference), certain surfaces are discarded, and the remaining ones make up the new shape. The actual CSG algorithm is beyond the scope of this post, but the documentation and code for the `csg.js`_ library provides a basic explanation. 
 
 .. _`csg.js`: http://evanw.github.io/csg.js/docs/
 
 
 Creating a BSP Tree
 =============================
-
-Setting up the Environment
----------------------------
 
 In addition to the standard library, we'll use Numpy_ to calculate the line-segment intersections, and NetworkX_ to create the tree. NetworkX is a general purpose graph library that prevents us from having to define our own nodes and edges, and includes extensive traversal algorithms and visualization features. Both packages are installable via pip.
 
@@ -77,11 +74,11 @@ The BSP algorithm
 
 Below are the steps we'll be implementing to create our tree. Given a set of 2D line segments and a dividing line:
 
-1. Calculate the intersection of the dividing line with all segments .
+1. Calculate the intersection of the dividing line with all segments.
 2. Split any segments that intersect the dividing line into two segments at the intersection.
 3. Add colinear line segments to the current node of the tree.
-4. Create a new child node and repeat steps 1-6 for all segments in front of the dividing line..
-5. Create a new child node and repeat steps 1-6 for all segments behind the dividing line
+4. Create a new child node and repeat steps 1-6 for all segments in front of the dividing line.
+5. Create a new child node and repeat steps 1-6 for all segments behind the dividing line.
 6. Connect the new nodes to the current node with an edge.
 
 Since tree generation is a recursive process, steps 4 and 5 repeat every step up to and *including* themselves until every line segment can be described as colinear to a node. Also, the number of segments in the returned tree may drastically exceed the number of segments in the original set, depending on how many are bisected at each iteration. We'll break the algorithm down into two pieces: the code used to intersect and split a set of segments with a dividing line, and the recursive function that builds the tree.
@@ -107,9 +104,9 @@ The segments array is an Nx2x2 array, where N is the number of segments being so
         [[1,1],[1,-1]]
     ])
 
-Similarly, a line is represented by a single 2x2 array of two XY-pairs. The advantage of using Numpy data structures instead of Python lists and tuples is that we can apply the intersection algorithm to the entire segment array at once, instead of iterating over each segment with a for loop. Since Numpy calls compiled C-code, there is almost always a performance gain when a for loop can be replaced with array operators.
+Similarly, a line is represented by a single 2x2 array of two XY-pairs. The advantage of using Numpy data structures instead of Python lists and tuples is that we can apply the intersection algorithm to the entire segment array at once, instead of iterating over each segment with a for loop. Since Numpy calls compiled C-code, there is almost always a performance gain when a loop can be replaced with array operations.
 
-The last decision we need to make before writing the bisect function is come up with a consistent definition for what "in front" and "behind" mean in the context of our lines. An easy enough way to visualize it is this: If you take your right hand and orient it so that the pad of your hand is on top of the first point of the line, and your fingers point towards the second, everything on the left side of your hand (closest to the palm) is in front of the line, and everything on the right side (closes to the back of your hand) is behind the line. Later we'll define this more formally with projections onto a normal vector of the line. If the concept of a vector projection is new, I recommend reading up on dot and cross-products, or skipping straight to the implementation_.
+The last decision we need to make before writing the bisect function is coming up with a consistent definition for what "in front" and "behind" mean in the context of our lines. An easy enough way to visualize it is this: If you take your right hand and orient it so that the pad of your hand is on top of the first point of the line, and your fingers point towards the second, everything on the left side of your hand (closest to the palm) is in front of the line, and everything on the right side (closes to the back of your hand) is behind the line. Later we'll define this more formally with projections onto a normal vector of the line. If the concept of a vector projection is new, I recommend reading up on dot and cross-products, or skipping straight to the implementation_.
 
 .. image:: /images/bsp_2d/line_ahead_behind.png 
     :class: blog-figure
@@ -126,7 +123,7 @@ To calculate the intercepts we'll describe the lines and segments as vectors wit
     &= \vec{p}_0 + \vec{v}*t
     \end{aligned}
 
-Since segments have a defined start and end, t is valid over a closed range :math:`t \in [0,1]`. Lines on the other hand extend infinitely in all directions, so t can be any real number. For convenience I'm going to refer to our line segments as :math:`\vec{g}(t) = \vec{p_0} + \vec{v}_0t`, and the dividing line as :math:`l(s) = \vec{p}_1 + \vec{v}_1 s`. We're interested in the value :math:`t` where the two lines meet.
+Since segments have a defined start and end, t is valid over a closed range :math:`t \in [0,1]`. Lines on the other hand extend infinitely in all directions, so t can be any real number. For convenience I'm going to refer to our line segments as :math:`\vec{g}(t) = \vec{p_0} + \vec{v}_0t`, and the dividing line as :math:`l(s) = \vec{p}_1 + \vec{v}_1 s`. We're interested in the value t where the two lines meet.
 
 .. container:: row
 
@@ -166,7 +163,7 @@ Numerator
         ((\vec{p}_0-\vec{p}_1) \cdot \hat{n})|\vec{v}_1|
 
 
-    Meaning the numerator is taking the distance between two a point on the segment and a point on the line, and projecting that vector onto the normal vector of the line (this is identical to calculating the `shortest distance between a point and a line`_). From our definition of "in front" and "behind", we can claim that a line segment is *partially* in front of the line if the numerator is > 0, and *partially* behind if the numerator is < 0. If the numerator is equal to zero, it means the first point of the segment is on the line, and we need to look at the denominator to define whether it's in front or behind.
+    Meaning the numerator is taking the distance between a point on the segment and a point on the line, and projecting that vector onto the normal vector of the line (this is identical to calculating the `shortest distance between a point and a line`_). From our definition of "in front" and "behind", we can claim that a line segment is *partially* in front of the line if the numerator is > 0, and *partially* behind if the numerator is < 0. If the numerator is equal to zero, it means the first point of the segment is on the line, and we need to look at the denominator to define whether it's in front or behind.
 
 .. _`shortest distance between a point and a line`: https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
 
