@@ -1,9 +1,5 @@
 def bisect(segments: np.ndarray, line: np.ndarray):
 
-    single_segment = segments.ndim == 2
-    if single_segment:
-        segments = segments[np.newaxis, ...]
-
     segment_start = segments[..., 0, :]
     segment_end = segments[..., 1, :]
 

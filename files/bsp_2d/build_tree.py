@@ -1,4 +1,5 @@
 def build_tree(segments: np.ndarray, starting_segment: np.ndarray = None) -> nx.DiGraph:
+    
     def bsp_helper(segments: np.ndarray, division_line: np.ndarray):
         ahead, behind, colinear = bisect(segments, division_line)  # get the bisected segments
         node_id = id(division_line)  # make your line hashable so it's usable as a node
