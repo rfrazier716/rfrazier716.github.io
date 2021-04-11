@@ -93,3 +93,7 @@ pre.code {
 sticky-top addthis_inline_share_toolbox{
     text-align: center;
 }
+
+#logo{
+    height: 2em;
+}
