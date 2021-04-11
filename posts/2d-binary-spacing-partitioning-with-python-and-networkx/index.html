@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns# article: http://ogp.me/ns/article#
+" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2D Binary Spacing Partitioning with Python and NetworkX | Fotonix &amp; Gizmos</title>
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://rfrazier716.github.io/posts/2d-binary-spacing-partitioning-with-python-and-networkx/">
+<link rel="icon" href="../../favicon.ico" sizes="16x16">
+<!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]--><meta name="author" content="Ryan Frazier">
+<link rel="prev" href="../efficient-csg/" title="Rendering Constructive Solid Geometry With Python" type="text/html">
+<meta property="og:site_name" content="Fotonix &amp; Gizmos">
+<meta property="og:title" content="2D Binary Spacing Partitioning with Python and NetworkX">
+<meta property="og:url" content="https://rfrazier716.github.io/posts/2d-binary-spacing-partitioning-with-python-and-networkx/">
+<meta property="og:description" content="I'm a sucker for tricks programmers use to get games to run efficiently, from the metro train in Fall Out 3 that's actually a piece of armor, to the spell casting bunnies in World of Warcraft that tri">
+<meta property="og:image" content="https://rfrazier716.github.io/images/bsp_2d/opengraph.png">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-03-29T20:20:56-04:00">
+<meta property="article:tag" content="graphics">
+<meta property="article:tag" content="numpy">
+<meta property="article:tag" content="python">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-expand-md static-top mb-4
+navbar-dark
+bg-primary
+"><div class="container">
+<!-- This keeps the margins nice -->
+        <a class="navbar-brand" href="../../">
+
+            <span id="blog-title">Fotonix &amp; Gizmos</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="bs-navbar">
+            <ul class="navbar-nav mr-auto">
+<li class="nav-item">
+<a href="../../" class="nav-link">Home</a>
+                </li>
+<li class="nav-item">
+<a href="../../projects/" class="nav-link">Projects</a>
+                </li>
+<li class="nav-item">
+<a href="../../about/" class="nav-link">About</a>
+
+                
+            </li>
+</ul>
+<ul class="navbar-nav navbar-right"></ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        
+
+<article class="post-text h-entry hentry postpage " itemscope="itemscope" itemtype="http://schema.org/Article"><div class="row">
+        <div class="col-lg-8 col-md-12">
+                <header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">2D Binary Spacing Partitioning with Python and NetworkX</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard p-author h-card"><span class="byline-name fn p-name" itemprop="author">
+                    Ryan Frazier
+            </span></p>
+            <p class="dateline">
+            <a href="." rel="bookmark">
+            <time class="published dt-published" datetime="2021-03-29T20:20:56-04:00" itemprop="datePublished" title="2021-03-29 20:20">2021-03-29 20:20</time></a>
+            </p>
+            
+        </div>
+        
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>I'm a sucker for tricks programmers use to get games to run efficiently, from the <a class="reference external" href="https://www.pcgamer.com/heres-whats-happening-inside-fallout-3s-metro-train/">metro train in Fall Out 3</a> that's actually a piece of armor, to the <a class="reference external" href="https://kotaku.com/the-invisible-bunnies-that-power-world-of-warcraft-1791576630">spell casting bunnies</a> in World of Warcraft that triggered world events. In a slightly different camp, however, are tricks that enabled game makers to do the impossible with the hardware they're given, and one name that's constantly tied to these feats is <a class="reference external" href="https://en.wikipedia.org/wiki/John_Carmack">John Carmack</a>, cofounder of id software and pioneer of 3D computer games. His use of ray casting for Wolfenstein 3D and the <a class="reference external" href="https://en.wikipedia.org/wiki/Fast_inverse_square_root">fast inverse square root algorithm</a> alone are topics worthy of their own posts, but today I'm going to focus on the algorithm he used to enable real-time 3D level rendering in the original Doom: binary space partitioning (BSP).</p>
+<p>Carmack's vision for Doom was to have maps with varying heights, zone-specific lighting, and non-orthogonal walls. Unfortunately, the ray casting algorithm used in id's previous game, Wolfenstein 3D, couldn't render such complex scenes, so he was left looking for a new solution. David Kushner's <a class="reference external" href="http://www.davidkushner.com/book/masters-of-doom/">Masters of Doom</a>, as well as this post on <a class="reference external" href="https://twobithistory.org/2019/11/06/doom-bsp.html">twobithistory</a> have already covered this story wonderfully, so I won't go into excessive detail but instead focus on the solution. By representing levels as binary trees of line segments, the rendering engine could quickly decide which surfaces to draw and in what order. Despite being incredibly curious when I first read Masters of Doom, I wasn't working on anything related to computer graphics at the time, and filed BSP trees off for something to look at another day.</p>
+<p>Fast forward to now: I'm trying to incorporate OpenGL rendering into my <a class="reference external" href="https://github.com/rfrazier716/PyRayT">ray tracer</a>, which requires <a class="reference external" href="../efficient-csg/">constructive solid geometry</a> performed on polygonal meshes. Turns out binary space partitioning is a core part of this algorithm too, so it's finally time to dive in and learn how to create and use BSP trees!</p>
+<div class="contents alert alert-primary ml-0 topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#what-s-so-special-about-binary-space" id="id1">What's So Special About Binary Space?</a></p></li>
+<li>
+<p><a class="reference internal" href="#creating-a-bsp-tree" id="id2">Creating a BSP Tree</a></p>
+<ul>
+<li><p><a class="reference internal" href="#setting-up-the-environment" id="id3">Setting up the Environment</a></p></li>
+<li><p><a class="reference internal" href="#the-bsp-algorithm" id="id4">The BSP algorithm</a></p></li>
+<li>
+<p><a class="reference internal" href="#bisecting-a-line" id="id5">Bisecting a Line</a></p>
+<ul>
+<li><p><a class="reference internal" href="#intersecting-two-lines" id="id6">Intersecting Two Lines</a></p></li>
+<li><p><a class="reference internal" href="#ahead-behind-bisected-or-colinear" id="id7">Ahead, Behind, Bisected or Colinear</a></p></li>
+<li><p><a class="reference internal" href="#putting-it-into-a-function" id="id8">Putting it Into a Function</a></p></li>
+<li><p><a class="reference internal" href="#handling-bisected-lines" id="id9">Handling Bisected Lines</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#recursively-building-the-tree" id="id10">Recursively Building the Tree</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#taking-it-for-a-test-drive" id="id11">Taking it for a Test Drive</a></p></li>
+</ul>
+</div>
+<div class="contents alert alert-primary ml-0 topic" id="quick-links">
+<p class="topic-title">Quick Links</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#what-s-so-special-about-binary-space" id="id12">What's So Special About Binary Space?</a></p></li>
+<li>
+<p><a class="reference internal" href="#creating-a-bsp-tree" id="id13">Creating a BSP Tree</a></p>
+<ul>
+<li><p><a class="reference internal" href="#setting-up-the-environment" id="id14">Setting up the Environment</a></p></li>
+<li><p><a class="reference internal" href="#the-bsp-algorithm" id="id15">The BSP algorithm</a></p></li>
+<li><p><a class="reference internal" href="#bisecting-a-line" id="id16">Bisecting a Line</a></p></li>
+<li><p><a class="reference internal" href="#recursively-building-the-tree" id="id17">Recursively Building the Tree</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#taking-it-for-a-test-drive" id="id18">Taking it for a Test Drive</a></p></li>
+</ul>
+</div>
+<div class="section" id="what-s-so-special-about-binary-space">
+<h2><a class="toc-backref" href="#id12">What's So Special About Binary Space?</a></h2>
+<p>Binary space partitioning divides an n-dimensional space into segments that are entirely in front or behind a dividing <a class="reference external" href="https://en.wikipedia.org/wiki/Hyperplane">hyperplane</a>. For now we'll focus on the 2D case, which means the partition splits a group of line segments into sets that are either in front, behind, or colinear to a dividing line. Repeatedly performing this partitioning on the resulting sets creates a binary tree, where every node contains a dividing line and all colinear segments, and each edge connects to a child node whose segments are completely in front or behind the current node.</p>
+<div class="figure align-center">
+<img alt="/images/bsp_2d/tree_construction.gif" src="../../images/bsp_2d/tree_construction.gif" style="width: 600px;"><p class="caption">Construction of a bsp tree by repeatedly subdividing a collection of surfaces. edges labeled + are in front of the previous node, and - are behind.</p>
+</div>
+<p>The most popular use for BSP trees is solving the <a class="reference external" href="https://en.wikipedia.org/wiki/Hidden-surface_determination">which surface problem</a> in computer graphics, notably for the <a class="reference external" href="https://en.wikipedia.org/wiki/Painter%27s_algorithm">painter's algorithm</a>. As the painter's algorithm draws the entire set of surfaces from back to front, it needs to be able to quickly sort the surfaces from any viewpoint. BSP trees allow for the computationally expensive sorting to happen just once. When the scene needs to be rendered the tree is traveresed in linear time from the current viewpoint and a sorted list of surfaces is generated. It's worth noting this only works for static surfaces, which made it ideal for rendering Doom's level maps. As soon as an individual surface is transformed, however, the entire tree needs to be regenerated.</p>
+<p>A less famous use of BSP trees is performing constructive solid geometry operations on discrete polygonal meshes. This application uses two separate BSP trees, one for each object the operations are being applied to. the trees are then 'projected' onto each other, resulting in a set of surfaces from one object that are entirely in the other. depending on the operation (union, intersection, or difference), certain surfaces are discarded, and the remaining ones make up the new shape. The actual CSG algorithm is beyond the scope of this post, but the documentation and code for the <a class="reference external" href="http://evanw.github.io/csg.js/docs/">csg.js</a> library provides a basic explanation.</p>
+</div>
+<div class="section" id="creating-a-bsp-tree">
+<h2><a class="toc-backref" href="#id13">Creating a BSP Tree</a></h2>
+<div class="section" id="setting-up-the-environment">
+<h3><a class="toc-backref" href="#id14">Setting up the Environment</a></h3>
+<p>In addition to the standard library, we'll use <a class="reference external" href="https://numpy.org">Numpy</a> to calculate the line-segment intersections, and <a class="reference external" href="https://networkx.org">NetworkX</a> to create the tree. NetworkX is a general purpose graph library that prevents us from having to define our own nodes and edges, and includes extensive traversal algorithms and visualization features. Both packages are installable via pip.</p>
+<pre class="code shell"><a name="rest_code_250ce5ecda794d30ae231a7a164ef395-1"></a>py -m pip install numpy, networkx
+</pre>
+</div>
+<div class="section" id="the-bsp-algorithm">
+<h3><a class="toc-backref" href="#id15">The BSP algorithm</a></h3>
+<p>Below are the steps we'll be implementing to create our tree. Given a set of 2D line segments and a dividing line:</p>
+<ol class="arabic simple">
+<li><p>Calculate the intersection of the dividing line with all segments .</p></li>
+<li><p>Split any segments that intersect the dividing line into two segments at the intersection.</p></li>
+<li><p>Add colinear line segments to the current node of the tree.</p></li>
+<li><p>Create a new child node and repeat steps 1-6 for all segments in front of the dividing line..</p></li>
+<li><p>Create a new child node and repeat steps 1-6 for all segments behind the dividing line</p></li>
+<li><p>Connect the new nodes to the current node with an edge.</p></li>
+</ol>
+<p>Since tree generation is a recursive process, steps 4 and 5 repeat every step up to and <em>including</em> themselves until every line segment can be described as colinear to a node. Also, the number of segments in the returned tree may drastically exceed the number of segments in the original set, depending on how many are bisected at each iteration. We'll break the algorithm down into two pieces: the code used to intersect and split a set of segments with a dividing line, and the recursive function that builds the tree.</p>
+</div>
+<div class="section" id="bisecting-a-line">
+<h3><a class="toc-backref" href="#id16">Bisecting a Line</a></h3>
+<p>The bulk of the processing is determining where each line segment in a set intersects the dividing line. We'll make a function called <code>bisect</code> that accepts an array of line segments and a dividing line, and returns three arrays, one each for segments ahead, behind, and colinear to the dividing line.</p>
+<pre class="code python"><a name="rest_code_606ca7e58ff844049ef05b225e82c337-1"></a><span class="k">def</span> <span class="nf">bisect</span><span class="p">(</span><span class="n">segments</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">line</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<a name="rest_code_606ca7e58ff844049ef05b225e82c337-2"></a>    <span class="c1"># separates a set of line segments based on where they intercept a dividing line</span>
+</pre>
+<p>The segments array is an Nx2x2 array, where N is the number of segments being sorted. Each row of the array is a set of two xy-pairs representing the start and endpoints of the segment. For example, a square centered at the origin is composed of four segments:</p>
+<pre class="code python"><a name="rest_code_131b6ab12e454596a91550acfacd5bb7-1"></a><span class="n">square</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">([</span>
+<a name="rest_code_131b6ab12e454596a91550acfacd5bb7-2"></a>    <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">],[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span>
+<a name="rest_code_131b6ab12e454596a91550acfacd5bb7-3"></a>    <span class="p">[[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">],[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span>
+<a name="rest_code_131b6ab12e454596a91550acfacd5bb7-4"></a>    <span class="p">[[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span>
+<a name="rest_code_131b6ab12e454596a91550acfacd5bb7-5"></a>    <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+<a name="rest_code_131b6ab12e454596a91550acfacd5bb7-6"></a><span class="p">])</span>
+</pre>
+<p>Similarly, a line is represented by a single 2x2 array of two XY-pairs. The advantage of using Numpy data structures instead of Python lists and tuples is that we can apply the intersection algorithm to the entire segment array at once, instead of iterating over each segment with a for loop. Since Numpy calls compiled C-code, there is almost always a performance gain when a for loop can be replaced with array operators.</p>
+<p>The last decision we need to make before writing the bisect function is come up with a consistent definition for what "in front" and "behind" mean in the context of our lines. An easy enough way to visualize it is this: If you take your right hand and orient it so that the pad of your hand is on top of the first point of the line, and your fingers point towards the second, everything on the left side of your hand (closest to the palm) is in front of the line, and everything on the right side (closes to the back of your hand) is behind the line. Later we'll define this more formally with projections onto a normal vector of the line. If the concept of a vector projection is new, I recommend reading up on dot and cross-products, or skipping straight to the <a class="reference internal" href="#implementation">implementation</a>.</p>
+<img alt="/images/bsp_2d/line_ahead_behind.png" class="blog-figure align-center" src="../../images/bsp_2d/line_ahead_behind.png"><div class="section" id="intersecting-two-lines">
+<h4><a class="toc-backref" href="#id6">Intersecting Two Lines</a></h4>
+<p>To calculate the intercepts we'll describe the lines and segments as vectors with one independent variable.</p>
+<div class="math">
+\begin{equation*}
+\begin{aligned}
+\vec{l}(t) &amp;= \vec{p}_0+(\vec{p}_1-\vec{p}_0)*t \\
+&amp;= \vec{p}_0 + \vec{v}*t
+\end{aligned}
+\end{equation*}
+</div>
+<p>Since segments have a defined start and end, t is valid over a closed range <span class="math">\(t \in [0,1]\)</span>. Lines on the other hand extend infinitely in all directions, so t can be any real number. For convenience I'm going to refer to our line segments as <span class="math">\(\vec{g}(t) = \vec{p_0} + \vec{v}_0t\)</span>, and the dividing line as <span class="math">\(l(s) = \vec{p}_1 + \vec{v}_1 s\)</span>. We're interested in the value <span class="math">\(t\)</span> where the two lines meet.</p>
+<div class="row docutils container">
+<div class="col-lg-5 col-md-12 my-auto docutils container">
+<div class="math">
+\begin{align*}
+\begin{aligned}
+\vec{g}(t) &amp;= \vec{l}(s) \\
+\vec{p}_0 + \vec{v}_0 t &amp;= \vec{p}_1 + \vec{v}_1 s \\
+&amp;...
+\end{aligned}\\
+t = \frac{(\vec{p}_1-\vec{p}_0) \times \vec{v}_1}{\vec{v}_0 \times \vec{v}_1}
+\end{align*}
+</div>
+</div>
+<div class="col-lg-7 col-md-12 my-auto docutils container">
+<div class="figure align-center">
+<img alt="/images/bsp_2d/line_intersection.png" src="../../images/bsp_2d/line_intersection.png"><p class="caption">intersection point shown in red</p>
+</div>
+</div>
+</div>
+<p>I've skipped a few steps in the above equation because the <a class="reference external" href="https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect">intercept of two vector equations</a> is well understood. What we're more interested in is using the results to determine where the segments lie with respect to our line.</p>
+<p>Red flags might be going off because this equation is dividing two vectors, which is (1) an invalid operation and (2) can't result in a scaler. Since our lines and segments are all 2D, however, we're going to use the 2D definition of cross product: <span class="math">\(\vec{A} \times \vec{B} = A_x*B_y-A_y*B_x\)</span>. This scaler is the z-component of the cross product vector we <em>would</em> have gotten had we taken a traditional 3D cross-product and set the z-values to zero for <span class="math">\(\vec{A}\)</span> &amp; <span class="math">\(\vec{B}\)</span>.</p>
+</div>
+<div class="section" id="ahead-behind-bisected-or-colinear">
+<h4><a class="toc-backref" href="#id7">Ahead, Behind, Bisected or Colinear</a></h4>
+<p>It's easy to tell that the line bisects a given segment when the t is between 0 and 1. What about the other cases though: how do we determine if the segment is in front or behind the line, and what about cases where t is undefined? To get more insight into what's happening with the intersection equation, we'll look at the numerator and denominator separately.</p>
+<dl>
+<dt>Numerator</dt>
+<dd>
+<p>We already defined the two-dimensional vector cross product: <span class="math">\(\vec{A} \times \vec{B} = A_x*B_y-A_y*B_x\)</span>. Taking a closer look, it's identical to <span class="math">\((A_x, A_y) \cdot (B_y, -B_x)\)</span>, and <span class="math">\((B_y, -B_x)\)</span> is the same as rotating <span class="math">\((B_x,B_y)\)</span> clockwise 90 degrees, aka it's <em>proportional to the unit normal vector of the dividing line</em>. The numerator can be rewritten as:</p>
+<div class="math">
+\begin{equation*}
+((\vec{p}_0-\vec{p}_1) \cdot \hat{n})|\vec{v}_1|
+\end{equation*}
+</div>
+<p>Meaning the numerator is taking the distance between two a point on the segment and a point on the line, and projecting that vector onto the normal vector of the line (this is identical to calculating the <a class="reference external" href="https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line">shortest distance between a point and a line</a>). From our definition of "in front" and "behind", we can claim that a line segment is <em>partially</em> in front of the line if the numerator is &gt; 0, and <em>partially</em> behind if the numerator is &lt; 0. If the numerator is equal to zero, it means the first point of the segment is on the line, and we need to look at the denominator to define whether it's in front or behind.</p>
+</dd>
+</dl>
+<dl>
+<dt>Denominator</dt>
+<dd>
+<p>Using the same logic as above, the denominator can be rewritten as a vector projection onto the normal vector:</p>
+<div class="math">
+\begin{equation*}
+-(\vec{v}_0 \cdot \hat{n})|\vec{v}_1|
+\end{equation*}
+</div>
+<p>This projection is a measure of how far <span class="math">\(\vec{g}(t)\)</span> travels towards line <span class="math">\(\vec{l}(s)\)</span> per interval t. Since the numerator is how far the lines are apart (projected onto the normal vector), and the denominator is how fast one line is approaching the second along that same normal, it makes sense that the ratio is the amount of time (t) until they intersect!</p>
+<p>If the denominator is equal to zero, the two lines are parallel, and the sign of the numerator determines where the segment lies relative to the line.</p>
+</dd>
+</dl>
+<p>With the exception of cases where t is between 0 &amp; 1, the numerator and denominator must be considered when defining the segments location. A summary of all cases is given below.</p>
+<table class="table table-striped table-sm blog-table bsp-cases w-85 mx-auto">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 17%">
+<col style="width: 21%">
+<col style="width: 37%">
+</colgroup>
+<thead><tr>
+<th class="head"><p>t</p></th>
+<th class="head"><p>Numerator</p></th>
+<th class="head"><p>Denominator</p></th>
+<th class="head"><p>Line Segment Location</p></th>
+</tr></thead>
+<tbody>
+<tr>
+<td><p>0 &lt; t &lt; 1</p></td>
+<td><p>-</p></td>
+<td><p>-</p></td>
+<td><p>Bisected by line</p></td>
+</tr>
+<tr>
+<td><p>t &gt; 0 or t &lt; 1</p></td>
+<td><p>&gt; 0</p></td>
+<td><p>-</p></td>
+<td><p>In front of line</p></td>
+</tr>
+<tr>
+<td><p>t &gt; 0 or t &lt; 1</p></td>
+<td><p>&lt;0</p></td>
+<td><p>-</p></td>
+<td><p>Behind line</p></td>
+</tr>
+<tr>
+<td><p>t = 0</p></td>
+<td><p>-</p></td>
+<td><p>&lt; 0</p></td>
+<td><p>In front of line</p></td>
+</tr>
+<tr>
+<td><p>t = 0</p></td>
+<td><p>-</p></td>
+<td><p>&gt; 0</p></td>
+<td><p>Behind line</p></td>
+</tr>
+<tr>
+<td><p>-</p></td>
+<td><p>= 0</p></td>
+<td><p>= 0</p></td>
+<td><p>Colinear</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="putting-it-into-a-function">
+<span id="implementation"></span><h4><a class="toc-backref" href="#id8">Putting it Into a Function</a></h4>
+<p>Cases in hand we're ready to implement the first half of our bisect function!</p>
+<pre class="code python"><a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-1"></a><span class="k">def</span> <span class="nf">bisect</span><span class="p">(</span><span class="n">segments</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">line</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-2"></a>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-3"></a>    <span class="n">segment_start</span> <span class="o">=</span> <span class="n">segments</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-4"></a>    <span class="n">segment_end</span> <span class="o">=</span> <span class="n">segments</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-5"></a>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-6"></a>    <span class="n">v0</span> <span class="o">=</span> <span class="n">segment_end</span> <span class="o">-</span> <span class="n">segment_start</span>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-7"></a>    <span class="n">v1</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-8"></a>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-9"></a>    <span class="c1"># need to solve for the intersection equation, first find the numerator and denominator</span>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-10"></a>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-11"></a>    <span class="n">numerator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">((</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">segment_start</span><span class="p">),</span> <span class="n">v1</span><span class="p">)</span>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-12"></a>    <span class="n">denominator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span> <span class="n">v1</span><span class="p">)</span>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-13"></a>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-14"></a>    <span class="c1"># if the denominator is zero the lines are parallel</span>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-15"></a>    <span class="n">parallel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">denominator</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-16"></a>    <span class="n">not_parallel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">parallel</span><span class="p">)</span>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-17"></a>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-18"></a>    <span class="c1"># the intersection time is the point along the line segment where the line bisects it</span>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-19"></a>    <span class="n">intersection</span> <span class="o">=</span> <span class="n">numerator</span> <span class="o">/</span> <span class="p">(</span><span class="n">denominator</span> <span class="o">+</span> <span class="n">parallel</span><span class="p">)</span>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-20"></a>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-21"></a>    <span class="n">ahead</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">numerator</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">numerator</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">denominator</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">))</span>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-22"></a>    <span class="n">behind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">numerator</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">numerator</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">denominator</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">))</span>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-23"></a>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-24"></a>    <span class="c1"># segments are colinear if they are parallel and the numerator is zero</span>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-25"></a>    <span class="n">colinear</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">parallel</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">numerator</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-26"></a>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-27"></a>    <span class="c1"># bisected segments are segments that aren't parallel and t is in (0,1)</span>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-28"></a>    <span class="n">bisected</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-29"></a>        <span class="n">not_parallel</span><span class="p">,</span>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-30"></a>        <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">intersection</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">intersection</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span>
+<a name="rest_code_7be0af7e6e8f4202a2001df01ff05876-31"></a>    <span class="p">)</span>
+</pre>
+<p>Right now all it does is build a set of boolean masks used to index the segment array. Before returning the new segments we need to write some code to split bisected segments into two new segments. Notice how when calculating t the denominator has an extra component <code>parallel</code>. This boolean value is cast as a 1 if the denominator would have been zero, and prevents Numpy from throwing a warning about divide by zero errors.</p>
+</div>
+<div class="section" id="handling-bisected-lines">
+<h4><a class="toc-backref" href="#id9">Handling Bisected Lines</a></h4>
+<p>If a segment is bisected by the line at time t, we need to create two new segments, one from 0-t, and a second from t-1. Fancy indexing with Numpy can be slower than doing simple operations on an entire array (this is highly dependent on the application), so we'll create two new segments for every segment and then filter.</p>
+<pre class="code python"><a name="rest_code_e5ee8e96093747cd8d25ac6379330b36-1"></a><span class="n">intersection_points</span> <span class="o">=</span> <span class="n">segment_start</span> <span class="o">+</span> <span class="n">intersection</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="n">v0</span>
+<a name="rest_code_e5ee8e96093747cd8d25ac6379330b36-2"></a><span class="n">l_segments</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">segments</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:],</span> <span class="n">intersection_points</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<a name="rest_code_e5ee8e96093747cd8d25ac6379330b36-3"></a><span class="n">r_segments</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">intersection_points</span><span class="p">,</span> <span class="n">segments</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre>
+<p>Notice how they're split into left and right segments, not 'in front' and 'behind'. That's because right now we don't know which segments are which, and need to filter them based on the numerator. If the numerator is &gt;0, the first point of the segment is ahead of the line, making <code>l_segment</code> ahead and <code>r_segment</code> behind.</p>
+<pre class="code python"><a name="rest_code_a8471f4b8ec1494f928f5cca2ee1eabc-1"></a><span class="n">mask</span> <span class="o">=</span> <span class="n">numerator</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span>
+<a name="rest_code_a8471f4b8ec1494f928f5cca2ee1eabc-2"></a><span class="n">bisected_ahead</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">l_segments</span><span class="p">,</span> <span class="n">r_segments</span><span class="p">)[</span><span class="n">bisected</span><span class="p">]</span>
+<a name="rest_code_a8471f4b8ec1494f928f5cca2ee1eabc-3"></a><span class="n">bisected_behind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">mask</span><span class="p">),</span> <span class="n">l_segments</span><span class="p">,</span> <span class="n">r_segments</span><span class="p">)[</span><span class="n">bisected</span><span class="p">]</span>
+</pre>
+<div class="figure align-center">
+<img alt="/images/bsp_2d/left_right_segments.png" src="../../images/bsp_2d/left_right_segments.png"><p class="caption">An example of two segments where the left and right splits are on opposite sides of the dividing line</p>
+</div>
+<p>Once the bisected segments have been split, all that's left to do is combine them with their respective ahead/behind sets, and return the three sets of segments. The full function is found <a class="reference external" href="https://github.com/rfrazier716/bsp/blob/12af4fba95cc594b2f3da604491de75d508d1d58/bsp.py#L9">here</a>, with a set of if statements to catch cases where ahead/behind sets are empty arrays. The <code>Tuple</code> Typehint is from the <a class="reference external" href="https://docs.python.org/3/library/typing.html">typing</a> module, and is useful for IDE's to infer what types the function will return.</p>
+</div>
+</div>
+<div class="section" id="recursively-building-the-tree">
+<h3><a class="toc-backref" href="#id17">Recursively Building the Tree</a></h3>
+<p>Compared to the amount of code required to partition our line segments, the function build the BSP tree is relatively simple.</p>
+<pre class="code python"><a name="rest_code_633f78f7e53646eaa539be46328ef071-1"></a><span class="k">def</span> <span class="nf">build_tree</span><span class="p">(</span><span class="n">segments</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">starting_segment</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">:</span>
+<a name="rest_code_633f78f7e53646eaa539be46328ef071-2"></a>
+<a name="rest_code_633f78f7e53646eaa539be46328ef071-3"></a>    <span class="k">def</span> <span class="nf">bsp_helper</span><span class="p">(</span><span class="n">segments</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">division_line</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+<a name="rest_code_633f78f7e53646eaa539be46328ef071-4"></a>        <span class="n">ahead</span><span class="p">,</span> <span class="n">behind</span><span class="p">,</span> <span class="n">colinear</span> <span class="o">=</span> <span class="n">bisect</span><span class="p">(</span><span class="n">segments</span><span class="p">,</span> <span class="n">division_line</span><span class="p">)</span>  <span class="c1"># get the bisected segments</span>
+<a name="rest_code_633f78f7e53646eaa539be46328ef071-5"></a>        <span class="n">node_id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="n">division_line</span><span class="p">)</span>  <span class="c1"># make your line hashable so it's usable as a node</span>
+<a name="rest_code_633f78f7e53646eaa539be46328ef071-6"></a>        <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="n">division_line</span><span class="p">,</span> <span class="n">colinear_segments</span><span class="o">=</span><span class="n">colinear</span><span class="p">)</span>  <span class="c1"># add the node to the graph</span>
+<a name="rest_code_633f78f7e53646eaa539be46328ef071-7"></a>        <span class="k">if</span> <span class="n">behind</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># if there's any elements behind</span>
+<a name="rest_code_633f78f7e53646eaa539be46328ef071-8"></a>            <span class="n">node_behind</span> <span class="o">=</span> <span class="n">bsp_helper</span><span class="p">(</span><span class="n">behind</span><span class="p">,</span> <span class="n">behind</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># recursively call for all segments behind</span>
+<a name="rest_code_633f78f7e53646eaa539be46328ef071-9"></a>            <span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">node_behind</span><span class="p">,</span> <span class="n">position</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># add an edge from this node to the behind node</span>
+<a name="rest_code_633f78f7e53646eaa539be46328ef071-10"></a>        <span class="k">if</span> <span class="n">ahead</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+<a name="rest_code_633f78f7e53646eaa539be46328ef071-11"></a>            <span class="n">node_ahead</span> <span class="o">=</span> <span class="n">bsp_helper</span><span class="p">(</span><span class="n">ahead</span><span class="p">,</span> <span class="n">ahead</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># recursively call for all segments in front</span>
+<a name="rest_code_633f78f7e53646eaa539be46328ef071-12"></a>            <span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">node_ahead</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># add an edge from this node to the front node</span>
+<a name="rest_code_633f78f7e53646eaa539be46328ef071-13"></a>        <span class="k">return</span> <span class="n">node_id</span>  <span class="c1"># return the hashed id</span>
+<a name="rest_code_633f78f7e53646eaa539be46328ef071-14"></a>
+<a name="rest_code_633f78f7e53646eaa539be46328ef071-15"></a>    <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>  <span class="c1"># make a new directed graph</span>
+<a name="rest_code_633f78f7e53646eaa539be46328ef071-16"></a>    <span class="k">if</span> <span class="n">starting_segment</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a name="rest_code_633f78f7e53646eaa539be46328ef071-17"></a>        <span class="n">starting_segment</span> <span class="o">=</span> <span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<a name="rest_code_633f78f7e53646eaa539be46328ef071-18"></a>
+<a name="rest_code_633f78f7e53646eaa539be46328ef071-19"></a>    <span class="c1"># run the recursive helper function, which should add all nodes and edges</span>
+<a name="rest_code_633f78f7e53646eaa539be46328ef071-20"></a>    <span class="n">bsp_helper</span><span class="p">(</span><span class="n">segments</span><span class="p">,</span> <span class="n">starting_segment</span><span class="p">)</span>
+<a name="rest_code_633f78f7e53646eaa539be46328ef071-21"></a>    <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">relabel</span><span class="o">.</span><span class="n">convert_node_labels_to_integers</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+</pre>
+<p>Let's pick it apart, starting with the function signature. The function expects a nx2x2 array of line segments, and an optional starting segment that it used as the first dividing line. The output will be a NetworkX directed graph object where every node is a dividing line holding the colinear segments for that line.</p>
+<pre class="code python"><a name="rest_code_39cac12fbc854ee58c61a1bde5c8b262-1"></a><span class="k">def</span> <span class="nf">build_tree</span><span class="p">(</span><span class="n">segments</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">starting_segment</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">:</span>
+</pre>
+<p>Next is the initialization block, here we create the actual graph object and check if the user provided a starting segment. If no segment was given, the first segment of the array is used instead. The function then calls the bsp_helper function that fills the graph with divided segments, and then relabels all nodes sequentially before returning the graph.</p>
+<pre class="code python"><a name="rest_code_2e4fd1b5610f4c519ac4b2abd6ee2920-1"></a><span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>  <span class="c1"># make a new directed graph</span>
+<a name="rest_code_2e4fd1b5610f4c519ac4b2abd6ee2920-2"></a><span class="k">if</span> <span class="n">starting_segment</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a name="rest_code_2e4fd1b5610f4c519ac4b2abd6ee2920-3"></a>    <span class="n">starting_segment</span> <span class="o">=</span> <span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<a name="rest_code_2e4fd1b5610f4c519ac4b2abd6ee2920-4"></a>
+<a name="rest_code_2e4fd1b5610f4c519ac4b2abd6ee2920-5"></a><span class="c1"># run the recursive helper function, which should add all nodes and edges</span>
+<a name="rest_code_2e4fd1b5610f4c519ac4b2abd6ee2920-6"></a><span class="n">bsp_helper</span><span class="p">(</span><span class="n">segments</span><span class="p">,</span> <span class="n">starting_segment</span><span class="p">)</span>
+<a name="rest_code_2e4fd1b5610f4c519ac4b2abd6ee2920-7"></a><span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">relabel</span><span class="o">.</span><span class="n">convert_node_labels_to_integers</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+</pre>
+<p>The final piece is the nested bsp_helper function. Defining bsp_helper within build_tree allows it to access the graph variable without explicitly passing it (this is part of the <a class="reference external" href="https://realpython.com/python-namespaces-scope/#variable-scope">enclosing scope</a> in an LEBG model). It also keeps bsp_helper out of the module namespace. The function calculates where each segment in a set falls relative to the dividing line. It then creates a new node with two attributes: the dividing line of the node, and any segments that are colinear to that dividing line. If there's any segments in front of the line, the helper function recursively calls itself with only the set of segments ahead of current dividing line, returning the id of the created node. The returned node is connected to the current node with an edge, whose position attribute is +1 (meaning it's ahead of the current node). The same is then done for segments behind the current line. If recursive functions are a new concept, RealPython has a <a class="reference external" href="https://realpython.com/python-thinking-recursively/">great tutorial</a> on understanding and implementing them, as well as introduces the <a class="reference external" href="https://docs.python.org/3/library/functools.html#functools.lru_cache">@lru_cache</a> decorator.</p>
+</div>
+</div>
+<div class="section" id="taking-it-for-a-test-drive">
+<h2><a class="toc-backref" href="#id18">Taking it for a Test Drive</a></h2>
+<p>As a last step we'll create a tree from scratch and plot the results. First lets make a function to draw the segments stored in a BSP tree, with markers showing where the the segments are divided. The drawing itself will be handled by <a class="reference external" href="https://matplotlib.org">matplotlib</a>, which can also be installed from pip.</p>
+<pre class="code python"><a name="rest_code_7d972322ccb446a0b54dd4c0194e3f23-1"></a><span class="k">def</span> <span class="nf">draw_segments</span><span class="p">(</span><span class="n">tree</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a name="rest_code_7d972322ccb446a0b54dd4c0194e3f23-2"></a>    <span class="k">if</span> <span class="n">axis</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a name="rest_code_7d972322ccb446a0b54dd4c0194e3f23-3"></a>        <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+<a name="rest_code_7d972322ccb446a0b54dd4c0194e3f23-4"></a>    <span class="n">all_segments</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">value</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">dict</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">get_node_attributes</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="s2">"colinear_segments"</span><span class="p">))</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+<a name="rest_code_7d972322ccb446a0b54dd4c0194e3f23-5"></a>    <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">all_segments</span><span class="p">:</span>
+<a name="rest_code_7d972322ccb446a0b54dd4c0194e3f23-6"></a>        <span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre>
+<p>Next we'll import some <a class="reference external" href="../../bsp_2d/points.csv">prebuilt line segments</a> and reshape the list of points into an appropriate shape. Then it's as simple as creating the bsp tree and plotting the results!</p>
+<pre class="code python"><a name="rest_code_01a7a816822d4d30902e23e9bb25e06e-1"></a><span class="n">segments</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s2">"points.csv"</span><span class="p">)</span>
+<a name="rest_code_01a7a816822d4d30902e23e9bb25e06e-2"></a><span class="n">segments</span> <span class="o">=</span> <span class="n">segments</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">segments</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">4</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<a name="rest_code_01a7a816822d4d30902e23e9bb25e06e-3"></a>
+<a name="rest_code_01a7a816822d4d30902e23e9bb25e06e-4"></a><span class="n">tree</span> <span class="o">=</span> <span class="n">build_tree</span><span class="p">(</span><span class="n">segments</span><span class="p">)</span>
+<a name="rest_code_01a7a816822d4d30902e23e9bb25e06e-5"></a><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<a name="rest_code_01a7a816822d4d30902e23e9bb25e06e-6"></a><span class="n">draw_segments</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'k'</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">'o'</span><span class="p">)</span>
+<a name="rest_code_01a7a816822d4d30902e23e9bb25e06e-7"></a><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre>
+<div class="figure align-center">
+<img alt="/images/bsp_2d/doom_tree.png" src="../../images/bsp_2d/doom_tree.png" style="width: 800px;"><p class="caption">The fruit of our labor, bisected points are shown in red</p>
+</div>
+<p>Despite creating an impressive BSP tree, at the end of the day it's still just a graph, and could use a killer application to make the power of BSP shine! <a class="reference external" href="https://github.com/rfrazier716/bsp/blob/master/bsp.py">The full code</a> has additional functions for performing operations on trees as well as implementing CSG operations. Alternatively, pair BSP with <a class="reference external" href="http://pyglet.org">Pyglet</a> you're half way towards a working 2.5D game engine.</p>
+</div>
+</div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-12">
+                <div class="sticky-top" id="sticky-right" style="top: 1.5rem">
+        <div class="mx-2" id="quick-nav"></div>
+        <div class="addthis_inline_share_toolbox mx-auto"></div>
+    </div>
+
+    <script>
+        document.getElementById('quick-nav').appendChild(
+        document.getElementById('quick-links')
+        );
+    </script>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags">
+<li><a class="tag p-category" href="../../categories/graphics/" rel="tag">graphics</a></li>
+            <li><a class="tag p-category" href="../../categories/numpy/" rel="tag">numpy</a></li>
+            <li><a class="tag p-category" href="../../categories/python/" rel="tag">python</a></li>
+        </ul>
+<ul class="pager hidden-print">
+<li class="previous">
+                <a href="../efficient-csg/" rel="prev" title="Rendering Constructive Solid Geometry With Python">Previous post</a>
+            </li>
+        </ul></nav></aside><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha384-3lJUsx1TJHt7BA4udB5KPnDrlkO8T6J6v/op7ui0BbCjvZ9WqV4Xm6DTP6kQ/iBH" crossorigin="anonymous"></script><script type="text/x-mathjax-config">
+        MathJax.Hub.Config({tex2jax: {inlineMath: [['$latex ','$'], ['\\(','\\)']]}});
+        </script></article><!--End of body content--><footer id="footer">
+            
+Contents © 2021         <a href="mailto:ryan@fotonixx.com">Ryan Frazier</a> 
+- Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+
+<span class="follow-icons">
+
+  <a href="mailto:rfrazier716+site@gmail.com" class="fas fa-envelope-square fa-2x follow-icon"></a>
+  <a href="https://github.com/rfrazier716" class="fab fa-github-square fa-2x follow-icon"></a>
+  <a href="https://www.instagram.com/fotonix716/" class="fab fa-instagram-square fa-2x follow-icon"></a>
+  <a href="https://twitter.com/FotonixAndGizmo" class="fab fa-twitter-square fa-2x follow-icon"></a>
+</span>
+
+            
+        </footer>
+</div>
+</div>
+
+        <script src="../../assets/js/all-nocdn.js"></script><script src="https://kit.fontawesome.com/b9c0b6e7c8.js" crossorigin="anonymous"></script><!-- Go to www.addthis.com/dashboard to customize your tools --><script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-603c029f21971de0"></script><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element){var i=element.getElementsByTagName('img')[0];return i===undefined?'':i.alt;}});
+    </script>
+</body>
+</html>

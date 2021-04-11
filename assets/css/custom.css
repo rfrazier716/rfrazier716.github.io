@@ -57,3 +57,39 @@ a:hover .fav-index{
     min-height: 150px;
     object-fit: cover;
 }
+
+.post-index-card .card-title {
+    text-align: center;
+}
+
+.table.blog-table .head{
+    text-align: center;
+    size: 1.5em;
+    background-color:  #c3dbf7;
+}
+
+.table.blog-table td{
+    text-align: center;
+}
+
+.table.blog-table {
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+code {
+    font-size: 87.5%;
+    color: #000000;
+    word-wrap: break-word;
+  }
+
+pre.code {
+    margin-left: 0;
+    margin-right: 0;
+    overflow: auto;
+    white-space: pre;
+  }
+
+sticky-top addthis_inline_share_toolbox{
+    text-align: center;
+}

@@ -14,6 +14,7 @@ og: http://ogp.me/ns# article: http://ogp.me/ns/article#
 <link rel="icon" href="../../favicon.ico" sizes="16x16">
 <!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]--><meta name="author" content="Ryan Frazier">
 <link rel="prev" href="../getting-up-and-running-with-nikola/" title="Getting Up and Running with Nikola" type="text/html">
+<link rel="next" href="../2d-binary-spacing-partitioning-with-python-and-networkx/" title="2D Binary Spacing Partitioning with Python and NetworkX" type="text/html">
 <meta property="og:site_name" content="Fotonix &amp; Gizmos">
 <meta property="og:title" content="Rendering Constructive Solid Geometry With Python">
 <meta property="og:url" content="https://rfrazier716.github.io/posts/efficient-csg/">
@@ -70,9 +71,11 @@ bg-primary
     <div class="body-content">
         <!--Body content-->
         
-<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Rendering Constructive Solid Geometry With Python</a></h1>
 
-        <div class="addthis_inline_share_toolbox"></div>
+<article class="post-text h-entry hentry postpage " itemscope="itemscope" itemtype="http://schema.org/Article"><div class="row">
+        <div class="col-lg-8 col-md-12">
+                <header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Rendering Constructive Solid Geometry With Python</a></h1>
+
         <div class="metadata">
             <p class="byline author vcard p-author h-card"><span class="byline-name fn p-name" itemprop="author">
                     Ryan Frazier
@@ -85,7 +88,7 @@ bg-primary
         </div>
         
     </header><div class="e-content entry-content" itemprop="articleBody text">
-    <div>
+            <div>
 <p>I recently hit a road block with my <a class="reference external" href="https://github.com/rfrazier716/PyRayT">ray tracer</a>: cubes, cylinders, and spheres rendered fine, but there wasn't an easy way to create arbitrary shapes whose intersection and normal functions I hadn't already hard coded. Since <a class="reference external" href="https://github.com/rfrazier716/PyRayT">PyRayT's</a> end use is for optical design, at the bare minimum it needed a flexible way to create lenses and mirrors. Flipping through Jamis Bucks' <a class="reference external" href="https://pragprog.com/titles/jbtracer/the-ray-tracer-challenge/">The Ray Tracer Challenge</a>, it turns out the last chapter <em>Constructive Solid Geometry</em> (CSG) addressed my needs perfectly! However, Buck's equations for CSG did not blend well with PyRayTs flow of rendering multiple rays at once. Today I'll be covering my own algorithm for adding constructive solid geometry to a ray tracer, as well as its implementation in Python using <a class="reference external" href="https://numpy.org">NumPy</a>.</p>
 <!-- TEASER_END -->
 <div class="contents alert alert-primary col-md-4 topic" id="contents">
@@ -346,6 +349,21 @@ bg-primary
 </div>
 </div>
 </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-12">
+                <div class="sticky-top" id="sticky-right" style="top: 1.5rem">
+        <div class="mx-2" id="quick-nav"></div>
+        <div class="addthis_inline_share_toolbox mx-auto"></div>
+    </div>
+
+    <script>
+        document.getElementById('quick-nav').appendChild(
+        document.getElementById('quick-links')
+        );
+    </script>
+</div>
     </div>
     <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags">
 <li><a class="tag p-category" href="../../categories/constructive-solid-geometry/" rel="tag">constructive solid geometry</a></li>
@@ -359,6 +377,9 @@ bg-primary
 <ul class="pager hidden-print">
 <li class="previous">
                 <a href="../getting-up-and-running-with-nikola/" rel="prev" title="Getting Up and Running with Nikola">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../2d-binary-spacing-partitioning-with-python-and-networkx/" rel="next" title="2D Binary Spacing Partitioning with Python and NetworkX">Next post</a>
             </li>
         </ul></nav></aside><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha384-3lJUsx1TJHt7BA4udB5KPnDrlkO8T6J6v/op7ui0BbCjvZ9WqV4Xm6DTP6kQ/iBH" crossorigin="anonymous"></script><script type="text/x-mathjax-config">
         MathJax.Hub.Config({tex2jax: {inlineMath: [['$latex ','$'], ['\\(','\\)']]}});
@@ -380,7 +401,8 @@ Contents © 2021         <a href="mailto:ryan@fotonixx.com">Ryan Frazier</a>
 </div>
 </div>
 
-        <script src="../../assets/js/all-nocdn.js"></script><script src="https://kit.fontawesome.com/b9c0b6e7c8.js" crossorigin="anonymous"></script><!-- Go to www.addthis.com/dashboard to customize your tools --><script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-603c029f21971de0"></script><script>
+        <script src="../../assets/js/all-nocdn.js"></script><script src="https://kit.fontawesome.com/b9c0b6e7c8.js" crossorigin="anonymous"></script><!-- Go to www.addthis.com/dashboard to customize your tools --><script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-603c029f21971de0"></script><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script><script>
     baguetteBox.run('div#content', {
         ignoreClass: 'islink',
         captions: function(element){var i=element.getElementsByTagName('img')[0];return i===undefined?'':i.alt;}});
