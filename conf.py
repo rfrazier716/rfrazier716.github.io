@@ -20,7 +20,7 @@ BLOG_AUTHOR = "Ryan Frazier"  # (translatable)
 BLOG_TITLE = "Fotonix & Gizmos"  # (translatable)
 # This is the main URL for your site. It will be used
 # in a prominent link. Don't forget the protocol (http/https)!
-SITE_URL = "https://rfrazier716.github.io/"
+SITE_URL = "https://www.fotonixx.com/"
 # This is the URL where Nikola's output will be deployed.
 # If not set, defaults to SITE_URL
 # BASE_URL = "https://rfrazier716.github.io/"
