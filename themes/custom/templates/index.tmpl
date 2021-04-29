@@ -25,9 +25,10 @@
     {{ pagination.page_navigation(current_page, page_links, prevlink, nextlink, prev_next_links_reversed) }}
 {% endif %}
 <div class="container">
+<div class="col-lg-8 col-md-12">
 <div class="row h-100">
 {% for post in posts%}
-        <div class="col-sm-12 col-lg-4 mb-4">
+        <div class="col-sm-12 col-md-6 mb-4">
         <div class="card h-100 post-index-card">
             <img class="index-image card-img-top img-fluid" src={{post.previewimage}} alt="Card image cap">
             <div class="card-body">
@@ -44,7 +45,7 @@
                 <time class="published dt-published" datetime="{{ post.formatted_date('webiso') }}" itemprop="datePublished" title="{{ post.formatted_date(date_format)|e }}">{{ post.formatted_date(date_format)|e }}</time>
                 </p>
                 
-                <p class="card-text">{{post.text(strip_html=True, show_read_more_link=False)[:180].rsplit(' ',1)[0]+' ...'}}</p>
+                <p class="card-text d-md-none d-lg-block">{{post.text(strip_html=True, show_read_more_link=False)[:180].rsplit(' ',1)[0]+' ...'}}</p>
                 <div class="btn-read-more">
                     <a href={{post.permalink()}} class="btn btn-primary">Read More</a>
                 </div>
@@ -52,6 +53,7 @@
         </div>
         </div>
 {% endfor %}
+</div>
 </div>
 </div>
 {{ helper.html_pager() }}

@@ -50,6 +50,7 @@
             <div class="e-content entry-content" itemprop="articleBody text">
             {{ post.text() }}
             </div>
+            {{ helper.html_tags(post) }}
         </div>
 
         <div class="col-lg-4 col-md-12">
@@ -58,7 +59,6 @@
     </div>
     <aside class="postpromonav">
     <nav>
-    {{ helper.html_tags(post) }}
     {{ helper.html_pager(post) }}
     </nav>
     </aside>
