@@ -1006,3 +1006,11 @@ sticky-top addthis_inline_share_toolbox{
 .at-share-btn-elements {
     text-align: center;
 }
+
+.about-me {
+    text-align: center;
+}
+
+.about-me-share a.about-icon{
+    color: var(--info);
+}
