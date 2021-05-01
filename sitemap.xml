@@ -19,11 +19,11 @@
  </url>
  <url>
   <loc>https://www.fotonixx.com/archive.html</loc>
-  <lastmod>2021-04-11T20:31:00Z</lastmod>
+  <lastmod>2021-04-29T00:57:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/</loc>
-  <lastmod>2021-04-11T18:20:00Z</lastmod>
+  <lastmod>2021-04-29T01:28:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/cat_programming/</loc>
@@ -44,6 +44,10 @@
  <url>
   <loc>https://www.fotonixx.com/categories/graphics/</loc>
   <lastmod>2021-04-11T18:20:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://www.fotonixx.com/categories/music/</loc>
+  <lastmod>2021-04-29T01:28:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/nikola/</loc>
@@ -74,6 +78,10 @@
   <lastmod>2021-04-11T18:20:00Z</lastmod>
  </url>
  <url>
+  <loc>https://www.fotonixx.com/categories/video-games/</loc>
+  <lastmod>2021-04-29T01:28:00Z</lastmod>
+ </url>
+ <url>
   <loc>https://www.fotonixx.com/galleries/</loc>
   <lastmod>2021-04-11T18:20:00Z</lastmod>
  </url>
@@ -84,6 +92,10 @@
  <url>
   <loc>https://www.fotonixx.com/posts/2d-binary-spacing-partitioning-with-python-and-networkx/</loc>
   <lastmod>2021-04-11T18:20:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://www.fotonixx.com/posts/5-video-game-soundtracks-to-jam-out-to-while-coding/</loc>
+  <lastmod>2021-04-24T20:35:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/posts/efficient-csg/</loc>
