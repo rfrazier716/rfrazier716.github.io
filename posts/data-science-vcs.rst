@@ -1,4 +1,4 @@
-.. title: Data Science VCS
+.. title: Version Controlling Your Data Science Projects
 .. slug: data-science-vcs
 .. date: 2021-05-22 11:46:46 UTC-04:00
 .. tags: 
@@ -7,82 +7,66 @@
 .. description: 
 .. type: text
 
-There's a recurring pattern I've encountered at work involving data analysis that goes something like this: 
+Historically I've been a huge advocate of `Mathematica <https://www.wolfram.com/mathematica/>`_ for scientific computing. The symbolic analysis made physics modelling a breeze, and I could quickly create attractive summary plots to be shared with my team. As I started looking at large datasets and collaborating with more engineers, however, Mathematica became more hinderance than help. Code could not be easily version controlled so it would often end up emailed back and forth, with the receiver having to manually check that they had all dependent files and update file-paths to load data without errors.
 
-.. container::
-    class: alert alert-secondary
+Not only that but most of my coworkers were not familiar with Mathematica, and there wasn't justification in purchasing license seats just for them to open and run my files. All of this culminated in an environment where most data analysis bottlenecked through me and caused unnecessary slowdowns.
 
-    *A large amount of data has been taken, typically saved across multiple CSV files. The engineer responsible for looking at the data then opens the files directly in Excel, and either plots results in place, or copies specific columns into a new "summary" file and starts processing the data there. When it's time to share results with the rest of the team, The excel files are brought up during a meeting, and once a conclusion is made they're often discarded.*
-
-This data analysis style has caused issues and schedule slips, which drove me to create a Python-centric, version controlled workflow that can be easily adopted and adapted to any analysis.
+These issues sparked my conversion to `Python`_ for almost all analysis. As free, open-source software, anybody on my team can install it in minutes, and its popularity as a scripting language means nearly everybody we onboard has some Python experience. Today I'll be covering the repository structure I've adopted to make a data analysis workflow that anybody can easily use and contribute to.
 
 .. contents::
-    :depth: 2
     :class: alert alert-primary
 
 .. contents:: Quick Links
     :depth: 1
     :class: alert alert-primary ml-0
 
+What Makes This Structure Special?
+===================================
 
-Why Doesn't This Current Method Work?
-=====================================
+Our new analysis flow is going to borrow extensively from the great open source tools that have come about for data science, combined with best practices for software maintenance. In the end we will have a repository that can be extended for any data analysis project featuring:
 
-The main problems with the above method stem from difficulty scaling to larger datasets with more than just one engineer looking at them:
-
-CSV is a poor format for large datasets
-    As a plain text file, I understand the preference for CSV when you just want to open the data in and flip through it, but as the datasets grow, the unnecessary bloat of CSV files compared to more memory efficient formats (e.g. HDF5) outweighs any benefits. This is especially true once you start generating multidimensional datasets (I recently had to look over a 4D array which was saved as 500 unique CSV files. Converting everything to an hdf5 file decreased the disk space used by 10x as well and made it significantly easier to slice the data into arbitrary views). The main preference I hear for CSV over other formats is that it can be natively opened in Excel, which leads to the next point.
-
-Excel is too manual for efficient analysis
-    This comes back to the scaling problem. If you are only looking at a single, two-dimensional dataset Excel does make it easy to generate nice looking plots. It might even seem scalable from the context of "well every new dataset I just open the file in excel and plot the result. But what happens if you decide those plots should be normalized to a certain value, or all plotted with the same scale? Now you need to go back into each file, add a new column which is your processing, and then plot that processed result. This manual step is error prone and is a perfect candidate for automation.
-
-Editing data files can break them for other users
-    This is another huge issue with processing data directly in Excel: the data and the analysis are in one file, This prevents multiple people from independently analyzing data. Regardless of that though, **data files should be treated as read-only**, and not edited or renamed after the fact. We've had cases in the past where somebody opens up a csv file with excel, and even though they didn't intentionally make any changes, when they closed it excel had updated the datetime format for all of the timestamps, which causing analysis scripts to break on seemingly random files. 
-
-The Value of the data is only as good as the team's memory
-    A graph in an Excel file by itself carries no meaning, and there's a much higher burden on the engineer who created it to remember what he was doing at the time. Six months down the line if the file is opened will they remember what they were looking for? If the engineer has since left and new data comes in will somebody be able to replicate the analysis and get the same results? If the answer to these is no the validity of the results is very fragile, and you'll likely find yourself repeating measurements in the future.
-
-
-How Do We Fix it?
-``````````````````
-
-Our new analysis flow is going to borrow extensively from the great open source tools that have come about for data science, combined with best practices for software maintenance. In the end we will have a template that can be used as a jumping off point for any data analysis project featuring:
-
-* A Version controlled git repository with hooks in place to only store code
-* Jupyter Notebook integration to perform the actual Analysis
-* A managed Python environment to keep track of dependencies (Numpy, SciPy, etc.)
-* Version controlled data which is stored separately from your code, but tracked in the main repository
+* A version controlled `Git`_ repository with hooks in place to only store code.
+* `Jupyter`_ notebook integration to perform the actual analysis.
+* A managed Python environment to keep track of dependencies.
+* `Version controlled data <https://dvc.org/>`_ which is stored separately from your code, but tracked in the main repository
 * A clean, informative readme enabling other users to download and run the same analysis
 
-This project will assume you have familiarity with Python_ and the `Jupyter Notebook environment`_, as well as a light understanding of Git_.
+This project will assume you have familiarity with the Python ecosystem and Jupyter Notebook environment, as well as a light understanding of Git.
 
-.. _Python: https://www.python.org/
-.. _`Jupyter Notebook environment`: https://jupyter.org/
+.. _`Jupyter`: https://jupyter.org/
 .. _`Git`: https://git-scm.com/
 
+.. container::
+    class: alert alert-info
 
-Getting Required software
+    .. raw:: html
+    
+        <i class="fas fa-info-circle"></i> If you want to skip the explanation, you can fork a <a href=https://github.com/rfrazier716/data_analysis_template>template of the final repository</a> from GitHub.
+
+
+Getting Required Software
 ==========================
 
-While most of the tools we use will be installed through Python's own package manager, there's a few pieces that need to be downloaded separately:
+While most of the tools we use will be installed through `Python's own package manager <https://pip.pypa.io/en/stable/>`_, there's a few pieces that need to be downloaded separately:
 
-* A Python Distribution - The base Python Interpreter, at the time of writing I recommend version 3.8, which is well supported. It's worth noting that if you are on windows, the :code:`pywinpty` package (required by Jupyter) only supports 64-bit Python versions, so make sure to download a 64-bit interpreter.
-* Poetry - We'll use Poetry to manage virtual environments as well as make sure others can install the same package versions we're using (via the poetry.lock file)
-* Visual Studio Code (Optional) - While any text editor will work, VSCode's extensive Python support (Including a Jupyter extension that runs a server in the editor) as well as git integration make it a one-stop shop for data analysis.
-* Git - At the end of the day Jupyter notebooks are still code, and we want to exercise best software practices when writing them, including a robust version control system. Git can be daunting at first, but VSCode's git integration means your commits can be done through the UI instead of command line.
+* A `Python`_ Distribution - The base Python Interpreter. At the time of writing I recommend `version 3.8 <https://www.python.org/downloads/release/python-3810/>`_, which is well supported. It's worth noting that if you are on Windows, the :code:`pywinpty` package (required by Jupyter) only supports 64-bit Python, so make sure to download a 64-bit interpreter.
+* `Poetry <https://python-poetry.org/>`_ - We'll use Poetry to manage virtual environments as well as make sure others can install the same package versions we're using (via the :code:`poetry.lock` file)
+* `Visual Studio Code <https://code.visualstudio.com/>`_ - While any text editor will work, VSCode's extensive Python support (Including a Jupyter extension that runs a server in the editor) as well as git integration make it a one-stop shop for data analysis.
+* `Git <https://git-scm.com/>`_ - At the end of the day Jupyter notebooks are still code, and we want to exercise best software practices when writing them, version control included. Git can be daunting at first, but `VSCode's git integration <https://code.visualstudio.com/docs/editor/versioncontrol>`_ means your commits can be done through the UI instead of command line.
 
-Once everything is installed we're ready to set up the environment.
+Once everything is installed we're ready to set up the environment. Create a new folder that will hold the repository and open it in VSCode (Ctrl+K if you're already in VSCode).
 
-Setting up our Python Environment
+Setting Up Our Python Environment
 ==================================
 
-We want the packages we depend on to be isolated from the rest of the Python installation. Since Python dynamically links libraries at runtime, updating a package down the line (e.g. to install a different library with a newer dependency) might break your old code, or worse, introduce a subtle bug that you don't catch until much further down the line. While we could go to an extreme and containerize all of our code, running it in a Docker Environment or similar, Python instead offers a simpler solution through virtual environments. If virtual environments are a new concept, I recommend reading the `tutorial on python.org`_.
+We want the packages we depend on to be isolated from the rest of the Python installation. Since Python dynamically links libraries at runtime, updating a package down the line (e.g. to install a different library with a newer dependency) might break your old code, or worse, introduce a subtle bug that you don't catch until much later. While we could go to an extreme and containerize all of our code, running it in a Docker Environment or similar, Python instead offers a simpler solution through `virtual environments`_. If virtual environments are a new concept, I recommend reading the `tutorial on python.org`_.
 
 .. _`tutorial on python.org`: https://docs.python.org/3/tutorial/venv.html
+.. _`virtual environments`: https://docs.python.org/3/tutorial/venv.html
 
-Easy Virtual Environments with Poetry
+Easy Virtual Environments With Poetry
 ``````````````````````````````````````
-Poetry makes creating new environments easy with its :code:`poetry init` command. This will ask a series of questions about your project which the tool will use to generate a `pyproject.toml`_ file. You can also choose to add any package dependencies when creating the environment. It's simple and often faster to add dependencies later, so I typically skip this step.
+Poetry makes creating new environments easy with its :code:`poetry init` command. This will ask a series of questions about your project which the tool will use to generate a `pyproject.toml`_ file. You can also choose to add any package dependencies when creating the environment. It's simple and often faster to add dependencies later, so I typically skip this step. If there's not a console at the bottom of your VSCode window, open it with Ctrl+Shift+`, or Terminal -> New Terminal and run the initialization.
 
 .. _`pyproject.toml`: https://snarky.ca/what-the-heck-is-pyproject-toml/
 
@@ -126,7 +110,7 @@ Jupyter uses `IPython Kernels`_ running as a separate process to evaluate cells.
 
     $ poetry run python -m ipykernel install --user --name project_x_env --display-name "My Awesome Data Science Environment"
 
-Now you can Launch Jupyter from **any** environment, including the global environment, and still access this environment's packages.
+Now you can Launch Jupyter from **any** environment, including the global environment, and still access this environment's packages. If you don't have Jupyter installed globally, you can run the installation in our environment by executing :code:`poetry run jupyter lab`. Alternatively, creating and opening an :code:`*.ipynb` file in VSCode will change enable the data science view.
 
 .. figure:: /images/data_science_vcs/kernel_addition.png
     :align: center
@@ -136,10 +120,19 @@ Now you can Launch Jupyter from **any** environment, including the global enviro
 Adding Version Control
 =======================
 
+You might be wondering why a data analysis project needs version control, or what version control even is. `To quote Atlassian <https://www.atlassian.com/git/tutorials/what-is-version-control>`_: 
+
+.. container::
+    class: alert alert-info
+
+    *Version control software keeps track of every modification to the code in a special kind of database. If a mistake is made, developers can turn back the clock and compare earlier versions of the code to help fix the mistake while minimizing disruption to all team members.*
+
+Sounds pretty great, right?! If you still need convincing: imagine you're toying with a new way to look at data but you don't want to delete your current method. Instead of copying the file into a new one, you can create a `branch <https://www.atlassian.com/git/tutorials/using-branches>`_ and `merge <https://www.atlassian.com/git/tutorials/using-branches/git-merge>`_ the changes if they work, or delete them if not. Not only that but you can have multiple people simultaneously looking at the data at once, each one focused on their specific tasks, with all changes merged at the end.
+
 Making a New Repository
 ````````````````````````
 
-To keep things simple we'll use VSCode's git plugins to create, commit to, and push our repository. Start by opening the project folder in VSCode, on the left side of the screen you should see the directory structure with the pyproject and poetry.lock files. Depending on your Poetry settings the virtual environment may also be in this base directory.
+To keep things simple we'll use VSCode's git plugins to create, commit to, and push our repository. On the left side of the VSCode window you should see the directory structure with the pyproject and poetry.lock files. Depending on your Poetry settings the virtual environment may also be in this base directory.
 
 .. figure:: /images/data_science_vcs/empty_repository.png
     :align: center
@@ -161,7 +154,7 @@ When you've added the files your project directory should look similar to below:
 Choosing what files to ignore
 ``````````````````````````````
 
-Git uses the .gitignore file to black-list specific files or even entire directories from being captured into version control. This helps keep the repository size small and only commit files that are necessary to reproduce the environment. As a rule of thumb the following should be excluded from your commits:
+Git uses the :code:`.gitignore` file to black-list specific files or even entire directories from being captured into version control. This helps keep the repository size small and only commit files that are necessary to reproduce the environment. As a rule of thumb the following should be excluded from your commits:
 
 * Any IDE settings (the :code:`./.vscode/` directory )
 * Auto-generated files (:code:`*.pyc`, file backups etc.)
@@ -176,7 +169,7 @@ It might seem alarming that datasets should not be part of version control, afte
     /data/*
     !/data/.gitkeep
 
-The rest of our :code:`.gitignore` file is built off of GitHub's `python.gitignore`_ with the above additions to ignore our data directory, as well as VSCode settings, and Jupyter backup files. The entire file can be found here. 
+The rest of our :code:`.gitignore` file is built off of GitHub's `python.gitignore`_ with the above additions to ignore our data directory, as well as VSCode settings, and Jupyter backup files. The entire file can be found `here <https://github.com/rfrazier716/data_analysis_template/blob/main/.gitignore>`_. 
 
 .. _`python.gitignore`: https://github.com/github/gitignore/blob/master/Python.gitignore
 
@@ -185,10 +178,10 @@ Creating a Git Hook to Prevent Messy Commits
 
 While I love Jupyter for exploration and data analysis, one thing that always bothers me is how the code lives in the same file as evaluated evaluated output. When version controlling notebooks this can cause issues for a couple of reasons:
 
-#. If the data you're working on is private but the code is public, the private data could end up in an output and committed, available for anybody to see
+#. If the data you're working on is private but the code is public, the private data could end up in an output and committed, available for anybody to see.
 #. Git works by logging differences in your file. This includes things like cell number, cell output, and picture metadata, if you version control an evaluated notebook you'll have unstaged changes as soon as you evaluate a cell, even though none of the written code actually changed!
 
-We want a way to scrub our notebooks of all evaluated output before committing, them. To do so we'll use `githooks`_ which are custom scripts that run when you perform a git command. Flipping through the githook documentation, the pre-commit hook is exactly what we need. Unfortunately, installing a git hook is a manual process that requires you to add a file to your :code:`/.git/` directory. 
+We want a way to scrub our notebooks of all evaluated output before committing them. To do so we'll use `githooks`_ which are custom scripts that run when you perform a git command. Flipping through the githook documentation, the pre-commit hook is exactly what we need. Unfortunately, installing a git hook is a manual process that requires you to add a file to your :code:`/.git/` directory. 
 
 .. container::
     class: alert alert-warning
@@ -199,7 +192,7 @@ We want a way to scrub our notebooks of all evaluated output before committing, 
 
 .. _`githooks`: https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks
 
-In order to make it as easy as possible for anybody to use this template, as well as make writing the githook simple, we'll instead use the `pre-commit`_ python package and write our hook with a YAML file that will live in the root of our version control. The pre-commit config we'll be using comes from `Yuri Zhauniarovich's blog`_ and uses nbconvert to scrub the output in-place. 
+In order to make it as easy as possible for anybody to use this template, as well as make writing the githook simple, we'll instead use the `pre-commit`_ python package and write our hook with a YAML file that will live in the root of our version control. The pre-commit config we'll be using comes from `Yuri Zhauniarovich's blog`_ and uses `nbconvert <https://nbconvert.readthedocs.io/en/latest/>`_ to scrub the output in-place. 
 
 .. _`Yuri Zhauniarovich's blog`: https://zhauniarovich.com/post/2020/2020-06-clearing-jupyter-output/
 
@@ -216,14 +209,14 @@ To define the hook, a new file in the base directory called :code:`.pre-commit-c
 .. code:: YAML
 
     repos:
-    - repo: local
+      - repo: local
         hooks:
-        - id: jupyter-nb-clear-output
+          - id: jupyter-nb-clear-output
             name: jupyter-nb-clear-output
             files: \.ipynb$
             stages: [commit]
             language: system
-            entry: jupyter nbconvert --ClearOutputPreprocessor.enabled=True --inplace
+            entry: poetry run jupyter nbconvert --ClearOutputPreprocessor.enabled=True --inplace
 
 The last piece is to install the githook so that it's run before every commit. Pre-commit makes this easy for us with it's :code:`install` argument.
 
@@ -241,9 +234,9 @@ with the files staged and commit message filled out, press the check-mark at the
 Version Controlling Data
 =========================
 
-Next comes adding data to the repository. Copy them over to the :code:`/data/` directory we made earlier. You can have a nested folder structure inside of that directory so organize it into a structure that works for you. Looking at the Explorer panel you'll notice all these files are greyed out and don't show up if you tab over to the Source Control panel. Since :code:`/data/` is ignored every file and folder below is is subsequently ignored as well.
+Next comes adding data to the repository. Copy any necessary data files over to the :code:`/data/` directory we made earlier. You can have a nested directory tree inside of that directory so organize it into a structure that works for you. Looking at the Explorer panel you'll notice all these files are greyed out and don't show up if you tab over to the Source Control panel. Since :code:`/data/` is ignored every file and folder below is is subsequently ignored as well.
 
-Why don't we store everything in the Git Repository?
+Why Don't We Store Everything in the Git Repository?
 `````````````````````````````````````````````````````
 To understand why we wouldn't want to store our large data files in a git repository, lets peel back what happens when you clone an existing repository onto your local system. From Atlassian's `Git-LFS tutorial <https://www.atlassian.com/git/tutorials/git-lfs>`_:
 
@@ -263,12 +256,6 @@ Since DVC is a python package, we can install it with Pip just like our other de
 
     $ poetry add dvc
 
-Stage the pyproject.toml and poetry.lock files for as a new commit with the message:
-
-.. code::
-
-    added DVC as a dependency
-
 DVC is designed to mimic a git work flow, so many of the commands you'd use for git have DVC parallels. for example. To initialize DVC in our repository and add the data directory we use the :code:`init` and :code:`add` commands respectively.
 
 .. code:: shell-session
@@ -286,7 +273,7 @@ If you add new data to the directory, you can update :code:`data.dvc` by running
 Adding a Remote
 ````````````````
 
-DVC allows you to back-up version-controlled data to remote servers, perfect for enabling computers/users to access the same dataset. From the `documentation <https://dvc.org/doc/command-reference/remote#remote>`_: 
+DVC allows you to back-up version-controlled data to remote servers, perfect for enabling multiple users to access the same version of a dataset. From the `documentation <https://dvc.org/doc/command-reference/remote#remote>`_: 
 
 .. container::
     class: alert alert-info
@@ -295,9 +282,9 @@ DVC allows you to back-up version-controlled data to remote servers, perfect for
     
     *Using DVC with remote storage is optional. DVC commands use the local cache (usually in dir .dvc/cache) as data storage by default. This enables the main DVC usage scenarios out of the box.* 
 
-I recommend setting up a default remote even if you're the only one looking at the dataset. Mine are usually directories on an internal network drive, but DVC has `support for multiple storage types <https://dvc.org/doc/command-reference/remote/add#supported-storage-types>`, so use whichever structure works best for you. The remote can even be a separate directory on you computer, so if you ever need to delete your local code and clone a fresh repository you can painlessly pull your data.
+I recommend setting up a default remote even if you're the only one looking at the dataset. Mine are usually directories on an internal network drive, but DVC has `support for multiple storage types <https://dvc.org/doc/command-reference/remote/add#supported-storage-types>`_, so use whichever structure works best for you. The remote can even be a separate directory on you computer.
 
-Once the remote is set-up pushing to it is as simple as running :code:`dvc push <remote>`. To pull from your remote you similarly run :code:`dvc pull <remote>`.
+Once the remote is set-up, pushing to it is as simple as running :code:`dvc push <remote>`. To pull from your remote you similarly run :code:`dvc pull <remote>`.
 
 Document Everything with a ReadMe 
 ==================================
@@ -312,6 +299,8 @@ A good readme will elevate your repository from "that collection of code that on
   * Registering the Environment with Jupyter
   * Pulling data from the DVC remote
 
+* Explain how to run the analysis, with a description of what each notebook does and what results it will generate.
+
 * Give Clear instructions for how users can contribute to/extend the repository:
 
   * Installing the additional developer dependencies
@@ -319,12 +308,25 @@ A good readme will elevate your repository from "that collection of code that on
 
 I'm a big fan of `othneildrew's Best ReadMe Template <https://github.com/othneildrew/Best-README-Template>`_ And use it for most of my projects. A reimplemented version can be found on the example repository which covers all of the above requirements.
 
-Remember we also had a second ReadMe in the :code:`/notebooks/` directory. Use that one to describe each notebook in greater detail. You can even include example plots and outputs that the notebooks should generate. GitHub will show a rendered readme in every directory that has one, so you can even group all your notebooks into separate subdirectories, and have a specific readme explaining the purpose of every group!
+Remember we also had a second ReadMe in the :code:`/notebooks/` directory which we'll use to describe each notebook in greater detail. You can even include example plots and outputs that the notebooks should generate. GitHub will show a rendered readme in every directory that has one, so you can even group all your notebooks into separate subdirectories, and have a specific readme explaining the purpose of every group!
 
 With data added, committed, and readme's filled in it's time for our next commit! stage all the changed files and give it a meaningful message. E.g. highlight what data was added and where it came from. Be sure to follow the `50-72 rule <https://www.midori-global.com/blog/2018/04/02/git-50-72-rule>`_ so your messages stay meaningful and concise.
 
 This is also a great time to push your commits up to your favorite server. If VCS is completely new to you, I'd recommend `github <https://docs.github.com/en/github/getting-started-with-github>`_ for its sheer popularity and option to make both public and private repositories with a free account.
 
+What's the Workflow Look Like?
+==============================
+
+With the repository setup, it's time to outline how to use it for analysis. While at the end of the day you should do whatever is natural for your team. I recommend adopting a modification of the `Gitflow`_ workflow:
+
+* No work is done in the main branch of the repository.
+* When you have a new task, make a branch off of :code:`main` and do all of your work in that new branch.
+* All notebooks should live in the :code:`/notebook/` directory. Use subdirectories to group similar notebooks.
+* When the task is finished, clean up the branch and update the readme to describe any new files. Depending on how formal your team is, manually merge the branch back into :code:`main` or submit a pull-request.
+
+This structure ensures that analysis tasks are done in isolated environments and only merged back when they're finalized, and you don't need to constantly worry about pulling from the main branch and resolving merge requests.
+
+.. _`Gitflow`: https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow
 
 How to Save Results 
 ====================
@@ -333,3 +335,7 @@ This repository structure does a great job making sure analysis is done in a cle
 
 Static site generation with Sphinx can easily be integrated into a CI/CD workflow and Github even offers free hosting of static pages. Look into `gh-pages <https://github.com/c-w/ghp-import>`_ for an easy way to deploy your pages into a github hosted Static site.
 
+
+This entire template can be found on `my GitHub <https://github.com/rfrazier716/data_analysis_template>`_, feel free to fork it for your own projects and submit requests for additional features!
+
+.. _Python: https://www.python.org/
