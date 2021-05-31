@@ -1,8 +1,8 @@
 .. title: Version Controlling Your Data Science Projects
 .. slug: data-science-vcs
-.. date: 2021-05-21 11:46:46 UTC-04:00
+.. date: 2021-05-31 11:46:46 UTC-04:00
 .. tags: python, git, data science, analysis, jupyter
-.. category: programming
+.. category: Programming
 .. link: 
 .. description: 
 .. type: text
