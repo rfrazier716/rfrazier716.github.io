@@ -7,11 +7,11 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <sitemap>
   <loc>https://www.fotonixx.com/categories/analysis.xml</loc>
-  <lastmod>2021-05-31T16:47:00Z</lastmod>
+  <lastmod>2021-05-31T16:54:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/cat_programming.xml</loc>
-  <lastmod>2021-05-01T00:43:00Z</lastmod>
+  <lastmod>2021-05-31T16:54:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/constructive-solid-geometry.xml</loc>
@@ -23,11 +23,11 @@
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/data-science.xml</loc>
-  <lastmod>2021-05-31T16:47:00Z</lastmod>
+  <lastmod>2021-05-31T16:54:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/git.xml</loc>
-  <lastmod>2021-05-31T16:47:00Z</lastmod>
+  <lastmod>2021-05-31T16:54:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/github.xml</loc>
@@ -39,7 +39,7 @@
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/jupyter.xml</loc>
-  <lastmod>2021-05-31T16:47:00Z</lastmod>
+  <lastmod>2021-05-31T16:54:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/music.xml</loc>
@@ -59,7 +59,7 @@
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/python.xml</loc>
-  <lastmod>2021-05-31T16:47:00Z</lastmod>
+  <lastmod>2021-05-31T16:54:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/ray-tracing.xml</loc>
@@ -83,10 +83,10 @@
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/rss.xml</loc>
-  <lastmod>2021-05-31T16:47:00Z</lastmod>
+  <lastmod>2021-05-31T16:54:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/sitemap.xml</loc>
-  <lastmod>2021-05-31T16:47:00Z</lastmod>
+  <lastmod>2021-05-31T16:54:00Z</lastmod>
  </sitemap>
 </sitemapindex>
