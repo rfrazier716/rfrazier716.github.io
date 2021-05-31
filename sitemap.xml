@@ -19,11 +19,15 @@
  </url>
  <url>
   <loc>https://www.fotonixx.com/archive.html</loc>
-  <lastmod>2021-05-01T21:02:00Z</lastmod>
+  <lastmod>2021-05-29T22:18:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/</loc>
-  <lastmod>2021-04-29T01:28:00Z</lastmod>
+  <lastmod>2021-05-31T16:47:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://www.fotonixx.com/categories/analysis/</loc>
+  <lastmod>2021-05-31T16:47:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/cat_programming/</loc>
@@ -38,12 +42,24 @@
   <lastmod>2021-04-11T18:20:00Z</lastmod>
  </url>
  <url>
+  <loc>https://www.fotonixx.com/categories/data-science/</loc>
+  <lastmod>2021-05-31T16:47:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://www.fotonixx.com/categories/git/</loc>
+  <lastmod>2021-05-31T16:47:00Z</lastmod>
+ </url>
+ <url>
   <loc>https://www.fotonixx.com/categories/github/</loc>
   <lastmod>2021-04-11T18:20:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/graphics/</loc>
   <lastmod>2021-04-11T18:20:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://www.fotonixx.com/categories/jupyter/</loc>
+  <lastmod>2021-05-31T16:47:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/music/</loc>
@@ -98,12 +114,20 @@
   <lastmod>2021-04-24T20:35:00Z</lastmod>
  </url>
  <url>
+  <loc>https://www.fotonixx.com/posts/data-science-vcs/</loc>
+  <lastmod>2021-05-22T16:05:00Z</lastmod>
+ </url>
+ <url>
   <loc>https://www.fotonixx.com/posts/efficient-csg/</loc>
   <lastmod>2021-04-11T18:20:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/posts/getting-up-and-running-with-nikola/</loc>
   <lastmod>2021-04-11T18:20:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://www.fotonixx.com/posts/my-first-fight-with-rusts-borrow-checker/</loc>
+  <lastmod>2021-05-20T01:00:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/projects/</loc>

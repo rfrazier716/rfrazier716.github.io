@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns# article: http://ogp.me/ns/article#
+" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Version Controlling Your Data Science Projects | Fotonix &amp; Gizmos</title>
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://www.fotonixx.com/posts/data-science-vcs/">
+<link rel="icon" href="../../favicon.ico" sizes="16x16">
+<!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]--><meta name="author" content="Ryan Frazier">
+<link rel="prev" href="../5-video-game-soundtracks-to-jam-out-to-while-coding/" title="5 Video Game Soundtracks to Jam Out to While Coding" type="text/html">
+<meta property="og:site_name" content="Fotonix &amp; Gizmos">
+<meta property="og:title" content="Version Controlling Your Data Science Projects">
+<meta property="og:url" content="https://www.fotonixx.com/posts/data-science-vcs/">
+<meta property="og:description" content="Historically I've been a huge advocate of Mathematica for scientific computing. The symbolic analysis made physics modeling a breeze, and I could quickly create attractive summary plots to be shared w">
+<meta property="og:image" content="https://www.fotonixx.com/images/data_science_vcs/preview_image.jpg">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-05-21T11:46:46-04:00">
+<meta property="article:tag" content="analysis">
+<meta property="article:tag" content="data science">
+<meta property="article:tag" content="git">
+<meta property="article:tag" content="jupyter">
+<meta property="article:tag" content="python">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-expand-md static-top mb-4
+navbar-dark
+bg-dark
+"><div class="container">
+<!-- This keeps the margins nice -->
+        <a class="navbar-brand" href="../../">
+            <img src="../../images/site_logo.svg" alt="Fotonix &amp; Gizmos" id="logo" class="d-inline-block align-top"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="bs-navbar">
+            <ul class="navbar-nav mr-auto">
+<li class="nav-item">
+<a href="../../" class="nav-link">Home</a>
+                </li>
+<li class="nav-item">
+<a href="../../projects/" class="nav-link">Projects</a>
+                </li>
+<li class="nav-item">
+<a href="../../about/" class="nav-link">About</a>
+
+                
+            </li>
+</ul>
+<ul class="navbar-nav navbar-right"></ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        
+
+<article class="post-text h-entry hentry postpage " itemscope="itemscope" itemtype="http://schema.org/Article"><div class="row">
+        <div class="col-lg-8 col-md-12">
+                <header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Version Controlling Your Data Science Projects</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard p-author h-card"><span class="byline-name fn p-name" itemprop="author">
+                    Ryan Frazier
+            </span></p>
+            <p class="dateline">
+            <a href="." rel="bookmark">
+            <time class="published dt-published" datetime="2021-05-21T11:46:46-04:00" itemprop="datePublished" title="2021-05-21 11:46">2021-05-21 11:46</time></a>
+            </p>
+            
+        </div>
+        
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Historically I've been a huge advocate of <a class="reference external" href="https://www.wolfram.com/mathematica/">Mathematica</a> for scientific computing. The symbolic analysis made physics modeling a breeze, and I could quickly create attractive summary plots to be shared with my team. As I started looking at large datasets and collaborating with more engineers, however, Mathematica became more hinderance than help. As Code could not be easily version controlled, it would often end up emailed back and forth with the receiver having to manually check that they had all dependent files, as well as update file-paths to load data without errors.</p>
+<p>Most of my coworkers were not familiar with Mathematica, and there wasn't justification in purchasing license seats just for them to open and run my files. All of this culminated in an environment where most data analysis bottlenecked through me and caused unnecessary slowdowns.</p>
+<p>These issues sparked my conversion to <a class="reference external" href="https://www.python.org/">Python</a> for almost all analysis. As free, open-source software, anybody on my team can install it in minutes, and its popularity as a scripting language means nearly everybody we onboard has some Python experience. Today I'll be covering the repository structure I've adopted to make a data analysis workflow that anybody can easily use and contribute to. It assumes you have familiarity with the Python ecosystem and <a class="reference external" href="https://jupyter.org/">Jupyter</a> Notebook environment, as well as a light understanding of Git.</p>
+<div class="contents alert alert-primary topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#what-makes-this-structure-special" id="id2">What Makes this Structure Special?</a></p></li>
+<li><p><a class="reference internal" href="#required-software" id="id3">Required Software</a></p></li>
+<li>
+<p><a class="reference internal" href="#setting-up-our-python-environment" id="id4">Setting Up Our Python Environment</a></p>
+<ul>
+<li>
+<p><a class="reference internal" href="#easy-virtual-environments-with-poetry" id="id5">Easy Virtual Environments with Poetry</a></p>
+<ul>
+<li><p><a class="reference internal" href="#adding-common-dependencies" id="id6">Adding Common Dependencies</a></p></li>
+<li><p><a class="reference internal" href="#registering-our-environment-as-an-ipython-kernel" id="id7">Registering Our Environment as an IPython Kernel</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><a class="reference internal" href="#adding-version-control" id="id8">Adding Version Control</a></p>
+<ul>
+<li><p><a class="reference internal" href="#making-a-new-repository" id="id9">Making a New Repository</a></p></li>
+<li><p><a class="reference internal" href="#choosing-which-files-to-ignore" id="id10">Choosing which Files to Ignore</a></p></li>
+<li><p><a class="reference internal" href="#creating-a-git-hook-to-prevent-messy-commits" id="id11">Creating a Git Hook to Prevent Messy Commits</a></p></li>
+</ul>
+</li>
+<li>
+<p><a class="reference internal" href="#version-controlling-data" id="id12">Version Controlling Data</a></p>
+<ul>
+<li><p><a class="reference internal" href="#why-don-t-we-store-everything-in-the-git-repository" id="id13">Why Don't We Store Everything in the Git Repository?</a></p></li>
+<li><p><a class="reference internal" href="#setting-up-dvc" id="id14">Setting up DVC</a></p></li>
+<li><p><a class="reference internal" href="#adding-a-remote" id="id15">Adding a Remote</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#document-everything-with-a-readme" id="id16">Document Everything with a ReadMe</a></p></li>
+<li><p><a class="reference internal" href="#what-s-the-workflow-look-like" id="id17">What's the Workflow Look Like?</a></p></li>
+<li><p><a class="reference internal" href="#how-to-save-results" id="id18">How to Save Results</a></p></li>
+</ul>
+</div>
+<div class="contents alert alert-primary ml-0 topic" id="quick-links">
+<p class="topic-title">Quick Links</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#what-makes-this-structure-special" id="id19">What Makes this Structure Special?</a></p></li>
+<li><p><a class="reference internal" href="#required-software" id="id20">Required Software</a></p></li>
+<li><p><a class="reference internal" href="#setting-up-our-python-environment" id="id21">Setting Up Our Python Environment</a></p></li>
+<li><p><a class="reference internal" href="#adding-version-control" id="id22">Adding Version Control</a></p></li>
+<li><p><a class="reference internal" href="#version-controlling-data" id="id23">Version Controlling Data</a></p></li>
+<li><p><a class="reference internal" href="#document-everything-with-a-readme" id="id24">Document Everything with a ReadMe</a></p></li>
+<li><p><a class="reference internal" href="#what-s-the-workflow-look-like" id="id25">What's the Workflow Look Like?</a></p></li>
+<li><p><a class="reference internal" href="#how-to-save-results" id="id26">How to Save Results</a></p></li>
+</ul>
+</div>
+<div class="section" id="what-makes-this-structure-special">
+<h2><a class="toc-backref" href="#id19">What Makes this Structure Special?</a></h2>
+<p>Our new analysis flow is going to borrow extensively from the great open source tools that have come about for data science combined with best practices for software maintenance. In the end we will have a repository that can be extended for any data analysis project featuring:</p>
+<ul class="simple">
+<li><p>A version controlled <a class="reference external" href="https://git-scm.com/">Git</a> repository with hooks in place to only store code.</p></li>
+<li><p><a class="reference external" href="https://jupyter.org/">Jupyter</a> notebook integration to perform the actual analysis.</p></li>
+<li><p>A managed Python environment to keep track of dependencies.</p></li>
+<li><p><a class="reference external" href="https://dvc.org/">Version controlled data</a> which is stored separately from your code, but tracked in the main repository.</p></li>
+<li><p>A clean, informative ReadMe enabling other users to download and run the same analysis.</p></li>
+</ul>
+<div class="class alert alert-info docutils container">
+<i class="fas fa-info-circle"></i> If you want to skip the explanation, you can fork a <a href="https://github.com/rfrazier716/data_analysis_template">template of the final repository</a> from GitHub.</div>
+</div>
+<div class="section" id="required-software">
+<h2><a class="toc-backref" href="#id20">Required Software</a></h2>
+<p>While most of the tools we use will be installed through <a class="reference external" href="https://pip.pypa.io/en/stable/">Python's own package manager</a>, there's a few pieces that need to be downloaded separately:</p>
+<ul class="simple">
+<li><p>A <a class="reference external" href="https://www.python.org/">Python</a> Distribution - The base Python Interpreter. At the time of writing I recommend <a class="reference external" href="https://www.python.org/downloads/release/python-3810/">version 3.8</a>, which is well supported. It's worth noting that if you are on Windows, the <code>pywinpty</code> package (required by Jupyter) only supports 64-bit Python, so make sure to download a 64-bit interpreter.</p></li>
+<li><p><a class="reference external" href="https://python-poetry.org/">Poetry</a> - We'll use Poetry to manage virtual environments as well as make sure others can install the same package versions we're using (via the <code>poetry.lock</code> file).</p></li>
+<li><p><a class="reference external" href="https://code.visualstudio.com/">Visual Studio Code</a> - While any text editor will work, VSCode's extensive Python support (including a Jupyter extension that runs a server in the editor) makes it a one-stop shop for data analysis.</p></li>
+<li><p><a class="reference external" href="https://git-scm.com/">Git</a> - At the end of the day Jupyter notebooks are still code, and we want to exercise best software practices when writing them, version control included. Git can be daunting at first, but <a class="reference external" href="https://code.visualstudio.com/docs/editor/versioncontrol">VSCode's Git integration</a> means your commits can be done through the UI instead of command line.</p></li>
+</ul>
+<p>Once everything is installed we're ready to set up the environment. Create a new folder that will hold the repository and open it in VSCode (<code>Ctrl+K</code> if you're already in VSCode).</p>
+</div>
+<div class="section" id="setting-up-our-python-environment">
+<h2><a class="toc-backref" href="#id21">Setting Up Our Python Environment</a></h2>
+<p>We want the packages we depend on to be isolated from the rest of the Python installation. Since Python dynamically links libraries at runtime, updating a package down the line (e.g. to install a different library with a newer dependency) might break your old code, or worse, introduce a subtle bug that you don't catch until much later. While we could go to an extreme and containerize all of our code, running it in a Docker Environment or similar, Python instead offers a simpler solution through <a class="reference external" href="https://docs.python.org/3/tutorial/venv.html">virtual environments</a>. If virtual environments are a new concept, I recommend reading the <a class="reference external" href="https://docs.python.org/3/tutorial/venv.html">tutorial on python.org</a>.</p>
+<div class="section" id="easy-virtual-environments-with-poetry">
+<h3><a class="toc-backref" href="#id5">Easy Virtual Environments with Poetry</a></h3>
+<p>Poetry makes creating new environments easy with its <code>poetry init</code> command. This will ask a series of questions about your project which the tool will use to generate a <a class="reference external" href="https://snarky.ca/what-the-heck-is-pyproject-toml/">pyproject.toml</a> file. You can also choose to add any package dependencies when creating the environment. It's simple and often faster to add dependencies later, so I typically skip this step.</p>
+<p>If there's not a console at the bottom of your VSCode window, open it with <code>Ctrl+Shift+`</code>, or Terminal -&gt; New Terminal and run the initialization.</p>
+<pre class="code console"><a name="rest_code_fd3e732c45094e3eb7409acf5ef74788-1"></a><span class="gp">$ </span>poetry init
+<a name="rest_code_fd3e732c45094e3eb7409acf5ef74788-2"></a>
+<a name="rest_code_fd3e732c45094e3eb7409acf5ef74788-3"></a><span class="go">This command will guide you through creating your pyproject.toml config.</span>
+<a name="rest_code_fd3e732c45094e3eb7409acf5ef74788-4"></a>
+<a name="rest_code_fd3e732c45094e3eb7409acf5ef74788-5"></a><span class="go">Package name [data_analysis]:  my_awesome_analysis_repository</span>
+<a name="rest_code_fd3e732c45094e3eb7409acf5ef74788-6"></a><span class="go">Version [0.1.0]:</span>
+<a name="rest_code_fd3e732c45094e3eb7409acf5ef74788-7"></a><span class="go">Description []:</span>
+<a name="rest_code_fd3e732c45094e3eb7409acf5ef74788-8"></a><span class="go">Author [Ryan Frazier &lt;ryan@fotonixx.com&gt;, n to skip]:</span>
+<a name="rest_code_fd3e732c45094e3eb7409acf5ef74788-9"></a><span class="go">License []:</span>
+<a name="rest_code_fd3e732c45094e3eb7409acf5ef74788-10"></a><span class="go">Compatible Python versions [^3.9]:  &gt;3.8,&lt;3.9</span>
+<a name="rest_code_fd3e732c45094e3eb7409acf5ef74788-11"></a>
+<a name="rest_code_fd3e732c45094e3eb7409acf5ef74788-12"></a><span class="go">Would you like to define your main dependencies interactively? (yes/no) [yes] no</span>
+<a name="rest_code_fd3e732c45094e3eb7409acf5ef74788-13"></a><span class="go">Would you like to define your development dependencies interactively? (yes/no) [yes] no</span>
+</pre>
+<p>Once it's done, <code>pyproject.toml</code> will be generated in the root directory with the information you entered. By default Poetry will create the environment in a separate directory, but you can access it with <code>poetry run</code>. Test that your environment is running by executing <code>poetry run py --version</code>, and making sure it matches the version you specified.</p>
+<div class="section" id="adding-common-dependencies">
+<h4><a class="toc-backref" href="#id6">Adding Common Dependencies</a></h4>
+<p>The specific packages you need will vary project-to-project, you'll almost always be using the <a class="reference external" href="https://www.scipy.org/stackspec.html">Scientific Python Stack</a>, so let's add it to our dependencies! We also need to install the <a class="reference external" href="https://ipython.org/ipython-doc/3/interactive/tutorial.html">Interactive Python (IPython)</a> Kernel so we can register this environment as a Jupyter Kernel later. All of these can be installed using poetry's <code>add</code> command.</p>
+<pre class="code console"><a name="rest_code_5981fb34c3c34e7796d26cf7b5e1c2b7-1"></a><span class="gp">$ </span>poetry add jupyterlab numpy scipy matplotlib pandas ipykernel
+</pre>
+<p>If you open <code>pyproject.toml</code> you'll see all those packages are now listed in the dependencies section. Additionally, Poetry created a <code>poetry.lock</code> file which is used to store the exact versions of every package and dependency in the environment.</p>
+</div>
+<div class="section" id="registering-our-environment-as-an-ipython-kernel">
+<h4><a class="toc-backref" href="#id7">Registering Our Environment as an IPython Kernel</a></h4>
+<p>Jupyter uses <a class="reference external" href="https://ipython.readthedocs.io/en/stable/development/how_ipython_works.html?highlight=kernel#the-ipython-kernel">IPython Kernels</a> running as a separate process to evaluate cells. In order for Jupyter to use our newly created virtual environment, we need to register it with a kernel using the ipykernel package. Run the below command, replacing <code>name</code> and <code>display-name</code> with appropriate values for the project.</p>
+<pre class="code console"><a name="rest_code_41d6f72b41354cd98b88266af5482635-1"></a><span class="gp">$ </span>poetry run python -m ipykernel install --user --name project_x_env --display-name <span class="s2">"My Awesome Data Science Environment"</span>
+</pre>
+<p>Now you can Launch Jupyter from <strong>any</strong> environment, including the global environment, and still access this environment's packages. If you don't have Jupyter installed globally, you can run the installation in our environment by executing <code>poetry run jupyter lab</code>. Alternatively, creating and opening an <code>*.ipynb</code> file in VSCode will enable the data science view.</p>
+<div class="figure align-center">
+<img alt="/images/data_science_vcs/kernel_addition.png" src="../../images/data_science_vcs/kernel_addition.png"><p class="caption">Our newly created Kernel as a selectable option</p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="adding-version-control">
+<h2><a class="toc-backref" href="#id22">Adding Version Control</a></h2>
+<p>You might be wondering why a data analysis project needs version control, or what version control even is. <a class="reference external" href="https://www.atlassian.com/git/tutorials/what-is-version-control">To quote Atlassian</a>:</p>
+<div class="class alert alert-info docutils container">
+<p><em>"Version control software keeps track of every modification to the code in a special kind of database. If a mistake is made, developers can turn back the clock and compare earlier versions of the code to help fix the mistake while minimizing disruption to all team members."</em></p>
+</div>
+<p>Sounds pretty great, right?! If you still need convincing: imagine you're toying with a new way to look at data but you don't want to delete your current method. Instead of copying the file into a new one, you can create a <a class="reference external" href="https://www.atlassian.com/git/tutorials/using-branches">branch</a> and <a class="reference external" href="https://www.atlassian.com/git/tutorials/using-branches/git-merge">merge</a> the changes if they work, or delete them if not. Not only that but you can have multiple people simultaneously looking at the data, each person focused on their specific tasks, with all changes merged at the end.</p>
+<div class="section" id="making-a-new-repository">
+<h3><a class="toc-backref" href="#id9">Making a New Repository</a></h3>
+<p>To keep things simple we'll use VSCode's Git plugins to create, commit to, and push our repository. On the left side of the VSCode window you should see the directory structure with the pyproject and poetry.lock files. Depending on your Poetry settings the virtual environment may also be in this base directory.</p>
+<div class="figure align-center">
+<img alt="/images/data_science_vcs/empty_repository.png" src="../../images/data_science_vcs/empty_repository.png">
+</div>
+<p>Open the Command Pallette (<code>Ctrl+Shift+P</code> or f1 on Windows) and type "git init". There should be only one option that reads "Git: Initialize Repository". Press Enter and select the current folder to initialize the repository.</p>
+<p>Notice that <code>pyproject.toml</code> and <code>poetry.lock</code> have turned green in the Explorer (<code>Ctrl+Shift+E</code>)! This is because VSCode knows you have a repository in the directory and that those files have not been staged for a commit. If you open the Source Control Panel (<code>Ctrl+Shift+G</code>) you'll see both those files listed as changes with a "U" on the right meaning they're unstaged. Before staging and making our initial commit, however, we want to add a few more files that will help flesh out the repository. These include:</p>
+<ul class="simple">
+<li><p>a <code>readme.md</code> file in the base directory</p></li>
+<li><p>a <code>.gitignore</code> file in the base directory</p></li>
+<li><p>a new directory <code>/notebooks/</code> with a <code>readme.md</code> inside of it.</p></li>
+<li><p>a <code>/data/</code> directory with an empty <code>.gitkeep</code> file  inside of it.</p></li>
+</ul>
+<p>When you've added the files your project directory should look similar to below:</p>
+<div class="figure align-center">
+<img alt="/images/data_science_vcs/adding_readme_and_ignore.png" src="../../images/data_science_vcs/adding_readme_and_ignore.png">
+</div>
+</div>
+<div class="section" id="choosing-which-files-to-ignore">
+<h3><a class="toc-backref" href="#id10">Choosing which Files to Ignore</a></h3>
+<p>Git uses the <code>.gitignore</code> file to black-list specific files or even entire directories from being captured into version control. This helps keep the repository size small and only commit files that are necessary to reproduce the environment. As a rule of thumb the following should be excluded from your commits:</p>
+<ul class="simple">
+<li><p>Any IDE settings (the <code>./.vscode/</code> directory )</p></li>
+<li><p>Auto-generated files (<code>*.pyc</code>, file backups etc.)</p></li>
+<li><p>User specific environment files</p></li>
+<li><p>Large files that don't often change (downloaded datasets, third-party libraries)</p></li>
+</ul>
+<p>It might seem alarming that datasets should not be part of version control, after all you have nothing to analyze without data! Further down we'll talk about how to synchronize data with the repository, but for now we'll ignore all files in the /data/ directory except for our whitelisted <code>.gitkeep</code> file.</p>
+<pre class="code text"><a name="rest_code_bd56c3d29a994d728d15bb32d32c2da5-1"></a># Ignore data directories
+<a name="rest_code_bd56c3d29a994d728d15bb32d32c2da5-2"></a>/data/*
+<a name="rest_code_bd56c3d29a994d728d15bb32d32c2da5-3"></a>!/data/.gitkeep
+</pre>
+<p>The rest of our <code>.gitignore</code> file is built off of GitHub's <a class="reference external" href="https://github.com/github/gitignore/blob/master/Python.gitignore">python.gitignore</a> with the above additions to ignore our data directory, as well as VSCode settings, and Jupyter backup files. The entire file can be found <a class="reference external" href="https://github.com/rfrazier716/data_analysis_template/blob/main/.gitignore">here</a>.</p>
+</div>
+<div class="section" id="creating-a-git-hook-to-prevent-messy-commits">
+<h3><a class="toc-backref" href="#id11">Creating a Git Hook to Prevent Messy Commits</a></h3>
+<p>While I love Jupyter for exploration and data analysis, one thing that always bothers me is how the code lives in the same file as evaluated evaluated output. When version controlling notebooks this can cause issues for a couple of reasons:</p>
+<ol class="arabic simple">
+<li><p>If the data you're working on is private but the code is public, the private data could end up in an output and committed, available for anybody to see.</p></li>
+<li><p>Git works by logging differences in your file. This includes things like cell number, cell output, and picture metadata, if you version control an evaluated notebook you'll have unstaged changes as soon as you evaluate a cell, even though none of the written code actually changed!</p></li>
+</ol>
+<p>We want a way to scrub our notebooks of all evaluated output before committing them. To do so we'll use <a class="reference external" href="https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks">githooks</a> which are custom scripts that run when you perform a Git command. Flipping through the Githook documentation, the pre-commit hook is exactly what we need. Unfortunately, installing a Githook is a manual process that requires you to add a file to your <code>/.git/</code> directory.</p>
+<div class="class alert alert-warning docutils container">
+<i class="fas fa-exclamation-triangle"></i> Githooks are a great way to keep your repository clean, but you <b>must</b> make sure your file is saved before running the hook, otherwise the script will overwrite any unsaved changes.</div>
+<p>In order to make it as easy as possible for anybody to use this template, as well as make writing the githook simple, we'll instead use the <a class="reference external" href="https://pre-commit.com/">pre-commit</a> python package and write our hook with a YAML file that will live in the root of our version control. The pre-commit config we'll be using comes from <a class="reference external" href="https://zhauniarovich.com/post/2020/2020-06-clearing-jupyter-output/">Yuri Zhauniarovich's blog</a> and uses <a class="reference external" href="https://nbconvert.readthedocs.io/en/latest/">nbconvert</a> to scrub the output in-place.</p>
+<p>Let's add <code>pre-commit</code> and <code>nbconvert</code> to our poetry environment. Since it's not needed to actually run the notebooks, and will only be used by people contributing to the codebase we'll install them as developer packages.</p>
+<pre class="code shell-session"><a name="rest_code_c31c076fafa14d79976c9596b13684d2-1"></a><span class="gp">$ </span>poetry add pre-commit nbconvert --dev
+</pre>
+<p>To define the hook, a new file in the base directory called <code>.pre-commit-config.yaml</code> and add the following text:</p>
+<pre class="code YAML"><a name="rest_code_322b3c0a31944ea0a8c00288bd042ae8-1"></a><span class="nt">repos</span><span class="p">:</span>
+<a name="rest_code_322b3c0a31944ea0a8c00288bd042ae8-2"></a>  <span class="p p-Indicator">-</span> <span class="nt">repo</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">local</span>
+<a name="rest_code_322b3c0a31944ea0a8c00288bd042ae8-3"></a>    <span class="nt">hooks</span><span class="p">:</span>
+<a name="rest_code_322b3c0a31944ea0a8c00288bd042ae8-4"></a>      <span class="p p-Indicator">-</span> <span class="nt">id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">jupyter-nb-clear-output</span>
+<a name="rest_code_322b3c0a31944ea0a8c00288bd042ae8-5"></a>        <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">jupyter-nb-clear-output</span>
+<a name="rest_code_322b3c0a31944ea0a8c00288bd042ae8-6"></a>        <span class="nt">files</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">\.ipynb$</span>
+<a name="rest_code_322b3c0a31944ea0a8c00288bd042ae8-7"></a>        <span class="nt">stages</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">commit</span><span class="p p-Indicator">]</span>
+<a name="rest_code_322b3c0a31944ea0a8c00288bd042ae8-8"></a>        <span class="nt">language</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">system</span>
+<a name="rest_code_322b3c0a31944ea0a8c00288bd042ae8-9"></a>        <span class="nt">entry</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">poetry run jupyter nbconvert --ClearOutputPreprocessor.enabled=True --inplace</span>
+</pre>
+<p>The last piece is to install the githook so that it's run before every commit. Pre-commit makes this easy for us with it's <code>install</code> argument.</p>
+<pre class="code shell-session"><a name="rest_code_18435e0fc74d4c4c871e92b1d033f40b-1"></a><span class="gp">$ </span>poetry run pre-commit install
+<a name="rest_code_18435e0fc74d4c4c871e92b1d033f40b-2"></a><span class="go">pre-commit installed at .git\hooks\pre-commit</span>
+</pre>
+<p>This is a good spot for our first commit! We've fleshed out the repository, filled our <code>.gitignore</code> and added most of our template files (even if they are empty). To commit using VSCode we'll again use the Source Control Panel (<code>Ctrl+Shift+G</code>). You can manually stage files by pressing the "+" icon to the right of the files, or you can stage all changes by clicking the "+" to the right of the "Changes" drop-down.</p>
+<p>All commits should have a meaningful message so that you can look back and quickly understand what was changed. <a class="reference external" href="https://chris.beams.io">Chris Beam's Blog</a> has a great <a class="reference external" href="https://chris.beams.io/posts/git-commit/">post</a> on the importance of a good commit message and how to write one, but for our first commit message we'll keep it simple with "initial commit".</p>
+<p>With the files staged and commit message filled out, press the check-mark at the top of the panel to commit the changes.</p>
+</div>
+</div>
+<div class="section" id="version-controlling-data">
+<h2><a class="toc-backref" href="#id23">Version Controlling Data</a></h2>
+<p>Next comes adding data to the repository. Copy any necessary data files over to the <code>/data/</code> directory we made earlier. You can have a nested directory tree inside of that directory so organize it into a structure that works for you. Looking at the Explorer panel you'll notice all these files are greyed out and don't show up if you tab over to the Source Control panel. Since <code>/data/</code> is ignored every file and folder below is is subsequently ignored as well.</p>
+<div class="section" id="why-don-t-we-store-everything-in-the-git-repository">
+<h3><a class="toc-backref" href="#id13">Why Don't We Store Everything in the Git Repository?</a></h3>
+<p>To understand why we wouldn't want to store our large data files in a Git repository, lets peel back what happens when you clone an existing repository onto your local system. From Atlassian's <a class="reference external" href="https://www.atlassian.com/git/tutorials/git-lfs">Git-LFS tutorial</a>:</p>
+<div class="class alert alert-info docutils container">
+<p><em>"Git is a distributed version control system, meaning the entire history of the repository is transferred to the client during the cloning process. For projects containing large files, particularly large files that are modified regularly, this initial clone can take a huge amount of time, as every version of every file has to be downloaded by the client."</em></p>
+</div>
+<p>The solution to this problem is to not version control the large files at all, but instead version control small reference files that tell you <em>where</em> the data lives so you only check-out the version you want, instead of the entire history. <a class="reference external" href="https://git-lfs.github.com/">Git-LFS</a> (Large File System) is one implementation of this strategy, but we're going to instead use the <a class="reference external" href="https://dvc.org/">Data Version Control (DVC)</a> Python package, which is specifically designed with data-analysis in mind.</p>
+</div>
+<div class="section" id="setting-up-dvc">
+<h3><a class="toc-backref" href="#id14">Setting up DVC</a></h3>
+<p>Since DVC is a Python package, we can install it with Pip just like our other dependencies. The assumption is anybody using our repository will want access to the data, not just developers, so we won't both with the <code>--dev</code> flag either.</p>
+<pre class="code shell-session"><a name="rest_code_dfc745181f24438c900ff53d83b35cc2-1"></a><span class="gp">$ </span>poetry add dvc
+</pre>
+<p>DVC is designed to mimic a Git workflow, so many of the commands you'd use for Git have DVC parallels. For example, to initialize DVC in our repository and add the data directory we use the <code>init</code> and <code>add</code> commands respectively.</p>
+<pre class="code shell-session"><a name="rest_code_5ab260dfc77240ff8f77249d0f2ee585-1"></a><span class="gp">$ </span>poetry run dvc init
+<a name="rest_code_5ab260dfc77240ff8f77249d0f2ee585-2"></a><span class="gp">$ </span>poetry run dvc add ./data/
+<a name="rest_code_5ab260dfc77240ff8f77249d0f2ee585-3"></a><span class="go">~~~</span>
+<a name="rest_code_5ab260dfc77240ff8f77249d0f2ee585-4"></a><span class="go">To track the changes with git, run:</span>
+<a name="rest_code_5ab260dfc77240ff8f77249d0f2ee585-5"></a><span class="go">        git add data.dvc .gitignore</span>
+</pre>
+<p>Notice the final output after adding the data directory, DVC is telling us that it's created a new file called <code>data.dvc</code> that's tracking changes to our data directory. It's also updated <code>.gitignore</code> automatically for us to ignore <code>/data/</code> (Our previously committed .gitkeep will not be ignored since it's already tracked). DVC's offering a convenience in case we had forgotten to ignore the directory ourselves, but since we already had, let's revert our <code>.gitignore</code> to its previous state. In the Source Control Panel, right-click <code>.gitignore</code> and select "Discard Changes". This will reset the file to its state in the previous commit.</p>
+<p>If you add new data to the directory, you can update <code>data.dvc</code> by running <code>dvc add ./data/</code> again. Make sure to commit <code>data.dvc</code> as soon as you add new data, otherwise committed notebooks might lose sync with the data changes.</p>
+</div>
+<div class="section" id="adding-a-remote">
+<h3><a class="toc-backref" href="#id15">Adding a Remote</a></h3>
+<p>DVC allows you to back-up version-controlled data to remote servers, perfect for enabling multiple users to access the same version of a dataset. From the <a class="reference external" href="https://dvc.org/doc/command-reference/remote#remote">documentation</a>:</p>
+<div class="class alert alert-info docutils container">
+<p><em>The same way as GitHub provides storage hosting for Git repositories, DVC remotes provide a location to store and share data and models. You can pull data assets created by colleagues from DVC remotes without spending time and resources to build or process them locally. Remote storage can also save space on your local environment – DVC can fetch into the cache directory only the data you need for a specific branch/commit.</em></p>
+<p><em>Using DVC with remote storage is optional. DVC commands use the local cache (usually in dir .dvc/cache) as data storage by default. This enables the main DVC usage scenarios out of the box.</em></p>
+</div>
+<p>I recommend setting up a default remote even if you're the only one looking at the dataset. Mine are usually directories on an internal network drive, but DVC has <a class="reference external" href="https://dvc.org/doc/command-reference/remote/add#supported-storage-types">support for multiple storage types</a>, so use whichever structure works best for you. The remote can even be a separate directory on you computer.</p>
+<p>Once the remote is set-up, pushing to it is as simple as running <code>dvc push &lt;remote&gt;</code>. To pull from your remote you similarly run <code>dvc pull &lt;remote&gt;</code>.</p>
+</div>
+</div>
+<div class="section" id="document-everything-with-a-readme">
+<h2><a class="toc-backref" href="#id24">Document Everything with a ReadMe</a></h2>
+<p>A good ReadMe will elevate your repository from "that collection of code that only you know how to use" to "an easily understood project that anybody can contribute to." Think of the ReadMe like a lab report with instruction on how to reproduce the analysis, it should:</p>
+<ul class="simple">
+<li><p>Clearly summarize the goal of the repository.</p></li>
+<li>
+<p>Explain how to duplicate the code on a user's machine. This includes:</p>
+<ul>
+<li><p>Installing required software (Python, Poetry, etc.).</p></li>
+<li><p>Creating the Virtual Environment and installing necessary packages.</p></li>
+<li><p>Registering the Environment with Jupyter.</p></li>
+<li><p>Pulling data from the DVC remote.</p></li>
+</ul>
+</li>
+<li><p>Explain how to run the analysis, with a description of what each notebook does and what results it will generate.</p></li>
+<li>
+<p>Give clear instructions for how users can contribute to/extend the repository:</p>
+<ul>
+<li><p>Installing the additional developer dependencies.</p></li>
+<li><p>Making sure the githook is set-up so only clean files are committed.</p></li>
+</ul>
+</li>
+</ul>
+<p>I'm a big fan of <a class="reference external" href="https://github.com/othneildrew/Best-README-Template">othneildrew's Best ReadMe Template</a> and use it for most of my projects. A modified version can be found on the <a class="reference external" href="https://github.com/rfrazier716/data_analysis_template">example repository</a> which covers all of the above requirements.</p>
+<p>Remember we also had a second ReadMe in the <code>/notebooks/</code> directory which we'll use to describe each notebook in greater detail. You can even include example plots and outputs that the notebooks should generate. GitHub will show a rendered ReadMe in every directory that has one, so you can even group all your notebooks into separate subdirectories, and have a specific ReadMe explaining the purpose of every group!</p>
+<p>With data added, committed, and ReadMe's filled in it's time for our next commit! Stage all the changed files and give it a meaningful message: e.g. highlight what data was added and where it came from. Be sure to follow the <a class="reference external" href="https://www.midori-global.com/blog/2018/04/02/git-50-72-rule">50-72 rule</a> so your messages stay meaningful and concise.</p>
+<p>This is a great time to push your commits up to your favorite server. If VCS is completely new to you, I'd recommend <a class="reference external" href="https://docs.github.com/en/github/getting-started-with-github">GitHub</a> for its sheer popularity and option to make both public and private repositories with a free account.</p>
+</div>
+<div class="section" id="what-s-the-workflow-look-like">
+<h2><a class="toc-backref" href="#id25">What's the Workflow Look Like?</a></h2>
+<p>With the repository set up, it's time to outline how to use it for analysis. While at the end of the day you should do whatever is natural for your team. I recommend adopting a modification of the <a class="reference external" href="https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow">Gitflow</a> workflow:</p>
+<ul class="simple">
+<li><p>No work is done in the main branch of the repository.</p></li>
+<li><p>When you have a new task, make a branch off of <code>main</code> and do all of your work in that new branch.</p></li>
+<li><p>All notebooks should live in the <code>/notebook/</code> directory. Use subdirectories to group similar notebooks.</p></li>
+<li><p>When the task is finished, clean up the branch and update the ReadMe to describe any new files. Depending on how formal your team is, manually merge the branch back into <code>main</code> or submit a pull-request.</p></li>
+</ul>
+<p>This structure ensures that analysis tasks are done in isolated environments and only merged back when they're finalized, and you don't need to constantly worry about pulling from the main branch and resolving merge requests.</p>
+</div>
+<div class="section" id="how-to-save-results">
+<h2><a class="toc-backref" href="#id26">How to Save Results</a></h2>
+<p>This repository structure does a great job making sure analysis is done in a clear, reproducible matter, but I haven't touched on how to actually save results. In fact, because of our commit-hook, even if your VCS server rendered Jupyter notebooks (and many do) there would be no output and only code! How do we actually save results in a format that can be looked back on? This will vary from person-to-person, but I like to create a <code>/results/</code> directory and use <a class="reference external" href="https://www.sphinx-doc.org/en/master/">Sphinx</a> to create a static website with a new page for each result. Be sure to populate them with saved images and hard coded values so that the results persist even if you edit the code later on.</p>
+<p>Static site generation with Sphinx can easily be integrated into a CI/CD workflow and Github even offers free hosting of static pages. Look into <a class="reference external" href="https://github.com/c-w/ghp-import">gh-pages</a> for an easy way to deploy your pages into a GitHub hosted Static site.</p>
+<p>This entire template can be found on <a class="reference external" href="https://github.com/rfrazier716/data_analysis_template">my GitHub</a>, feel free to fork it for your own projects and submit requests for additional features!</p>
+</div>
+</div>
+            </div>
+                    <ul itemprop="keywords" class="tags">
+<li><a class="tag p-category" href="../../categories/analysis/" rel="tag">analysis</a></li>
+            <li><a class="tag p-category" href="../../categories/data-science/" rel="tag">data science</a></li>
+            <li><a class="tag p-category" href="../../categories/git/" rel="tag">git</a></li>
+            <li><a class="tag p-category" href="../../categories/jupyter/" rel="tag">jupyter</a></li>
+            <li><a class="tag p-category" href="../../categories/python/" rel="tag">python</a></li>
+        </ul>
+</div>
+
+        <div class="col-lg-4 col-md-12">
+                <div class="sticky-top" id="sticky-right" style="top: 1.5rem">
+        <div class="mx-2" id="quick-nav"></div>
+        <div class="addthis_inline_share_toolbox mx-auto"></div>
+    </div>
+
+    <script>
+        document.getElementById('quick-nav').appendChild(
+        document.getElementById('quick-links')
+        );
+    </script>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../5-video-game-soundtracks-to-jam-out-to-while-coding/" rel="prev" title="5 Video Game Soundtracks to Jam Out to While Coding">Previous post</a>
+            </li>
+        </ul></nav></aside></article><!--End of body content--><footer id="footer">
+            
+Contents © 2021         <a href="mailto:ryan@fotonixx.com">Ryan Frazier</a> 
+- Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+
+<span class="follow-icons">
+
+  <a href="mailto:rfrazier716+site@gmail.com" class="fas fa-envelope-square fa-2x follow-icon"></a>
+  <a href="https://github.com/rfrazier716" class="fab fa-github-square fa-2x follow-icon"></a>
+  <a href="https://www.instagram.com/fotonix716/" class="fab fa-instagram-square fa-2x follow-icon"></a>
+  <a href="https://twitter.com/FotonixAndGizmo" class="fab fa-twitter-square fa-2x follow-icon"></a>
+</span>
+
+            
+        </footer>
+</div>
+</div>
+
+        <script src="../../assets/js/all-nocdn.js"></script><script src="https://kit.fontawesome.com/b9c0b6e7c8.js" crossorigin="anonymous"></script><!-- Go to www.addthis.com/dashboard to customize your tools --><script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-603c029f21971de0"></script><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element){var i=element.getElementsByTagName('img')[0];return i===undefined?'':i.alt;}});
+    </script>
+</body>
+</html>
