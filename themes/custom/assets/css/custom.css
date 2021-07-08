@@ -76,13 +76,6 @@ a:hover .fav-index{
     margin-left: 5%;
     margin-right: 5%;
 }
-
-code {
-    font-size: 87.5%;
-    color: #000000;
-    word-wrap: break-word;
-  }
-
 pre.code {
     margin-left: 0;
     margin-right: 0;
