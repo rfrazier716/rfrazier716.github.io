@@ -102,3 +102,7 @@ sticky-top addthis_inline_share_toolbox{
 .about-me-share a.about-icon{
     color: var(--info);
 }
+
+.rust-playground{
+    text-align: right;
+}
