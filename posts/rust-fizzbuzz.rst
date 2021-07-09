@@ -8,7 +8,7 @@
 .. type: text
 .. previewimage: /images/rust_fizzbuzz/preview_image.png
 
-The last couple few months have been a whirlwind exposure to `Rust`_. It started when I was looking for a systems language to speed up pieces of `PyRayT <https://pyrayt.readthedocs.io>`_ that was more general than `Cython <https://cython.org/>`_, but not C/C++ (which I have my own love/hate relationship with). After reading the excellently written `Rust Book`_ I was hooked on the language, using it for a couple CLIs, a `webserver <https://github.com/rfrazier716/mongo_warp>`_, and even going through old `Advent of Code <https://adventofcode.com/>`_ puzzles to get more practice. 
+The last few months have been a whirlwind exposure to `Rust`_. It started when I was looking for a systems language to speed up pieces of `PyRayT <https://pyrayt.readthedocs.io>`_ that was more general than `Cython <https://cython.org/>`_, but not C/C++ (which I have my own love/hate relationship with). After reading the excellently written `Rust Book`_ I was hooked on the language, using it for a couple CLIs, a `webserver <https://github.com/rfrazier716/mongo_warp>`_, and even going through old `Advent of Code <https://adventofcode.com/>`_ puzzles to get more practice. 
 
 .. figure:: https://i.imgflip.com/5fy2ea.jpg
     :align: center
