@@ -332,7 +332,6 @@ We also want to be able to catch the error in the main function. so we'll replac
     impl<T> Fizzy for T
     where
         T: PrimInt + Zero,
-        T: Copy + Clone,
         T: std::fmt::Display,
     {
         fn fizzy(&self, writer: &mut impl Write) -> Result<()> {
