@@ -19,11 +19,11 @@
  </url>
  <url>
   <loc>https://www.fotonixx.com/archive.html</loc>
-  <lastmod>2021-05-29T22:18:00Z</lastmod>
+  <lastmod>2021-07-09T13:01:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/</loc>
-  <lastmod>2021-05-31T16:47:00Z</lastmod>
+  <lastmod>2021-07-09T12:58:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/analysis/</loc>
@@ -94,6 +94,10 @@
   <lastmod>2021-04-11T18:20:00Z</lastmod>
  </url>
  <url>
+  <loc>https://www.fotonixx.com/categories/rust/</loc>
+  <lastmod>2021-07-09T12:58:00Z</lastmod>
+ </url>
+ <url>
   <loc>https://www.fotonixx.com/categories/video-games/</loc>
   <lastmod>2021-04-29T01:28:00Z</lastmod>
  </url>
@@ -124,6 +128,10 @@
  <url>
   <loc>https://www.fotonixx.com/posts/getting-up-and-running-with-nikola/</loc>
   <lastmod>2021-04-11T18:20:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://www.fotonixx.com/posts/rust-fizzbuzz/</loc>
+  <lastmod>2021-06-23T00:40:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/projects/</loc>

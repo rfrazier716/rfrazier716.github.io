@@ -981,13 +981,6 @@ a:hover .fav-index{
     margin-left: 5%;
     margin-right: 5%;
 }
-
-code {
-    font-size: 87.5%;
-    color: #000000;
-    word-wrap: break-word;
-  }
-
 pre.code {
     margin-left: 0;
     margin-right: 0;
@@ -1013,4 +1006,8 @@ sticky-top addthis_inline_share_toolbox{
 
 .about-me-share a.about-icon{
     color: var(--info);
+}
+
+.rust-playground{
+    text-align: right;
 }
