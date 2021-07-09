@@ -1,13 +1,20 @@
 .. title: Writing an (Overly) Idiomatic Fizzbuzz with Rust
 .. slug: rust-fizzbuzz
-.. date: 2021-06-22 20:27:33 UTC-04:00
-.. tags: 
-.. category: 
+.. date: 2021-07-08 20:27:33 UTC-04:00
+.. tags: rust
+.. category: Programming
 .. link: 
 .. description: 
 .. type: text
+.. previewimage: /images/rust_fizzbuzz/preview_image.png
 
-The last couple few months have been a whirlwind exposure to `Rust`_. It started when I was looking for a systems language to speed up pieces of `PyRayT <https://pyrayt.readthedocs.io>`_ that was more general purpose than `Cython <https://cython.org/>`_, but not C/C++ (which I have my own love/hate relationship with). After reading the excellently written `Rust Book`_ I was hooked on the language, using it for a couple CLIs, a `webserver <https://github.com/rfrazier716/mongo_warp>`_, and even going through old `Advent of Code <https://adventofcode.com/>`_ puzzles to get more practice. 
+The last couple few months have been a whirlwind exposure to `Rust`_. It started when I was looking for a systems language to speed up pieces of `PyRayT <https://pyrayt.readthedocs.io>`_ that was more general than `Cython <https://cython.org/>`_, but not C/C++ (which I have my own love/hate relationship with). After reading the excellently written `Rust Book`_ I was hooked on the language, using it for a couple CLIs, a `webserver <https://github.com/rfrazier716/mongo_warp>`_, and even going through old `Advent of Code <https://adventofcode.com/>`_ puzzles to get more practice. 
+
+.. figure:: https://i.imgflip.com/5fy2ea.jpg
+    :align: center
+    :width: 500
+
+    This is slowly becoming my answer to all things software related
 
 This post isn't going to be a gushing review of Rust (though as `2020's most loved language <https://insights.stackoverflow.com/survey/2020#technology-most-loved-dreaded-and-wanted-languages-loved>`_ you won't be hard pressed to find one of those either). Instead, it's sparked from an article I saw on `This Week in Rust <https://this-week-in-rust.org/>`_ back in June about writing an `idiomatic binary search <https://shane-o.dev/blog/binary-search-rust>`_. The binary search is a well known algorithm, which got me thinking: what's another well known program I could use to practice writing idiomatic code? The answer: `Fizzbuzz <https://en.wikipedia.org/wiki/Fizz_buzz>`_, the programming puzzle commonly used in interviews to make sure the candidate actually knows what a for loop is. 
 
@@ -23,12 +30,9 @@ In this post I'll be starting with a standard Fizzbuzz solution, and polishing i
 What Makes Code Idiomatic?
 ==========================
 
-Before diving into the *how*, it's worth covering *what* idiomatic code actually is. Outside of coding context, idiomatic means "using, containing, or denoting expressions that are natural to a native speaker." When discussing idiomatic programming, it means the program leverages features unique to the language to accomplish the task. Coming from Python, I would hear this as writing "pythonic" code (`list comprehension`_, `dunder methods`_, etc.). 
+Before diving into the *how*, it's worth covering *what* idiomatic code actually is. Outside of coding context, idiomatic means "using, containing, or denoting expressions that are natural to a native speaker." When discussing idiomatic programming, it means the program leverages features unique to the language to accomplish the task. Coming from `Python`_, I would hear this as writing "Pythonic" code (list comprehension, generators, etc.). 
 
-.. _`list comprehension`: https://www.w3schools.com/python/python_lists_comprehension.asp
-.. _`dunder methods`: https://www.geeksforgeeks.org/dunder-magic-methods-python/
-
-Idiomatic Rust should leverage Rust's unique features such as match, traits, iterators, and ownership. Since I'm still learning Rust every day, I use `Clippy <https://github.com/rust-lang/rust-clippy>`_, a linter with 400+ lints, to catch common mistakes and recommend idiomatic alternatives!
+Idiomatic Rust should leverage Rust's unique features such as match, traits, iterators, and ownership. Since I'm still learning Rust every day, I use the linter `Clippy <https://github.com/rust-lang/rust-clippy>`_, to catch common mistakes and recommend idiomatic alternatives!
 
 The Basic Fizzbuzz
 ===================
@@ -41,7 +45,7 @@ The goal of Fizzbuzz is simple:
 * For numbers which are multiples of both 3 and 5, print "FizzBuzz" instead of the number.
 
 
-The first bullet screams "for loop" while the next three are conditional (if statements). With that in mind we'll write our simplest solution relying on a series of if-else statements and the modulo operator.
+The first bullet screams "for loop" while the next three are conditional (if) statements. With that in mind we'll write our simplest solution relying on a series of if-else statements and the modulo operator.
 
 .. raw:: html
 
@@ -160,9 +164,9 @@ It may look like all we did was shuffle around where the code was (and for this 
 Idiomatic Testing???
 `````````````````````
 
-Unit tests themselves are not particularly idiomatic to Rust. In fact, you'd be hard pressed to find a modern language that does not have an extensive unit-test framework to tap into. What *is* idiomatic, however, is how testing is built into the core language and Rust's solution to testing private interfaces.
+Unit tests themselves are not particularly idiomatic to Rust. In fact, you'd be hard pressed to find a modern language that does not have an extensive unit test framework to tap into. What *is* idiomatic, however, is how testing is built into the core language and Rust's solution to testing private interfaces.
 
-When writing an class/interface, I'll split complex methods into multiple small methods that can be easily tested, but I don't want those interim methods exposed to the end user. Python makes this easy enough with private methods, prefixing a function with an underscore (_) marks it as private, and most documentation and linters will treat it as such. However, it's actually as public as any other function, so while the IDE might flag a warning when I call the method to test it, there's nothing illegal about doing so (see below).
+When writing a class/interface, I'll split complex methods into multiple small methods that can be easily tested, but I don't want those interim methods exposed to the end user. Python makes this easy enough with private methods, prefixing a function with an underscore (_) marks it as private, and most documentation and linters will treat it as such. However, it's actually as public as any other function, so while the IDE might flag a warning when I call the method to test it, there's nothing illegal about doing so (see below).
 
 .. code:: Python
 
@@ -246,7 +250,7 @@ Generic Traits and Monomorphization
 
 At this point pulling out the above Fizzbuzz will knock any interviewer's socks clean off... or they'll be annoyed that you've spend so much time on such an easy question, could go either way. But we're not here to please an imaginary interviewer! We're writing the most idiomatic Fizzbuzz in the history of Rust, so let's add one more "*totally unnecessary in this context but useful in general*" feature: Generic Types. 
 
-Up until now we've used :code:`i32` as the base type for all things fizzbuzz. It's a safe bet for general integers, having a range of >4 billion, but will it always be the *right* choice for our program? If fizzbuzz will only ever use positive numbers, you may as well use an unsigned int. If you only ever need to calculate up to 100, 32-bits is overkill and you're better off with :code:`u8`. Instead of trying to predict the end use-case, we want to write our trait implementation such that the main function can call it with *any* integer type, and an appropriate trait method is called. 
+Up until now we've used :code:`i32` as the base type for all things Fizzbuzz. It's a safe bet for general integers, having a range of >4 billion, but will it always be the *right* choice for our program? If Fizzbuzz will only ever use positive numbers, you may as well use an unsigned int. If you only ever need to calculate up to 100, 32-bits is overkill and you're better off with :code:`u8`. Instead of trying to predict the end use-case, we want to write our trait implementation such that the main function can call it with *any* integer type, and an appropriate trait method is called. 
 
 Rust solves this issue with `generics <https://doc.rust-lang.org/book/ch10-01-syntax.html>`_. Instead of defining a function for a specific type, the programmer defines a set of traits that the type **must** implement. Generics are one of Rust's *zero-cost abstractions*, and provide flexibility while incurring `no overhead at runtime <https://doc.rust-lang.org/book/ch10-01-syntax.html#performance-of-code-using-generics>`_.
 
@@ -272,7 +276,6 @@ To make :code:`Fizzy` generic to all int types, we'll use the `num <https://crat
     impl<T> Fizzy for T
     where
         T: PrimInt + Zero,
-        T: Copy + Clone,
         T: std::fmt::Display,
     {
         fn fizzy(&self) -> String {
@@ -301,7 +304,12 @@ Going off the Deep End
 
 We did it, we wrote an amazing Fizzbuzz leveraging a slew of Rust's unique features! But we also cheated slightly... The rules of the game asked us to print the result of the fizzbuzz check, but to enable testing we return a :code:`String` that's printed in the main loop. We can trim down this waste of a *whopping 72 bytes* of memory by having :code:`fizzy` write directly to an IO stream! The easiest solution would be to have our function call the :code:`println!` macro directly, but then we can no longer test our function. Instead, We'll borrow a tip from the `Rust CLI Book <https://rust-cli.github.io/book/tutorial/testing.html#making-your-code-testable>`_ (different than *The Rust Book*, but equally as good) where we pass a mutable reference to a :code:`Writer` handle. In the main loop that handle will point to stdout, but for testing it will be a :code:`vector` that we can compare to the expected output.
 
-This requires a couple modifications to our :code:`fizzy` function, (1) we need to replace all the match statement arms with :code:`writeln!` macro calls. and (2) since :code:`writeln!` can fail we need to modify the signature of :code:`fizzy` to return a :code:`std::io::Result` enum, allowing us to squeeze in yet another idiomatic feature: Error Types! We also want to be able to catch the error in the main function. so we'll replace the for loop with an iterator, and consume it with a :code:`try_for_each` method.
+This requires a couple modifications to our :code:`fizzy` function:
+
+#. We need to replace all the match statement arms with :code:`writeln!` macro calls. 
+#. Since :code:`writeln!` can fail we need to modify the signature of :code:`fizzy` to return a :code:`std::io::Result` enum, allowing us to squeeze in yet another idiomatic feature: Error Types! 
+
+We also want to be able to catch the error in the main function. so we'll replace the for loop with an iterator, and consume it with a :code:`try_for_each` method.
 
 
 .. raw:: html
@@ -329,7 +337,7 @@ This requires a couple modifications to our :code:`fizzy` function, (1) we need 
     {
         fn fizzy(&self, writer: &mut impl Write) -> Result<()> {
             let zero = T::zero();
-            let three = T::from(3).unwrap(); // THese will never fail
+            let three = T::from(3).unwrap(); // These will never fail
             let five = T::from(5).unwrap();
             match (*self % three, *self % five) {
                 (x, y) if x == zero && y == zero => writeln!(writer, "FizzBuzz"),
@@ -352,3 +360,4 @@ With those small changes we've added mutable references, iterators, and error ha
 
 .. _`Rust`: https://www.rust-lang.org/
 .. _`Rust Book`: https://doc.rust-lang.org/book/
+.. _`Python`: https://www.python.org/
