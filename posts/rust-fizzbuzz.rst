@@ -14,7 +14,7 @@ The last few months have been a whirlwind exposure to `Rust`_. It started when I
     :align: center
     :width: 500
 
-    This is slowly becoming my answer to all things software related
+    This is slowly becoming my reply to all things software related
 
 This post isn't going to be a gushing review of Rust (though as `2020's most loved language <https://insights.stackoverflow.com/survey/2020#technology-most-loved-dreaded-and-wanted-languages-loved>`_ you won't be hard pressed to find one of those either). Instead, it's sparked from an article I saw on `This Week in Rust <https://this-week-in-rust.org/>`_ back in June about writing an `idiomatic binary search <https://shane-o.dev/blog/binary-search-rust>`_. The binary search is a well known algorithm, which got me thinking: what's another well known program I could use to practice writing idiomatic code? The answer: `Fizzbuzz <https://en.wikipedia.org/wiki/Fizz_buzz>`_, the programming puzzle commonly used in interviews to make sure the candidate actually knows what a for loop is. 
 
@@ -164,7 +164,7 @@ It may look like all we did was shuffle around where the code was (and for this 
 Idiomatic Testing???
 `````````````````````
 
-Unit tests themselves are not particularly idiomatic to Rust. In fact, you'd be hard pressed to find a modern language that does not have an extensive unit test framework to tap into. What *is* idiomatic, however, is how testing is built into the core language and Rust's solution to testing private interfaces.
+Unit tests themselves are not unique/idiomatic to Rust. In fact, you'd be hard pressed to find a modern language that does not have an extensive unit test framework to tap into. What *is* idiomatic, however, is how testing is built into the core language and Rust's solution to testing private interfaces.
 
 When writing a class/interface, I'll split complex methods into multiple small methods that can be easily tested, but I don't want those interim methods exposed to the end user. Python makes this easy enough with private methods, prefixing a function with an underscore (_) marks it as private, and most documentation and linters will treat it as such. However, it's actually as public as any other function, so while the IDE might flag a warning when I call the method to test it, there's nothing illegal about doing so (see below).
 
@@ -355,6 +355,82 @@ We also want to be able to catch the error in the main function. so we'll replac
     }
 
 With those small changes we've added mutable references, iterators, and error handling to the list of features this little program can demonstrate. Was any of it necessary? Not at all! Our final output is no different than the first program composed of if-else statements. But it's always fun to start with a trivial program and think up ways to transform it into something that makes me feel like I'll one day earn the title of "Rustacean".    
+
+Update - Why no Love for Enum?
+================================
+
+After posting this code onto the `r/rust <https://www.reddit.com/r/rust/>`_ subreddit, the most common feedback I got was along the lines of "why are you passing strings around/writing directly to stdout, make an enum and use that instead." This somewhat surprised me because `my first pass`_ at writing this code *did* use an enum with an associated value, and the feedback for that code was "the enum is unnecessary if all you'll ever do is print the output, just print it directly to stdout." These conflicting feedbacks have helped me spawn my own definition for truly idiomatic Rust:
+
+.. _`my first pass`: https://github.com/rfrazier716/rust_101/blob/d0028ed3072b4d7ce34b845fe6044266cdcaa123/fizzbuzz/src/main.rs
+
+    "The most idiomatic Rust is whatever code you did not write, but somebody else has decided you should."
+
+    -- Fotonix
+
+Not one to disappoint, however, lets write a final Fizzbuzz that forgoes our custom trait in favor of an enum that implements :code:`std::fmt::Display`!
+
+.. raw:: html
+
+    <div class="rust-playground">
+        <a href=https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=8d9fc8300bf73040735c770a9e3ecf1d>
+            <i class="fas fa-play"></i> Run on the Rust Playground
+        </a>
+    </div>
+
+.. code:: rust
+
+    use num_traits::{identities::Zero, PrimInt}; // 0.2.14
+    use std::fmt;
+
+    #[derive(Debug, PartialEq)]
+    enum FizzbuzzResult<T> {
+        Fizz,
+        Buzz,
+        FizzBuzz,
+        Num(T),
+    }
+
+    impl<T> fmt::Display for FizzbuzzResult<T>
+    where
+        T: fmt::Display,
+    {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            match *self {
+                FizzbuzzResult::Fizz => write!(f, "Fizz"),
+                FizzbuzzResult::Buzz => write!(f, "Buzz"),
+                FizzbuzzResult::FizzBuzz => write!(f, "FizzBuzz"),
+                FizzbuzzResult::Num(ref val) => write!(f, "{}", val),
+            }
+        }
+    }
+
+    fn fizzbuzz<T>(num: T) -> FizzbuzzResult<T>
+    where
+        T: PrimInt + Zero,
+        T: Copy + Clone,
+    {
+        let zero = T::zero();
+        // These will never fail
+        let three = T::from(3).expect("Could not convert '3' to generic type");
+        let five = T::from(5).expect("Could not convert '5' to generic type");
+
+        match (num % three, num % five) {
+            (x, y) if x == zero && y == zero => FizzbuzzResult::FizzBuzz,
+            (x, _) if x == zero => FizzbuzzResult::Fizz,
+            (_, x) if x == zero => FizzbuzzResult::Buzz,
+            _ => FizzbuzzResult::Num(num),
+        }
+    }
+
+    fn main() {
+        for x in 1..=100 {
+            println!("{}", fizzbuzz(x))
+        }
+    }
+
+This code has a few distinct advantages, but the main ones are you only ever return an enum that lives on the stack, and testing no longer involves string comparison, but instead compares the returned enum to the expected type (This is why :code:`PartialEq` is derived for :code:`FizzbuzzResult`). On the flip side, we now have two match comparisons: one to generate the enum and one to display it, whereas our first attempt has only one. 
+
+At this point I don't know which of these options is *more* idiomatic, but I do know now that I've written them down, somebody is going to come in with a third option claiming it's superior to both 😄.
 
 
 .. _`Rust`: https://www.rust-lang.org/
