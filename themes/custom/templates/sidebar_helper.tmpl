@@ -3,7 +3,7 @@
 <div id="mc_embed_signup" class="alert alert-info mc-signup">
 <h2>Get Notified of New Content!</h2>
 <div class= "mc-signup-blurb">
-All My Ramblings Straight to your Inbox
+All my ramblings straight to your Inbox
 </div>
 <hr>
     <form action="https://fotonixx.us6.list-manage.com/subscribe/post?u=ed786630410d3ae8cc7b82748&amp;id=7b2d390e9d" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
@@ -23,3 +23,22 @@ All My Ramblings Straight to your Inbox
 </div>
 <!--End mc_embed_signup-->
 {% endmacro %}}
+
+{% macro popular_tags() %}
+    <div class="alert alert-primary popular-tags" align="center">
+    <h3>Popular Tags</h3>
+    <hr>
+    <ul class="tags popular-tags" itemprop="keywords">
+    {% for tag in ["python", "rust", "ray tracing"] %}
+    <li>
+        <a class="tag p-category " href="/categories/{{ tag.replace(" ","-") }}/" rel="tag">{{ tag }}</a>
+    <li>
+    {% endfor %}
+    </ul>
+    <a class="btn btn-link" href="/categories/">View All</a>
+    </div>
+{% endmacro %}
+
+{% macro addthis_share() %}
+    <div class="addthis_inline_share_toolbox mx-auto"></div>
+{% endmacro %}

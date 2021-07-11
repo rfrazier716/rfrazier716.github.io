@@ -1,6 +1,6 @@
 {#  -*- coding: utf-8 -*- #}
 
-{% import 'contact_helper.tmpl' as contact_helper with context %}
+{% import 'sidebar_helper.tmpl' as sidebar_helper with context %}
 {% import 'post_helper.tmpl' as helper with context %}
 {% import 'post_header.tmpl' as pheader with context %}
 {% import 'comments_helper.tmpl' as comments with context %}
@@ -11,11 +11,7 @@
 
 
 {% macro quick_nav_helper()%}
-    <div class="sticky-top" id="sticky-right" style="top: 1.5rem">
-        <div class ="mx-2" id="quick-nav"></div>
-        <div class="addthis_inline_share_toolbox mx-auto"></div>
-    </div>
-
+    <div class="w-100" id="quick-nav"></div>
     <script>
         document.getElementById('quick-nav').appendChild(
         document.getElementById('quick-links')
@@ -70,8 +66,12 @@
 {% endblock %}
 
 {% block side_gutter %}
-    {{ contact_helper.mail_chimp() }}
-    {{quick_nav_helper()}}
+    {{ sidebar_helper.mail_chimp() }}
+{% endblock %}
+
+{% block sticky_gutter %}
+    {{ quick_nav_helper() }}
+    {{ sidebar_helper.addthis_share() }}
 {% endblock %}
 
 {% block sourcelink %}

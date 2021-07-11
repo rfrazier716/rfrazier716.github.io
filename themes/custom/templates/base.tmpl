@@ -79,9 +79,11 @@ bg-dark
             </div>
             <div class="col-lg-4 col-md-12">
                 {% block side_gutter %}{% endblock %}
+                <div class="sticky-top" id="sticky-right" style="top: 1rem">
+                    {% block sticky_gutter %}{% endblock %}
+                </div>
             </div>
         </div>
-
 
         <footer id="footer">
             {{ content_footer }}
