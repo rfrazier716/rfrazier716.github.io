@@ -299,6 +299,21 @@ To make :code:`Fizzy` generic to all int types, we'll use the `num <https://crat
 
 Notice how we can no longer use integers in :code:`fizzy`, but instead have to convert them to our generic type within the function. Fortunately the compiler optimizes this out and replaces them with constants in the final code. This is also a case where its acceptable to use :code:`unwrap` without fear of causing a panic at runtime. Since T implements :code:`PrimInt` we know a conversion from integers to T will never fail.
 
+.. container::
+    class: alert alert-info
+
+    .. raw:: html
+
+        <div class="update-header">
+            <i class="fas fa-info-circle"></i> Update
+        </div>
+        <hr>
+
+    `/u/TinBryn pointed out`_ that that type bounds I picked were unnecessarily complex due to Rust's `super traits`_ system. A type implementing :code:`PrimInt` implies it also implements :code:`Zero` and :code:`Copy`, and :code:`Copy` implies :code:`Clone`. Ultimately all we need to include is :code:`where T: PrimInt + std::fmt::Display` to get the same functionality.
+
+.. _`super traits`: https://doc.rust-lang.org/book/ch19-03-advanced-traits.html#using-supertraits-to-require-one-traits-functionality-within-another-trait
+.. _`/u/TinBryn pointed out`: https://www.reddit.com/r/rust/comments/ogw7gi/learning_idiomatic_rust_by_going_overkill_with/h4si3pt/?utm_source=reddit&utm_medium=web2x&context=3
+
 Going off the Deep End 
 =======================
 
