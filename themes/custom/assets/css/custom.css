@@ -110,3 +110,8 @@ sticky-top addthis_inline_share_toolbox{
 .mc-signup{
     text-align: center;
 }
+
+#quick-links {
+    margin-right: 0;
+    margin-left: 0;
+}
