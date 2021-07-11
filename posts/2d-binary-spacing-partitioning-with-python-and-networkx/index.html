@@ -64,11 +64,11 @@ bg-dark
 </nav><!-- End of Menubar --><div class="container" id="content" role="main">
     <div class="body-content">
         <!--Body content-->
-        
+        <div class="row h-100">
+            <div class="col-lg-8 col-md-12">
+                
 
-<article class="post-text h-entry hentry postpage " itemscope="itemscope" itemtype="http://schema.org/Article"><div class="row">
-        <div class="col-lg-8 col-md-12">
-                <header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">2D Binary Spacing Partitioning with Python and NetworkX</a></h1>
+<article class="post-text h-entry hentry postpage " itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">2D Binary Spacing Partitioning with Python and NetworkX</a></h1>
 
         <div class="metadata">
             <p class="byline author vcard p-author h-card"><span class="byline-name fn p-name" itemprop="author">
@@ -82,7 +82,7 @@ bg-dark
         </div>
         
     </header><div class="e-content entry-content" itemprop="articleBody text">
-            <div>
+    <div>
 <p>I'm a sucker for tricks programmers use to get games to run efficiently, from the <a class="reference external" href="https://www.pcgamer.com/heres-whats-happening-inside-fallout-3s-metro-train/">metro train in Fall Out 3</a> that's actually a piece of armor, to the <a class="reference external" href="https://kotaku.com/the-invisible-bunnies-that-power-world-of-warcraft-1791576630">spell casting bunnies</a> in World of Warcraft that triggered world events. In a slightly different camp, however, are tricks that enabled game makers to do the impossible with the hardware they're given, and one name that's constantly tied to these feats is <a class="reference external" href="https://en.wikipedia.org/wiki/John_Carmack">John Carmack</a>, cofounder of id software and pioneer of 3D computer games. His use of ray casting for Wolfenstein 3D and the <a class="reference external" href="https://en.wikipedia.org/wiki/Fast_inverse_square_root">fast inverse square root algorithm</a> alone are topics worthy of their own posts, but today I'm going to focus on the algorithm he used to enable real-time 3D level rendering in the original Doom: binary space partitioning (BSP).</p>
 <p>Carmack's vision for Doom was to have maps with varying heights, zone-specific lighting, and non-orthogonal walls. Unfortunately, the ray casting algorithm used in id's previous game, Wolfenstein 3D, couldn't render such complex scenes, so he was left looking for a new solution. David Kushner's <a class="reference external" href="http://www.davidkushner.com/book/masters-of-doom/">Masters of Doom</a>, as well as this post on <a class="reference external" href="https://twobithistory.org/2019/11/06/doom-bsp.html">twobithistory</a> have already covered this story wonderfully, so I won't go into excessive detail but instead focus on the solution. By representing levels as binary trees of line segments, the rendering engine could quickly decide which surfaces to draw and in what order. Despite being incredibly curious when I first read Masters of Doom, I wasn't working on anything related to computer graphics at the time, and filed BSP trees off for something to look at another day.</p>
 <p>Fast forward to now: I'm trying to incorporate OpenGL rendering into my <a class="reference external" href="https://github.com/rfrazier716/PyRayT">ray tracer</a>, which requires <a class="reference external" href="../efficient-csg/">constructive solid geometry</a> performed on polygonal meshes. Turns out binary space partitioning is a core part of this algorithm too, so it's finally time to dive in and learn how to create and use BSP trees!</p>
@@ -403,28 +403,13 @@ t = \frac{(\vec{p}_1-\vec{p}_0) \times \vec{v}_1}{\vec{v}_0 \times \vec{v}_1}
 <p>Despite creating an impressive BSP tree, at the end of the day it's still just a graph, and could use a killer application to make the power of BSP shine! <a class="reference external" href="https://github.com/rfrazier716/bsp/blob/master/bsp.py">The full code</a> has additional functions for performing operations on trees as well as implementing CSG operations. Alternatively, pair BSP with <a class="reference external" href="http://pyglet.org">Pyglet</a> you're half way towards a working 2.5D game engine.</p>
 </div>
 </div>
-            </div>
-                    <ul itemprop="keywords" class="tags">
+    </div>
+            <ul itemprop="keywords" class="tags">
 <li><a class="tag p-category" href="../../categories/graphics/" rel="tag">graphics</a></li>
             <li><a class="tag p-category" href="../../categories/numpy/" rel="tag">numpy</a></li>
             <li><a class="tag p-category" href="../../categories/python/" rel="tag">python</a></li>
         </ul>
-</div>
-
-        <div class="col-lg-4 col-md-12">
-                <div class="sticky-top" id="sticky-right" style="top: 1.5rem">
-        <div class="mx-2" id="quick-nav"></div>
-        <div class="addthis_inline_share_toolbox mx-auto"></div>
-    </div>
-
-    <script>
-        document.getElementById('quick-nav').appendChild(
-        document.getElementById('quick-links')
-        );
-    </script>
-</div>
-    </div>
-    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<aside class="postpromonav"><nav><ul class="pager hidden-print">
 <li class="previous">
                 <a href="../efficient-csg/" rel="prev" title="Rendering Constructive Solid Geometry With Python">Previous post</a>
             </li>
@@ -433,7 +418,46 @@ t = \frac{(\vec{p}_1-\vec{p}_0) \times \vec{v}_1}{\vec{v}_0 \times \vec{v}_1}
             </li>
         </ul></nav></aside><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha384-3lJUsx1TJHt7BA4udB5KPnDrlkO8T6J6v/op7ui0BbCjvZ9WqV4Xm6DTP6kQ/iBH" crossorigin="anonymous"></script><script type="text/x-mathjax-config">
         MathJax.Hub.Config({tex2jax: {inlineMath: [['$latex ','$'], ['\\(','\\)']]}});
-        </script></article><!--End of body content--><footer id="footer">
+        </script></article><!--End of body content-->
+</div>
+            <div class="col-lg-4 col-md-12">
+    <!-- Begin Mailchimp Signup Form -->
+<div id="mc_embed_signup" class="alert alert-info mc-signup">
+<h2>Get Notified of New Content!</h2>
+<div class="mc-signup-blurb">
+All my ramblings straight to your Inbox
+</div>
+<hr>
+<form action="https://fotonixx.us6.list-manage.com/subscribe/post?u=ed786630410d3ae8cc7b82748&amp;id=7b2d390e9d" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+        <div class="form-group">
+            <input type="email" class="form-control" id="mce-EMAIL" name="EMAIL" aria-describedby="emailHelp" placeholder="Email...">
+</div>
+        <div id="mce-responses" class="clear">
+            <div class="response" id="mce-error-response" style="display:none"></div>
+            <div class="response" id="mce-success-response" style="display:none"></div>
+        </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_ed786630410d3ae8cc7b82748_7b2d390e9d" tabindex="-1" value=""></div>
+        <button type="submit" class="btn btn-primary btn-block">subscribe</button>
+        <div class="spam-callout">
+        🔒 No spam. Unsubscribe any time. 📧
+        </div>
+    </form>
+</div>
+<!--End mc_embed_signup-->
+
+                <div class="sticky-top" id="sticky-right" style="top: 1rem">
+        <div class="w-100" id="quick-nav"></div>
+    <script>
+        document.getElementById('quick-nav').appendChild(
+        document.getElementById('quick-links')
+        );
+    </script><div class="addthis_inline_share_toolbox mx-auto"></div>
+
+                </div>
+            </div>
+        </div>
+
+        <footer id="footer">
             
 Contents © 2021         <a href="mailto:ryan@fotonixx.com">Ryan Frazier</a> 
 - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         

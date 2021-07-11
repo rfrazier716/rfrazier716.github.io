@@ -66,11 +66,11 @@ bg-dark
 </nav><!-- End of Menubar --><div class="container" id="content" role="main">
     <div class="body-content">
         <!--Body content-->
-        
+        <div class="row h-100">
+            <div class="col-lg-8 col-md-12">
+                
 
-<article class="post-text h-entry hentry postpage " itemscope="itemscope" itemtype="http://schema.org/Article"><div class="row">
-        <div class="col-lg-8 col-md-12">
-                <header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Version Controlling Your Data Science Projects</a></h1>
+<article class="post-text h-entry hentry postpage " itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Version Controlling Your Data Science Projects</a></h1>
 
         <div class="metadata">
             <p class="byline author vcard p-author h-card"><span class="byline-name fn p-name" itemprop="author">
@@ -84,7 +84,7 @@ bg-dark
         </div>
         
     </header><div class="e-content entry-content" itemprop="articleBody text">
-            <div>
+    <div>
 <p>Historically I've been a huge advocate of <a class="reference external" href="https://www.wolfram.com/mathematica/">Mathematica</a> for scientific computing. The symbolic analysis made physics modeling a breeze, and I could quickly create attractive summary plots to be shared with my team. As I started looking at large datasets and collaborating with more engineers, however, Mathematica became more hinderance than help. As Code could not be easily version controlled, it would often end up emailed back and forth with the receiver having to manually check that they had all dependent files, as well as update file-paths to load data without errors.</p>
 <p>Most of my coworkers were not familiar with Mathematica, and there wasn't justification in purchasing license seats just for them to open and run my files. All of this culminated in an environment where most data analysis bottlenecked through me and caused unnecessary slowdowns.</p>
 <p>These issues sparked my conversion to <a class="reference external" href="https://www.python.org/">Python</a> for almost all analysis. As free, open-source software, anybody on my team can install it in minutes, and its popularity as a scripting language means nearly everybody we onboard has some Python experience. Today I'll be covering the repository structure I've adopted to make a data analysis workflow that anybody can easily use and contribute to. It assumes you have familiarity with the Python ecosystem and <a class="reference external" href="https://jupyter.org/">Jupyter</a> Notebook environment, as well as a light understanding of Git.</p>
@@ -363,37 +363,61 @@ bg-dark
 <p>This entire template can be found on <a class="reference external" href="https://github.com/rfrazier716/data_analysis_template">my GitHub</a>, feel free to fork it for your own projects and submit requests for additional features!</p>
 </div>
 </div>
-            </div>
-                    <ul itemprop="keywords" class="tags">
+    </div>
+            <ul itemprop="keywords" class="tags">
 <li><a class="tag p-category" href="../../categories/analysis/" rel="tag">analysis</a></li>
             <li><a class="tag p-category" href="../../categories/data-science/" rel="tag">data science</a></li>
             <li><a class="tag p-category" href="../../categories/git/" rel="tag">git</a></li>
             <li><a class="tag p-category" href="../../categories/jupyter/" rel="tag">jupyter</a></li>
             <li><a class="tag p-category" href="../../categories/python/" rel="tag">python</a></li>
         </ul>
-</div>
-
-        <div class="col-lg-4 col-md-12">
-                <div class="sticky-top" id="sticky-right" style="top: 1.5rem">
-        <div class="mx-2" id="quick-nav"></div>
-        <div class="addthis_inline_share_toolbox mx-auto"></div>
-    </div>
-
-    <script>
-        document.getElementById('quick-nav').appendChild(
-        document.getElementById('quick-links')
-        );
-    </script>
-</div>
-    </div>
-    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<aside class="postpromonav"><nav><ul class="pager hidden-print">
 <li class="previous">
                 <a href="../5-video-game-soundtracks-to-jam-out-to-while-coding/" rel="prev" title="5 Video Game Soundtracks to Jam Out to While Coding">Previous post</a>
             </li>
             <li class="next">
                 <a href="../rust-fizzbuzz/" rel="next" title="Writing an (Overly) Idiomatic Fizzbuzz with Rust">Next post</a>
             </li>
-        </ul></nav></aside></article><!--End of body content--><footer id="footer">
+        </ul></nav></aside></article><!--End of body content-->
+</div>
+            <div class="col-lg-4 col-md-12">
+    <!-- Begin Mailchimp Signup Form -->
+<div id="mc_embed_signup" class="alert alert-info mc-signup">
+<h2>Get Notified of New Content!</h2>
+<div class="mc-signup-blurb">
+All my ramblings straight to your Inbox
+</div>
+<hr>
+<form action="https://fotonixx.us6.list-manage.com/subscribe/post?u=ed786630410d3ae8cc7b82748&amp;id=7b2d390e9d" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+        <div class="form-group">
+            <input type="email" class="form-control" id="mce-EMAIL" name="EMAIL" aria-describedby="emailHelp" placeholder="Email...">
+</div>
+        <div id="mce-responses" class="clear">
+            <div class="response" id="mce-error-response" style="display:none"></div>
+            <div class="response" id="mce-success-response" style="display:none"></div>
+        </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_ed786630410d3ae8cc7b82748_7b2d390e9d" tabindex="-1" value=""></div>
+        <button type="submit" class="btn btn-primary btn-block">subscribe</button>
+        <div class="spam-callout">
+        🔒 No spam. Unsubscribe any time. 📧
+        </div>
+    </form>
+</div>
+<!--End mc_embed_signup-->
+
+                <div class="sticky-top" id="sticky-right" style="top: 1rem">
+        <div class="w-100" id="quick-nav"></div>
+    <script>
+        document.getElementById('quick-nav').appendChild(
+        document.getElementById('quick-links')
+        );
+    </script><div class="addthis_inline_share_toolbox mx-auto"></div>
+
+                </div>
+            </div>
+        </div>
+
+        <footer id="footer">
             
 Contents © 2021         <a href="mailto:ryan@fotonixx.com">Ryan Frazier</a> 
 - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         

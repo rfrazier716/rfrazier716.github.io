@@ -61,11 +61,11 @@ bg-dark
 </nav><!-- End of Menubar --><div class="container" id="content" role="main">
     <div class="body-content">
         <!--Body content-->
-        
+        <div class="row h-100">
+            <div class="col-lg-8 col-md-12">
+                
 
-<article class="post-text h-entry hentry postpage " itemscope="itemscope" itemtype="http://schema.org/Article"><div class="row">
-        <div class="col-lg-8 col-md-12">
-                <header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Writing an (Overly) Idiomatic Fizzbuzz with Rust</a></h1>
+<article class="post-text h-entry hentry postpage " itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Writing an (Overly) Idiomatic Fizzbuzz with Rust</a></h1>
 
         <div class="metadata">
             <p class="byline author vcard p-author h-card"><span class="byline-name fn p-name" itemprop="author">
@@ -79,7 +79,7 @@ bg-dark
         </div>
         
     </header><div class="e-content entry-content" itemprop="articleBody text">
-            <div>
+    <div>
 <p>The last few months have been a whirlwind exposure to <a class="reference external" href="https://www.rust-lang.org/">Rust</a>. It started when I was looking for a systems language to speed up pieces of <a class="reference external" href="https://pyrayt.readthedocs.io">PyRayT</a> that was more general than <a class="reference external" href="https://cython.org/">Cython</a>, but not C/C++ (which I have my own love/hate relationship with). After reading the excellently written <a class="reference external" href="https://doc.rust-lang.org/book/">Rust Book</a> I was hooked on the language, using it for a couple CLIs, a <a class="reference external" href="https://github.com/rfrazier716/mongo_warp">webserver</a>, and even going through old <a class="reference external" href="https://adventofcode.com/">Advent of Code</a> puzzles to get more practice.</p>
 <div class="figure align-center">
 <img alt="https://i.imgflip.com/5fy2ea.jpg" src="https://i.imgflip.com/5fy2ea.jpg" style="width: 500px;"><p class="caption">This is slowly becoming my reply to all things software related</p>
@@ -456,30 +456,54 @@ bg-dark
 <p>At this point I don't know which of these options is <em>more</em> idiomatic, but I do know now that I've written them down, somebody is going to come in with a third option claiming it's superior to both 😄.</p>
 </div>
 </div>
-            </div>
-                    <ul itemprop="keywords" class="tags">
+    </div>
+            <ul itemprop="keywords" class="tags">
 <li><a class="tag p-category" href="../../categories/rust/" rel="tag">rust</a></li>
         </ul>
+<aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../data-science-vcs/" rel="prev" title="Version Controlling Your Data Science Projects">Previous post</a>
+            </li>
+        </ul></nav></aside></article><!--End of body content-->
 </div>
+            <div class="col-lg-4 col-md-12">
+    <!-- Begin Mailchimp Signup Form -->
+<div id="mc_embed_signup" class="alert alert-info mc-signup">
+<h2>Get Notified of New Content!</h2>
+<div class="mc-signup-blurb">
+All my ramblings straight to your Inbox
+</div>
+<hr>
+<form action="https://fotonixx.us6.list-manage.com/subscribe/post?u=ed786630410d3ae8cc7b82748&amp;id=7b2d390e9d" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+        <div class="form-group">
+            <input type="email" class="form-control" id="mce-EMAIL" name="EMAIL" aria-describedby="emailHelp" placeholder="Email...">
+</div>
+        <div id="mce-responses" class="clear">
+            <div class="response" id="mce-error-response" style="display:none"></div>
+            <div class="response" id="mce-success-response" style="display:none"></div>
+        </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_ed786630410d3ae8cc7b82748_7b2d390e9d" tabindex="-1" value=""></div>
+        <button type="submit" class="btn btn-primary btn-block">subscribe</button>
+        <div class="spam-callout">
+        🔒 No spam. Unsubscribe any time. 📧
+        </div>
+    </form>
+</div>
+<!--End mc_embed_signup-->
 
-        <div class="col-lg-4 col-md-12">
-                <div class="sticky-top" id="sticky-right" style="top: 1.5rem">
-        <div class="mx-2" id="quick-nav"></div>
-        <div class="addthis_inline_share_toolbox mx-auto"></div>
-    </div>
-
+                <div class="sticky-top" id="sticky-right" style="top: 1rem">
+        <div class="w-100" id="quick-nav"></div>
     <script>
         document.getElementById('quick-nav').appendChild(
         document.getElementById('quick-links')
         );
-    </script>
-</div>
-    </div>
-    <aside class="postpromonav"><nav><ul class="pager hidden-print">
-<li class="previous">
-                <a href="../data-science-vcs/" rel="prev" title="Version Controlling Your Data Science Projects">Previous post</a>
-            </li>
-        </ul></nav></aside></article><!--End of body content--><footer id="footer">
+    </script><div class="addthis_inline_share_toolbox mx-auto"></div>
+
+                </div>
+            </div>
+        </div>
+
+        <footer id="footer">
             
 Contents © 2021         <a href="mailto:ryan@fotonixx.com">Ryan Frazier</a> 
 - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         

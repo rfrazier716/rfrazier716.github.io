@@ -11,15 +11,15 @@
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/cat_programming.xml</loc>
-  <lastmod>2021-07-09T13:01:00Z</lastmod>
+  <lastmod>2021-07-10T22:06:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/constructive-solid-geometry.xml</loc>
-  <lastmod>2021-04-11T20:31:00Z</lastmod>
+  <lastmod>2021-07-10T22:06:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/csg.xml</loc>
-  <lastmod>2021-04-11T20:31:00Z</lastmod>
+  <lastmod>2021-07-10T22:06:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/data-science.xml</loc>
@@ -51,23 +51,23 @@
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/numpy.xml</loc>
-  <lastmod>2021-04-11T20:31:00Z</lastmod>
+  <lastmod>2021-07-10T22:06:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/pyrayt.xml</loc>
-  <lastmod>2021-04-11T20:31:00Z</lastmod>
+  <lastmod>2021-07-10T22:06:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/python.xml</loc>
-  <lastmod>2021-05-31T16:54:00Z</lastmod>
+  <lastmod>2021-07-10T22:06:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/ray-tracing.xml</loc>
-  <lastmod>2021-04-11T20:31:00Z</lastmod>
+  <lastmod>2021-07-10T22:06:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/rendering.xml</loc>
-  <lastmod>2021-04-11T20:31:00Z</lastmod>
+  <lastmod>2021-07-10T22:06:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/rst.xml</loc>
@@ -75,7 +75,7 @@
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/rust.xml</loc>
-  <lastmod>2021-07-09T13:01:00Z</lastmod>
+  <lastmod>2021-07-10T13:33:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/video-games.xml</loc>
@@ -83,14 +83,14 @@
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/galleries/rss.xml</loc>
-  <lastmod>2021-05-01T21:02:00Z</lastmod>
+  <lastmod>2021-07-11T00:29:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/rss.xml</loc>
-  <lastmod>2021-07-09T13:01:00Z</lastmod>
+  <lastmod>2021-07-10T22:06:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/sitemap.xml</loc>
-  <lastmod>2021-07-09T13:01:00Z</lastmod>
+  <lastmod>2021-07-11T00:29:00Z</lastmod>
  </sitemap>
 </sitemapindex>
