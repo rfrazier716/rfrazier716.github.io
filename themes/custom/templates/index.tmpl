@@ -11,13 +11,12 @@
     {% block banner_top %}
     <div class="mb-4 ml-3">
         <div id="accordion">
-        <div class="card">
-        <div class="card-header" id="headingOne">
-            <h5 class="mb-0">
-            <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                News and Updates
-            </button>
-            </h5>
+        <div class="card card-announcements">
+        <div class="card-header announcements-header" id="headingOne">
+            <div class="d-flex align-items-center">
+            <span class="announcements-title">News and Updates</span>
+            <a href="#" class="ml-auto collapse-button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Show/Hide</a>
+            </div>
         </div>
     
         <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
@@ -26,7 +25,6 @@
             </div>
         </div>
         </div>
-        
     </div>
     {% endblock %}
 {% endif %}
