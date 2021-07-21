@@ -69,13 +69,15 @@ bg-dark
 <!-- End of Menubar -->
 <div class="container" id="content" role="main">
     <div class="body-content">
+        <div class=banner-top>
+        {% block banner_top %}{% endblock %}
+        </div>
         <!--Body content-->
         <div class="row h-100">
             <div class="col-lg-8 col-md-12">
                 {{ template_hooks['page_header']() }}
                 {% block extra_header %}{% endblock %}
                 {% block content %}{% endblock %}
-                <!--End of body content-->
             </div>
             <div class="col-lg-4 col-md-12">
                 {% block side_gutter %}{% endblock %}
@@ -84,6 +86,7 @@ bg-dark
                 </div>
             </div>
         </div>
+        <!--End of body content-->
 
         <footer id="footer">
             {{ content_footer }}
