@@ -55,17 +55,25 @@ bg-dark
         <div class="banner-top">
     <div class="mb-4 ml-3">
         <div id="accordion">
-        <div class="card">
-        <div class="card-header" id="headingOne">
-            <h5 class="mb-0">
-            <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                News and Updates
-            </button>
-            </h5>
+        <div class="card card-announcements">
+        <div class="card-header announcements-header" id="headingOne">
+            <div class="d-flex align-items-center">
+            <span class="announcements-title">News and Updates</span>
+            <a href="#" class="ml-auto collapse-button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Show/Hide</a>
+            </div>
         </div>
     
         <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
             <div class="card-body">
+<a href="#" data-toggle="collapse" data-target="#filters,#view_filters,#hide_filters">
+<span id="view_filters" class="collapse in">View Filters</span>
+<span id="hide_filters" class="collapse out">Hide Filters</span>
+</a>
+
+<div id="filters" class="collapse out">
+Now you see me!
+</div>
+
 <div class="row h-100">
     <div class="col-lg-8 col-md-12">
         <h1>My First Podcast!</h1>
@@ -91,10 +99,11 @@ bg-dark
             <iframe class="embed-responsive-item" src="jumbotron_video.mp4" allowfullscreen></iframe>
         </div>  
     </div>
+
+    
 </div>            </div>
         </div>
         </div>
-        
     </div>
         </div>
         <!--Body content-->

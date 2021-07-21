@@ -1031,3 +1031,21 @@ a.twitter-tag:hover{
     color: white;
     background-color: #033250;
 }
+
+.card-announcements .card-header {
+    background-color: var(--primary);
+    color: var(--secondary);
+}
+
+.card-announcements .announcements-title {
+    font-size: 2em;
+}
+
+.card-announcements .collapse-button {
+    float: right;
+    color: var(--secondary);
+    font-size:1em;
+
+}
+
+
