@@ -120,3 +120,21 @@ sticky-top addthis_inline_share_toolbox{
     font-size: 1.5em;
     color: var(--primary);
 }
+
+.twitter-tag {
+    background-color:#1DA1F2;
+    color: white;
+    padding: 0.25em 0.4em;
+    font-size: 75%;
+    border-radius: 0.25rem;
+    font-weight: 700;
+}
+
+a.twitter-tag {
+    text-decoration: none;
+}
+
+a.twitter-tag:hover{
+    color: white;
+    background-color: #033250;
+}
