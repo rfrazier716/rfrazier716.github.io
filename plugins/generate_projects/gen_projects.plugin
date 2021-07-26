@@ -1,0 +1,9 @@
+[Core]
+Name = generate_projects
+Module = task_generate_projects
+
+[Documentation]
+Author = Ryan Frazier
+Version = 0.1
+Website = https://getnikola.com
+Description = Generates a Project Page from YAML descriptors

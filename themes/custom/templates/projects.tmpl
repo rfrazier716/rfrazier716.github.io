@@ -1,0 +1,10 @@
+{% extends 'base.tmpl' %}
+
+
+{% block content %}
+<H1>Projects</H1>
+{% for project in data["projects"] %}
+    {{ project }}
+{% endfor %}
+<H1>Advent of Code</H1>
+{% endblock %}
