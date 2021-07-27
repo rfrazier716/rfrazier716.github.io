@@ -3,8 +3,27 @@
 
 {% block content %}
 <H1>Projects</H1>
-{% for project in data["projects"] %}
-    {{ project }}
-{% endfor %}
+<div class="container">
+    <div class="row">
+        {% for project in data["projects"]["projects"] %}
+        <div class="col-sm-12 mb-4">
+            <div class="card h-100 project-card">
+                <div class="card-body">
+                    {{ project["name"] }}
+                    {{ project["blurb"] }}
+                    {% for tag in project["tags"] %}
+                    <a href= {{ tag["url"]}}>
+                         <img src={{ tag["img"] }} alt="shield">
+                    </a> 
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+    
 <H1>Advent of Code</H1>
 {% endblock %}

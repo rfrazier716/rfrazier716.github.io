@@ -1,11 +1,18 @@
-test_project: 
-  name: Mister
-  lname: Pigg
-
-second_sproject: 
-  name: Mister
-  lname: Pigg
-
-third_proasdfject: 
-  name: Mister
-  lname: Pigg
+projects:
+- name: PyRayT
+  github_slug: https://github.com/rfrazier716/PyRayT
+  image: /images/site_logo.svg
+  blurb: >
+    This is a multiline String comment about the project
+  tags:
+    - img: https://img.shields.io/pypi/v/pyrayt
+      url: https://pypi.org/project/pyrayt/
+      
+- name: PyRayT
+  github_slug: https://github.com/rfrazier716/PyRayT
+  image: /images/site_logo.svg
+  blurb: >
+    This is a multiline String comment about the project
+  tags:
+    - img: https://img.shields.io/pypi/v/pyrayt
+      url: https://pypi.org/project/pyrayt/
