@@ -1060,4 +1060,22 @@ a.twitter-tag:hover{
 
 }
 
+.project-title-block .project-icons {
+    float: right;
+}
+
+.project-card .project-image {
+    display: flex;
+    align-items: center;
+}
+
+.project-title-block {
+    color: var(--primary);
+    font-size: 1.5em;
+}
+
+.project-title-block a.title:hover {
+    text-decoration: none;
+
+}
 
