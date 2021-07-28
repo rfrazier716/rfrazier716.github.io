@@ -1,18 +1,66 @@
 projects:
 - name: PyRayT
-  github_slug: https://github.com/rfrazier716/PyRayT
-  image: /images/site_logo.svg
+  image: https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg
+  url: https://github.com/rfrazier716/PyRayT
   blurb: >
-    This is a multiline String comment about the project
-  tags:
+    PyRayT is a geometric ray tracing package for optical system design. It's also the first project I've deployed to PYPI and has been an exercise in CI/CD pipelines.
+  icons:
+    - class: fab fa-github
+      url: https://github.com/rfrazier716/PyRayT
+  shields:
     - img: https://img.shields.io/pypi/v/pyrayt
       url: https://pypi.org/project/pyrayt/
+
+    - img: https://readthedocs.org/projects/pyrayt/badge/?version=latest&style=flat
+      url: https://pyrayt.readthedocs.io
       
-- name: PyRayT
-  github_slug: https://github.com/rfrazier716/PyRayT
-  image: /images/site_logo.svg
+    - img: https://img.shields.io/github/stars/rfrazier716/pyrayt.svg?style=flat
+      url: https://github.com/rfrazier716/pyrayt/stargazers
+      
+- name: Warp CRUD
+  image: https://rustacean.net/assets/rustacean-orig-noshadow.png
+  url: https://github.com/rfrazier716/warp_crud
   blurb: >
-    This is a multiline String comment about the project
-  tags:
-    - img: https://img.shields.io/pypi/v/pyrayt
-      url: https://pypi.org/project/pyrayt/
+    My first foray into back-end programming with a webserver written in Rust. This Project is a basic REST API to perform CRUD operations on a MongoDB database.
+  icons:
+    - class: fab fa-github
+      url: https://github.com/rfrazier716/warp_crud
+  shields:
+    - img: https://circleci.com/gh/rfrazier716/warp_crud.svg?style=shield
+      url: https://app.circleci.com/pipelines/github/rfrazier716/warp_crud
+
+- name: Fotonixx.com
+  image: /images/site_logo.svg
+  url: https://github.com/rfrazier716/rfrazier716.github.io
+  blurb: >
+    This site itself is a side project! It started as a way to get back into writing, but has progressed into a crash-course in javascript, html, and css.
+  icons:
+    - class: fab fa-github
+      url: https://github.com/rfrazier716/rfrazier716.github.io
+  shields:
+    - img: https://img.shields.io/badge/powered%20by-Nikola-033c73.svg
+      url: https://getnikola.com/
+
+- name: Wishbone UART
+  image: https://www.veripool.org/img/verilator_256_200_min.png
+  url: https://github.com/rfrazier716/wb-uart
+  blurb: >
+    A Wishbone compliant UART core written in synthesizable Verilog and simulated/tested with Verilator. The core was synthesized on a Terasic DE10-nano.
+  icons:
+    - class: fab fa-github
+      url: https://github.com/rfrazier716/wb-uart
+
+# - name: Mongo Warp
+#   image: https://rustacean.net/assets/rustacean-flat-happy.png
+#   url: https://github.com/rfrazier716/mongo_warp
+#   blurb: >
+#     A template to get up and running with an asynchronous Rust webserver. Includes a CI pipeline, runtime configuration, and unit/integration tests.
+#   icons:
+#     - class: fab fa-github
+#       url: https://github.com/rfrazier716/mongo_warp
+#   shields:
+#     - img: https://circleci.com/gh/rfrazier716/mongo_warp.svg?style=shield
+#       url: https://app.circleci.com/pipelines/github/rfrazier716/mongo_warp
+
+
+

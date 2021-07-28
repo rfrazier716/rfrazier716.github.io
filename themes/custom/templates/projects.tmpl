@@ -2,28 +2,48 @@
 
 
 {% block content %}
-<H1>Projects</H1>
 <div class="container">
     <div class="row">
         {% for project in data["projects"]["projects"] %}
         <div class="col-sm-12 mb-4">
             <div class="card h-100 project-card">
-                <div class="card-body">
-                    {{ project["name"] }}
-                    {{ project["blurb"] }}
-                    {% for tag in project["tags"] %}
+                <div class="card-body row align-items-center">
+                    <div class="col-3 d-none d-md-block project-image">
+                    <img src={{ project["image"] }}  class="img-fluid d-block align-middle" alt="image">
+                    </div>
+                    <div class="col-md-9 col-sm-12">
+                    <div class="project-title-block">
+                    <a class="title" href= "{{ project['url'] }}">{{ project["name"] }}</a>
+                    <span class="project-icons">
+                        {% for icon in project["icons"] %}
+                            <a href={{ icon["url"] }}><i class="{{ icon['class'] }}"></i></a>
+                        {% endfor %}
+                    </span>
+                    </div>
+                    <hr class="mt-1 mb-1">
+                    <div class="project-shields mb-2">
+                    {% for tag in project["shields"] %}
                     <a href= {{ tag["url"]}}>
                          <img src={{ tag["img"] }} alt="shield">
                     </a> 
                     {% endfor %}
+                    </div>
+                    <div class="project-description">
+                    {{ project["blurb"] }}
+                    </div>
+                    </div>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
 </div>
+{% endblock %}
 
-
-    
-<H1>Advent of Code</H1>
+{% block side_gutter %}
+<div class="alert alert-primary popular-tags" align="center">
+    <h3>Personal Projects</h3>
+    <hr>
+    Most of my professional projects are tied to private repositories. However, I'm almost always working on some side project related to hardware/software design, a sampling of which are highlighted here.
+</div>
 {% endblock %}
