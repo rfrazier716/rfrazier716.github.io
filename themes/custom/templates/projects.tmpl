@@ -2,47 +2,49 @@
 {% import 'sidebar_helper.tmpl' as sidebar_helper with context %}
 
 
-{% block content %}
+{% block gutterless_content %}
 {{ post.text() }}
 <div class="container">
     <div class="row">
         {% for project in data["projects"]["projects"] %}
-        <div class="col-sm-12 mb-4">
-            <div class="card h-100 project-card">
-                <div class="card-body row align-items-center">
-                    <div class="col-3 d-none d-md-block project-image">
-                    <img src={{ project["image"] }}  class="img-fluid mx-auto d-block" alt="image">
-                    </div>
-                    <div class="col-md-9 col-sm-12">
-                    <div class="project-title-block">
-                    <a class="title" href= "{{ project['url'] }}">{{ project["name"] }}</a>
-                    <span class="project-icons">
-                        {% for icon in project["icons"] %}
-                            <a href={{ icon["url"] }}><i class="{{ icon['class'] }}"></i></a>
-                        {% endfor %}
-                    </span>
-                    </div>
-                    <hr class="mt-1 mb-1">
-                    <div class="project-shields mb-2">
-                    {% for tag in project["shields"] %}
-                    <a href= {{ tag["url"]}}>
-                         <img src={{ tag["img"] }} alt="shield">
-                    </a> 
-                    {% endfor %}
-                    </div>
-                    <div class="project-description">
-                    {{ project["blurb"] }}
-                    </div>
-                    </div>
+        <div class="col-md-12 col-lg-6 mb-4">
+            <div class="card project-card box-shadow h-100">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-3 d-none d-md-block project-image">
+                            <img src="{{ project['image'] }}"  class="img-fluid mx-auto d-block" alt="image">
+                        </div>
+                        <div class="col-md-9 col-sm-12">
+                            <div class="project-title-block">
+                                <a class="card-title" href= "{{ project['url'] }}">{{ project["name"] }}</a>
+                                <span class="project-icons">
+                                    {% for icon in project["icons"] %}
+                                        <a href="{{ icon['url'] }}"><i class="{{ icon['class'] }}"></i></a>
+                                    {% endfor %}
+                                </span>
+                            </div>
+                            <hr class="mt-1 mb-1">
+                            <div class="project-shields mb-2">
+                                {% for tag in project["shields"] %}
+                                    <a href= "{{ tag['url'] }}">
+                                        <img src="{{ tag['img'] }}" alt="shield">
+                                    </a> 
+                                {% endfor %}
+                                {% if not project["shields"] %}
+                                    <br>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>       
+                </div>
+                <div class="card-body">
+                    <p class="project-description card-text">
+                        {{ project["blurb"] }}
+                    </p>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
 </div>
-{% endblock %}
-
-{% block side_gutter %}
-    {{ sidebar_helper.mail_chimp() }}
-    {{ sidebar_helper.addthis_share() }}
 {% endblock %}
