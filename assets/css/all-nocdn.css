@@ -1069,12 +1069,16 @@ a.twitter-tag:hover{
     align-items: center;
 }
 
+.project-card .project-image img{
+    max-height: 75px;
+}
+
 .project-title-block {
     color: var(--primary);
     font-size: 1.5em;
 }
 
-.project-title-block a.title:hover {
+.project-title-block a.card-title:hover {
     text-decoration: none;
 
 }
