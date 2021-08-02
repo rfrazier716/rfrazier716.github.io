@@ -3,7 +3,7 @@ projects:
   image: https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg
   url: https://github.com/rfrazier716/PyRayT
   blurb: >
-    PyRayT is a geometric ray tracing package for optical system design. It's also the first project I've deployed to PYPI and has been an exercise in CI/CD pipelines.
+    A geometric ray tracing package for optical system design. It's also the first project I've deployed to PYPI and has been an exercise in CI/CD pipelines.
   icons:
     - class: fab fa-github
       url: https://github.com/rfrazier716/PyRayT
@@ -31,7 +31,7 @@ projects:
 
 - name: Fotonixx.com
   image: /images/site_logo.svg
-  url: https://github.com/rfrazier716/rfrazier716.github.io
+  url: https://www.fotonixx.com
   blurb: >
     This site itself is a side project! It started as a way to get back into writing, but has progressed into a crash-course in javascript, html, and css.
   icons:

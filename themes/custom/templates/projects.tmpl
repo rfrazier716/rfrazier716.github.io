@@ -1,7 +1,9 @@
 {% extends 'base.tmpl' %}
+{% import 'sidebar_helper.tmpl' as sidebar_helper with context %}
 
 
 {% block content %}
+{{ post.text() }}
 <div class="container">
     <div class="row">
         {% for project in data["projects"]["projects"] %}
@@ -41,9 +43,6 @@
 {% endblock %}
 
 {% block side_gutter %}
-<div class="alert alert-primary popular-tags" align="center">
-    <h3>Personal Projects</h3>
-    <hr>
-    Most of my professional projects are tied to private repositories. However, I'm almost always working on some side project related to hardware/software design, a sampling of which are highlighted here.
-</div>
+    {{ sidebar_helper.mail_chimp() }}
+    {{ sidebar_helper.addthis_share() }}
 {% endblock %}
