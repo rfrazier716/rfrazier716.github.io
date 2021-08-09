@@ -206,8 +206,58 @@ This plot shows that the focal length of the lens is changing by almost 10% base
 Chromatic Aberrations
 ``````````````````````
 
+Unlike spherical aberrations, chromatic aberrations are explained by the lensmaker's equation: the focal point of the lens depends on the refractive index of the lens' material. Real materials don't have a constant refractive index; instead, the refractive index is a function of wavelength. This effect is called `dispersion <https://en.wikipedia.org/wiki/Dispersion_(optics)>`_, and while it's more often associated with the reason prisms create rainbows, it also means our lens will have a wavelength dependent focus.
+
+The same way we wrote a function to characterize spherical aberrations, we can write one to quantify chromatic aberration:
+
+.. code:: python
+
+    def chromatic_abberation(system, ray_origin: float, test_radius:float, wavelengths: np.ndarray) -> pd.DataFrame:
+        # create a set of sources for every wavelength of light
+        sources = [
+            pyrayt.components.LineOfRays(0, wavelength = wave)
+            .move_y(test_radius)
+            .move_x(ray_origin) 
+            for wave in wavelengths]
+        
+        # Create the ray tracer and propagate
+        tracer = pyrayt.RayTracer(sources, system)
+        tracer.set_rays_per_source(1)
+        results = tracer.trace()
+
+        #filter the rays that intersect the imager
+        imager_rays = results.loc[results['generation'] == np.max(results['generation'])]
+        
+        # calculate intercept of the imager rays with the x-axis and form into a dataframe
+        intercept = -imager_rays['x_tilt']*imager_rays['y0']/imager_rays['y_tilt'] + imager_rays['x0']
+        results = pd.DataFrame({'wavelength': imager_rays['wavelength'], 'focus': intercept})
+
+        return results
+
+
+If we run this function on our current system the results will say that every wavelength has the exact same focus! This is because we made the lens out of an "ideal" glass with a refractive index (n) of 1.5. Let's replace our lens with one made of a popular crown glass instead
+
+.. code:: python
+    
+    lens_material = matl.glass["BK7"] # Update this line of the lens definition
+
+Running the function on our newly dispersive system shows a focal length shift of ~1mm (2%) across the visible spectrum.
+
+.. container:: alert alert-warning
+    
+    plot of chromatic aberration
+    
+An image taken with this lens would result in sharp edges in our photos having a 'rainbow' effect. interstingly, this aberration is sometimes saught after for artistic effect, going as far as being including as a graphics setting in id's 2016 Doom reboot.
+
+
 Coma Aberrations
 `````````````````
+
+Coma is a unique aberration: instead of being a change in focal length, it's a change mangification vs. angle of incidence on the system. The name comes from the fact that points imaged with a system suffering from coma looks like the `coma of a comet <https://en.wikipedia.org/wiki/Coma_(cometary)>`_.
+
+The easiest way to visualize coma is to look at in in our system. To do this we'll construct 3 parallel sources that enter the system at different angles.
+
+
 
 Adding Another Lens
 =================================
