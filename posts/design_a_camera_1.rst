@@ -8,9 +8,9 @@
 .. has_math: true
 .. type: text
 
-Have you ever cut open a camera lens to look at what's inside? I don't blame you if you haven't, lenses are ridiculously expensive and it's a one way operation. However, if you look at a `picture of a cross-section <https://www.ephotozine.com/article/this-cutaway-diagram-shows-the-inside-of-a-dslr-30546>`_, you'd see that the 'lens' is actually made of upwards of a dozen individual lenses, each one doing its part to create a clear, error free image. Typically, understanding what's going on in the camera lens requires exhaustive calculations, or expensive lens design software costing upwards of $10,000 for a single user. My annoyance at this price barrier (as somebody who uses those tools professionally) is what sparked me to create `PyRayT`_, a free and open source generic ray tracer that pairs with the Scientific Python stack.
+Have you ever cut open a camera lens to look at what's inside? I don't blame you if you haven't, lenses are ridiculously expensive and it's a one way operation. However, if you look at a `picture of a cross-section <https://www.ephotozine.com/article/this-cutaway-diagram-shows-the-inside-of-a-dslr-30546>`_, you'd see that the "lens" is actually made of upwards of a dozen individual lenses, each one doing its part to create a clear, error free image. Typically, understanding what's going on in the camera lens requires exhaustive calculations or expensive lens design software costing upwards of $10,000 for a single user. My annoyance at this price barrier (as somebody who uses those tools professionally) is what sparked me to create `PyRayT`_, a free and open source generic ray tracer that pairs with the Scientific Python stack.
 
-To celebrate PyRayT's v0.3.0 release, I'm going to walk through how it can be used to design and optimize a multi-lens camera. In the first part of the series, We'll go over why lenses need to be so intricate, and what happens if you tried to make a camera out of a single lens instead.
+To celebrate `PyRayT's v0.3.0 release <https://pyrayt.readthedocs.io/en/latest/index.html>`_, I'm going to walk through how it can be used to design and optimize a multi-lens camera. In this first part of the series I'll go over why lenses need to be so intricate, and what happens if you tried to make a camera out of a single lens instead.
 
 .. contents:: 
     :class: alert alert-primary ml-0
@@ -28,7 +28,7 @@ If you rack your brain to recall highschool physics there's probably two things 
 #. A ray parallel to the optical axis converges onto the focal point.
 #. A ray going through the center of the lens is unmodified. 
 
-With these rules you can trace simple lens diagrams showing how object images are formed by lenses.
+With these rules you can trace simple diagrams showing how object images are formed by lenses.
 
 .. raw:: html
 
@@ -70,7 +70,7 @@ So how bad could a single lens imager really be? And how do you improve the qual
 Getting Up and Running with PyRayT
 ===================================
 
-As mentioned above, hand calculations for lenses rely on approximations that don't capture aberrations. Fortunately numeric ray tracers don't suffer from the same limitations, which is why they're so valuable for accurate lens design. Since this article is about showcasing features of `PyRayT`_, that's the ray tracer we'll be using. You can install the latest stable package from pip.
+As mentioned above, hand calculations for lenses rely on approximations that don't capture aberrations. Fortunately, numeric ray tracers don't suffer from the same limitations which is why they're so valuable for accurate lens design. Since this article is about showcasing features of `PyRayT`_, that's the ray tracer we'll be using. You can install the latest stable package from pip.
 
 .. code:: shell 
 
@@ -92,7 +92,7 @@ Our lens is the only component that contributes to system power, so the power of
 
     P_{lens} = (n_{lens} -1)[\frac{1}{R_1}-\frac{1}{R_2}+\frac{(n_{lens}-1)d}{n R_1 R_2}]
 
-Since we're doing the calculation by hand we'll make a couple approximations to simplify the design: (1) the radii of curvature are equal and opposite (resulting in a biconvex lens), and (2) the thickness is small enough that we can discard the final term. Later we'll numerically optimize the entire system to correct for focus, but these approximations give us a good starting point.
+Since we're doing the calculation by hand we'll make a couple approximations to simplify things: (1) the radii of curvature are equal and opposite (resulting in a biconvex lens), and (2) the thickness is small enough that we can discard the final term. Later we'll numerically optimize the entire system to correct for focus, but these approximations give us a good starting point.
 
 The simplified equation then becomes:
 
@@ -102,7 +102,7 @@ The simplified equation then becomes:
 
 Since the refractive index of most glasses is ~1.5, this means that our radius of curvature for a biconvex lens is equal to the *inverse of the lenses power*, which is also the focal length of the system!
 
-Now we can build our lens in *PyRayt* and visualize it with the :code:`draw` function in the :code:`tinygfx` package (installed as part of the PyRayT distribution).
+Now we can construct our lens and visualize it with the :code:`draw` function in the :code:`tinygfx` package (installed as part of the PyRayT distribution).
 
 .. code:: python
 
@@ -143,7 +143,7 @@ There's two more pieces we need in order to make the camera: an aperture to bloc
 
     imager = components.baffle((lens_diameter, lens_diameter)).move_x(system_focus)
 
-Our aperture can be thought of as a "baffle with a hole", where the hole is large enough to only let in rays with a cone angle specified by our f/#. :code:`pyrayt` and :code:`tinygfx` create arbitrary shapes via `constructive solids </posts/efficient-csg/>`_ so an aperture is a baffle with the center shape subtracted from it. The convenience function :code:`aperture` does just this, creating a baffle with an arbitrarily shaped hole in the middle. 
+Our aperture can be thought of as a "baffle with a hole", where the hole is large enough to only let in rays with a cone angle specified by our f/#. :code:`pyrayt` and :code:`tinygfx` create arbitrary shapes via `constructive solids </posts/efficient-csg/>`_ meaning an aperture is a baffle with the center shape subtracted from it. The convenience function :code:`aperture` does just this, creating a baffle with an arbitrarily shaped hole in the middle. 
 
 The diameter of the aperture that gives us the desired f/# depends on where in the system the aperture is located. If we place it half-way between the lens and the focal plane, the diameter of the opening has to be:
 
@@ -167,8 +167,16 @@ Our First Ray Trace
 
 With our components defined we're ready to simulate. The only thing we need is a test source that generates rays to trace through the system. PyRayT's :code:`LineOfRays` is perfect for this, as it generates a set of linearly spaced rays projected towards the +x axis. The last step is to load all the components into a :code:`RayTracer` object and run the :code:`trace` function.
 
+
 .. container::
-    class: alert alert-info
+    class: alert alert-success pb-0
+
+    .. raw:: html
+
+        <div class="alert-header">
+        <i class="fas fa-info-circle"></i> Note
+        </div>
+        <hr class="mt-0 mb-1">
 
     Almost all of the sources used to characterize our system will be parallel bundles of rays at various angles. This is because we're assuming the camera is `focused at infinity <https://en.wikipedia.org/wiki/Infinity_focus>`_, where any angular deviation between sets of rays originating from the same point are effectively zero.
 
@@ -188,9 +196,17 @@ The results of a trace is a `Pandas <https://pandas.pydata.org/>`_ dataframe whi
     # import matplotlib so we can manipulate the axis
     import matplotlib.pyplot as plt
 
-    # set up the figure and axis
-    fig = plt.figure(figsize=(12,12))
+    def init_figure() -> Tuple[plt.Figure, plt.Axes]:
+    """
+    Convenience function to generate an axis with a set size 
+    """
+    fig = plt.figure(figsize = (12,8))
     axis = plt.gca()
+    axis.grid()
+    return fig, axis
+
+    # set up the figure and axis
+    fig, axis = init_figure()
     axis.set_xlabel("distance (mm)")
     axis.set_ylabel("distance (mm)")
 
@@ -210,7 +226,12 @@ Looks like our lens is doing its job! All rays that transmit through the apertur
 Characterizing Lens Performance
 ================================
 
-A picture may be worth 1000 words, but when it comes to analyzing our lens' performance data is key. Let's use the results dataframe to see how our single lens design holds up against common imaging aberrations: spherical, chromatic, and chroma. As mentioned above, characterizing the system with Seidel Coefficients is beyond the scope of the article, instead we'll use `Matplotlib <https://matplotlib.org/>`_ to generate plots of the system focus across different parameters.
+A picture may be worth 1000 words, but when it comes to analyzing our lens' performance data is key. Using the results dataframe we can explore the `RaySet`_ metadata of each ray as they travel through the system, and we'll use that information to see how our single lens design holds up against common imaging aberrations: `spherical`_, `chromatic`_, and `coma`_. As mentioned above, characterizing the system with Seidel coefficients is beyond the scope of the article, instead we'll use `Matplotlib <https://matplotlib.org/>`_ to generate plots of the system focus across different parameters.
+
+.. _`RaySet`: https://pyrayt.readthedocs.io/en/latest/generated/pyrayt.html?highlight=RaySet#pyrayt._pyrayt.RaySet
+.. _`spherical`: https://en.wikipedia.org/wiki/Spherical_aberration
+.. _`chromatic`: https://en.wikipedia.org/wiki/Chromatic_aberration
+.. _`coma`: https://en.wikipedia.org/wiki/Coma_(optics) 
 
 Spherical Aberrations
 ----------------------
@@ -294,9 +315,9 @@ If we run this function on our current system the results will say that every wa
 
 Running the function on our newly dispersive system shows a focal length shift of ~1mm (2%) across the visible spectrum.
 
-.. container:: alert alert-warning
-    
-    plot of chromatic aberration
+.. image:: /images/camera_design_with_pyrayt/chromatic_aberration_chart_single_lens.png
+    :align: center
+    :width: 600
     
 An image taken with this lens would result in sharp edges in our photos having a 'rainbow' effect. Interestingly, this aberration is sometimes sought after for artistic effect, going as far as being including as a graphics setting in id's 2016 Doom reboot.
 
@@ -304,21 +325,55 @@ An image taken with this lens would result in sharp edges in our photos having a
 Coma Aberrations
 -----------------
 
-Instead of being a change in focal length, coma is a change mangification vs. angle of incidence on the system. The name comes from the fact that points imaged with a system suffering from coma looks like the `coma of a comet <https://en.wikipedia.org/wiki/Coma_(cometary)>`_.
+The last aberration we'll quantify is coma. Instead of being a change in focal length, coma is a change mangification vs. angle of incidence on the system. The name comes from the fact that points imaged with a system suffering from coma looks like the `coma of a comet <https://en.wikipedia.org/wiki/Coma_(cometary)>`_.
 
-The easiest way to visualize coma is to plot a :code:`LineOfRays` hitting the lens at non-normal incidence. In a coma free imager, the distribution of ray-imager intersections should have a mean equal to the ray that intersects y=0
+The easiest way to visualize coma is to plot a :code:`LineOfRays` hitting the lens at non-normal incidence. In a coma free imager, the distribution of ray-imager intersections should be symmetrically distributed about the central ray.
 
-.. container:: alert alert-warning
-    
-    Code of Ray Trace and Coma histogram 
+While we *could* generate three sources at three distinct angles and run a single ray trace, we're instead going to leverage PyRayT's `pin`_ function to manipulate the angle of the lens. Since the position of the lens is a property of the lens itself, updating the position without remembering to undo it later will effect calculations down the line. the :code:`pin` `context manager <https://realpython.com/python-with-statement/>`_ takes care of this for us by undoing any transformations of pinned objects when the context manager exits.
 
-Just looking at the ray trace we can see the angled rays don't come to any central focus, and the histogram has a strong skew towards the +y axis. From an imaging perspective this will cause a radial-blur, where the center of our image is in-focus but the edges are out of focus.
+The main advantage of rotating the lens instead of the source is that the incoming rays stay perpendicular to the imager, and nominally centered about y=0.
+
+.. _`pin`: https://pyrayt.readthedocs.io/en/latest/generated/pyrayt.html?highlight=pin#pyrayt._pyrayt.pin
+.. code:: python
+
+    # Create the system 
+    source = pyrayt.components.LineOfRays(0.9 * lens_diameter).move_x(-10)
+    tracer = pyrayt.RayTracer(source, [lens, imager])
+    tracer.set_rays_per_source(1001)
+    angles = (12,6,0)
+    fig, axis = init_figure()
+
+    for n,angle in enumerate(angles):
+        with pyrayt.pin(lens):
+            # pin the lens in place so its rotation resets between iterations
+            lens.rotate_z(angle)
+            results = tracer.trace()
+        imager_rays = results.loc[results['generation'] == np.max(results['generation'])]
+        axis.hist(imager_rays['y1'], bins=21, label = f"{angle}-degree incidence", density=True, alpha=0.8)
+
+    # plot labels
+    axis.set_xlabel("position along Y-axis (mm)")
+    axis.set_ylabel("density (AU)")
+    axis.set_label("Focal Spot Distribution vs. Angle of Incidence")
+
+    plt.legend()
+    plt.show()
+
+.. image:: /images/camera_design_with_pyrayt/coma_raytrace.png
+    :align: center
+    :width: 600
+
+.. image:: /images/camera_design_with_pyrayt/coma_histogram.png
+    :align: center
+    :width: 600
+
+Just looking at the ray trace we can see the angled rays don't come to any central focus, and the histogram has a strong skew towards the -y axis. From an imaging perspective this will cause a radial-blur, where the center of our image is in-focus but the edges are out of focus.
 
 
 Next Steps 
 ===========
 
-So far we've created a camera and identified its imperfections. In the next post we'll show how, with just one additional lens, we can drastically minimize all three of these aberrations. In the mean time feel free to explore the design and see how much optimization you can do with just one lens:
+So far we've created a simple camera and identified its imperfections. In the next post I'll show how, with just one additional lens, we can drastically minimize all three of the above aberrations! In the mean time feel free to explore the design and see how much optimization you can do with just one lens:
 
 * What about the design changes if you pick a different material?
 * If you break the symmetry between the front and back surface can you reduce aberrations? 

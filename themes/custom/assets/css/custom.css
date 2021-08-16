@@ -175,5 +175,8 @@ a.twitter-tag:hover{
 
 .project-title-block a.card-title:hover {
     text-decoration: none;
+}
 
+.alert .alert-header{
+    font-weight: 700;
 }
