@@ -7,10 +7,11 @@
 .. description: 
 .. has_math: true
 .. type: text
+.. previewimage: /images/camera_design_with_pyrayt/preview_image.png
 
-Have you ever cut open a camera lens to look at what's inside? I don't blame you if you haven't, lenses are ridiculously expensive and it's a one way operation. However, if you look at a `picture of a cross-section <https://www.ephotozine.com/article/this-cutaway-diagram-shows-the-inside-of-a-dslr-30546>`_, you'd see that the "lens" is actually made of upwards of a dozen individual lenses, each one doing its part to create a clear, error free image. Typically, understanding what's going on in the camera lens requires exhaustive calculations or expensive lens design software costing upwards of $10,000 for a single user. My annoyance at this price barrier (as somebody who uses those tools professionally) is what sparked me to create `PyRayT`_, a free and open source generic ray tracer that pairs with the Scientific Python stack.
+Have you ever cut open a camera lens to look at what's inside? I don't blame you if you haven't, lenses are ridiculously expensive and it's a one way operation. However, if you look at a `picture of a cross-section <https://www.ephotozine.com/article/this-cutaway-diagram-shows-the-inside-of-a-dslr-30546>`_, you'd see that the "lens" is actually made of upwards of a dozen individual lenses, each one doing its part to create a clear, error free image. Typically, understanding what's going on in the camera lens requires exhaustive calculations or expensive lens design software costing upwards of $10,000 for a single user. My annoyance at this price barrier (as somebody who uses those tools professionally) is what sparked me to create `PyRayT`_, a free and open source generic ray tracer that pairs with the `Scientific Python stack <https://scipy.org/install.html>`_.
 
-To celebrate `PyRayT's v0.3.0 release <https://pyrayt.readthedocs.io/en/latest/index.html>`_, I'm going to walk through how it can be used to design and optimize a multi-lens camera. In this first part of the series I'll go over why lenses need to be so intricate, and what happens if you tried to make a camera out of a single lens instead.
+To celebrate `PyRayT's v0.3.0 release <https://pyrayt.readthedocs.io/en/latest/release.html#v0-3-0>`_, I'm going to walk through how it can be used to design and optimize a multi-lens camera. This first part of the series will cover why lenses need to be so intricate, and what happens if you tried to make a camera out of a single lens instead.
 
 .. contents:: 
     :class: alert alert-primary ml-0
@@ -165,7 +166,7 @@ The diameter of the aperture that gives us the desired f/# depends on where in t
 Our First Ray Trace
 --------------------
 
-With our components defined we're ready to simulate. The only thing we need is a test source that generates rays to trace through the system. PyRayT's :code:`LineOfRays` is perfect for this, as it generates a set of linearly spaced rays projected towards the +x axis. The last step is to load all the components into a :code:`RayTracer` object and run the :code:`trace` function.
+With our components defined we're ready to simulate. The only thing we need is a test source that generates rays to trace through the system. For that we'll use PyRayT's :code:`LineOfRays` which generates a set of linearly spaced rays projected towards the +x axis. The last step is to load all the components into a :code:`RayTracer` object and run the :code:`trace` function.
 
 
 .. container::
@@ -197,13 +198,13 @@ The results of a trace is a `Pandas <https://pandas.pydata.org/>`_ dataframe whi
     import matplotlib.pyplot as plt
 
     def init_figure() -> Tuple[plt.Figure, plt.Axes]:
-    """
-    Convenience function to generate an axis with a set size 
-    """
-    fig = plt.figure(figsize = (12,8))
-    axis = plt.gca()
-    axis.grid()
-    return fig, axis
+        """
+        Convenience function to generate an axis with a set size 
+        """
+        fig = plt.figure(figsize = (12,8))
+        axis = plt.gca()
+        axis.grid()
+        return fig, axis
 
     # set up the figure and axis
     fig, axis = init_figure()
@@ -236,7 +237,7 @@ A picture may be worth 1000 words, but when it comes to analyzing our lens' perf
 Spherical Aberrations
 ----------------------
 
-Spherical lenses don't actually focus light to a perfect point. In fact, the focal point is a function of the radius where the light enters the lens (in our case the position on the y-axis where the ray originates). We can easily visualize the spherical aberrations by creating a helper function that generates a set of rays along the y-axis, and calculates where each ray intercepts the x-axis.
+Spherical lenses don't actually focus light to a perfect point. In fact, the focal point is a function of the radius where the light enters the lens (in our case the position on the y-axis where the ray originates). We can easily visualize the spherical aberrations by creating a helper function that generates a set of rays along the y-axis, and calculates where each ray intercepts the x-axis. 
 
 .. code:: python
 
@@ -267,18 +268,24 @@ Spherical lenses don't actually focus light to a perfect point. In fact, the foc
         results = pd.DataFrame({'radius': np.asarray(radii), 'focus': np.asarray(intercept)})
         return results
 
-Using the function on our single-lens system yields the following plot.
-
 .. image:: /images/camera_design_with_pyrayt/spherical_aberration_chart_single_lens.png
     :align: center
+    :width: 600
 
-This plot shows that the focal length of the lens is changing by almost 10% based on the radius alone, resulting in poor image quality with pictures looking "blurry" even when the imager is aligned to the focal plane. Speaking of the focal plane, we also see that the focus of our lens is ~53mm instead of the 50 we calculated. This is coming from the thick lens portions of the lensmaker's equation which we chose to ignore.
+Using the function on our single-lens system yields the above plot, showing that the focal length of the lens is changing by almost 10% based on the radius alone! This aberration would cause our single-lens images to come out "blurry" even when the imager is aligned to the focal plane.
 
+.. figure:: https://www.opticsthewebsite.com/Content/images/aber/USAF512_largeap3.png
+    :align: center
+    :width: 300
+
+    An image suffering from spherical aberrations. Source: `www.opticsthewebsite.com`_
+
+Speaking of the focal plane, we also see that the focus of our lens is ~52mm instead of the 50 we calculated, due the the thick lens portion of the lensmaker's equation we chose to ignore.
 
 Chromatic Aberrations
 ----------------------
 
-Unlike spherical aberrations, chromatic aberrations *are* explained by the lensmaker's equation: the focal point of the lens depends on the refractive index of the lens' material. Real materials don't have a constant refractive index; instead, the refractive index is a function of wavelength. This effect, called `dispersion <https://en.wikipedia.org/wiki/Dispersion_(optics)>`_, is more often associated with the reason prisms create rainbows. In our case it means our lens will have a wavelength dependent focus.
+Unlike spherical aberrations, chromatic aberrations *are* explained by the lensmaker's equation: the focal point of the lens depends on the refractive index of the lens' material. Real materials don't have a constant refractive index; instead, the refractive index is a function of wavelength. This effect, called `dispersion <https://en.wikipedia.org/wiki/Dispersion_(optics)>`_, is more often associated with the reason prisms split white light into a rainbow of colors. In our case it means our lens will have a wavelength dependent focus.
 
 The same way we wrote a function to characterize spherical aberrations, we can write one to quantify chromatic aberration:
 
@@ -307,7 +314,7 @@ The same way we wrote a function to characterize spherical aberrations, we can w
         return results
 
 
-If we run this function on our current system the results will say that every wavelength has the exact same focus! This is because we made the lens out of an "ideal" glass with a refractive index (n) of 1.5. Let's replace our lens with one made of a popular crown glass instead:
+If we run this function on our current system the results will say that every wavelength has the exact same focus! This is because we made the lens out of an "ideal" glass with a refractive index (n) of 1.5. Let's replace our lens with one made of a popular `crown glass <https://en.wikipedia.org/wiki/Crown_glass_(optics)>`_ instead:
 
 .. code:: python
     
@@ -319,13 +326,19 @@ Running the function on our newly dispersive system shows a focal length shift o
     :align: center
     :width: 600
     
-An image taken with this lens would result in sharp edges in our photos having a 'rainbow' effect. Interestingly, this aberration is sometimes sought after for artistic effect, going as far as being including as a graphics setting in id's 2016 Doom reboot.
+An image taken with this lens would result in sharp edges in our photos having a 'rainbow' effect. Interestingly, this aberration is sometimes sought after for artistic effect, going as far as being including as a graphics setting in id's `2016 Doom reboot <https://en.wikipedia.org/wiki/Doom_(2016_video_game)>`_.
+
+.. figure:: https://upload.wikimedia.org/wikipedia/commons/6/66/Chromatic_aberration_%28comparison%29.jpg
+    :align: center
+    :width: 300
+
+    An image with and without chromatic aberration. Source: `wikipedia.org <https://en.wikipedia.org/wiki/Chromatic_aberration>`_
 
 
 Coma Aberrations
 -----------------
 
-The last aberration we'll quantify is coma. Instead of being a change in focal length, coma is a change mangification vs. angle of incidence on the system. The name comes from the fact that points imaged with a system suffering from coma looks like the `coma of a comet <https://en.wikipedia.org/wiki/Coma_(cometary)>`_.
+The last aberration we'll quantify is `coma <https://en.wikipedia.org/wiki/Coma_(optics)>`_. Instead of being a change in focal length, coma is a change mangification vs. angle of incidence on the system. The name comes from the fact that a point imaged with a system suffering from coma looks like the `coma of a comet <https://en.wikipedia.org/wiki/Coma_(cometary)>`_.
 
 The easiest way to visualize coma is to plot a :code:`LineOfRays` hitting the lens at non-normal incidence. In a coma free imager, the distribution of ray-imager intersections should be symmetrically distributed about the central ray.
 
@@ -367,16 +380,22 @@ The main advantage of rotating the lens instead of the source is that the incomi
     :align: center
     :width: 600
 
-Just looking at the ray trace we can see the angled rays don't come to any central focus, and the histogram has a strong skew towards the -y axis. From an imaging perspective this will cause a radial-blur, where the center of our image is in-focus but the edges are out of focus.
+Just looking at the ray trace we can see the angled rays don't come to any central focus, and the histogram has a strong skew towards the -y axis. Like spherical aberrations, coma will cause our images to blur; however, the distortion is worse the further you are from the center of the imager, with the middle of the image remaining sharp.
 
+.. figure:: https://www.opticsthewebsite.com/Content/images/aber/USAF512_largeap4.png
+    :align: center
+    :width: 300
+
+    An image suffering from coma aberrations. Source: `www.opticsthewebsite.com`_
 
 Next Steps 
 ===========
 
-So far we've created a simple camera and identified its imperfections. In the next post I'll show how, with just one additional lens, we can drastically minimize all three of the above aberrations! In the mean time feel free to explore the design and see how much optimization you can do with just one lens:
+This wraps up the first part of our camera design. It might not seem like much, but understanding the limitations of a simple system helps justify why we go through the process of desiging a complex one. The full `Jupyter notebook for the design is on GitHub <https://gist.github.com/rfrazier716/211516bfba7a3795c3f5d00b5e5fe53b>`_, and next post I'll show how with just one additional lens, we can drastically minimize all three of the above aberrations to help our camera generate a cleaner final image! In the mean time feel free to explore the design and see how much optimization you can do with just one lens:
 
 * What about the design changes if you pick a different material?
 * If you break the symmetry between the front and back surface can you reduce aberrations? 
 * Is there a way to reduce chromatic aberration only by changing the physical dimensions (not material) of the lens? 
 
 .. _`PyRayt`: https://github.com/rfrazier716/PyRayT
+.. _`www.opticsthewebsite.com`: https://www.opticsthewebsite.com/SeidelSimulation

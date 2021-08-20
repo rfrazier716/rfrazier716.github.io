@@ -180,3 +180,9 @@ a.twitter-tag:hover{
 .alert .alert-header{
     font-weight: 700;
 }
+
+figure figcaption{
+    font-size: 90%;
+    color: #868e96;
+    margin-top: 0.5rem;
+}
