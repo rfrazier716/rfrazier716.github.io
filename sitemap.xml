@@ -7,130 +7,134 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
   <loc>https://www.fotonixx.com/</loc>
-  <lastmod>2021-08-02T13:44:00Z</lastmod>
+  <lastmod>2021-07-21T19:07:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/2021/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/about/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/archive.html</loc>
-  <lastmod>2021-08-02T14:33:00Z</lastmod>
+  <lastmod>2021-08-16T21:13:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/analysis/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/cat_programming/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/constructive-solid-geometry/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/csg/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/data-science/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/git/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/github/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/graphics/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/jupyter/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/music/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/nikola/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/numpy/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/pyrayt/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/python/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/ray-tracing/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/rendering/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/rst/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/rust/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/categories/video-games/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/posts/2d-binary-spacing-partitioning-with-python-and-networkx/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/posts/5-video-game-soundtracks-to-jam-out-to-while-coding/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/posts/data-science-vcs/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://www.fotonixx.com/posts/design-a-camera-with-python-and-pyrayt/</loc>
+  <lastmod>2021-08-07T21:38:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/posts/efficient-csg/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/posts/getting-up-and-running-with-nikola/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/posts/rust-fizzbuzz/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/projects/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
  <url>
   <loc>https://www.fotonixx.com/resume/</loc>
-  <lastmod>2021-08-02T13:42:00Z</lastmod>
+  <lastmod>2021-07-21T15:45:00Z</lastmod>
  </url>
 </urlset>

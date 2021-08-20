@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns# article: http://ogp.me/ns/article#
+" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design a Camera with Python and PyRayT: Part One | Fotonix &amp; Gizmos</title>
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" hreflang="en" href="../../rss.xml">
+<link rel="canonical" href="https://www.fotonixx.com/posts/design-a-camera-with-python-and-pyrayt/">
+<link rel="icon" href="../../favicon.ico" sizes="16x16">
+<!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]--><meta name="author" content="Ryan Frazier">
+<link rel="prev" href="../rust-fizzbuzz/" title="Writing an (Overly) Idiomatic Fizzbuzz with Rust" type="text/html">
+<meta property="og:site_name" content="Fotonix &amp; Gizmos">
+<meta property="og:title" content="Design a Camera with Python and PyRayT: Part One">
+<meta property="og:url" content="https://www.fotonixx.com/posts/design-a-camera-with-python-and-pyrayt/">
+<meta property="og:description" content="Have you ever cut open a camera lens to look at what's inside? I don't blame you if you haven't, lenses are ridiculously expensive and it's a one way operation. However, if you look at a picture of a ">
+<meta property="og:image" content="https://www.fotonixx.com/images/camera_design_with_pyrayt/preview_image.png">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-08-05T21:04:29-04:00">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-expand-md static-top mb-4
+navbar-dark
+bg-dark
+"><div class="container">
+<!-- This keeps the margins nice -->
+        <a class="navbar-brand" href="../../">
+            <img src="../../images/site_logo.svg" alt="Fotonix &amp; Gizmos" id="logo" class="d-inline-block align-top"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="bs-navbar">
+            <ul class="navbar-nav mr-auto">
+<li class="nav-item">
+<a href="../../" class="nav-link">Home</a>
+                </li>
+<li class="nav-item">
+<a href="../../projects/" class="nav-link">Projects</a>
+                </li>
+<li class="nav-item">
+<a href="../../about/" class="nav-link">About</a>
+
+                
+            </li>
+</ul>
+<ul class="navbar-nav navbar-right"></ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <div class="banner-top">
+        </div>
+        <!--Body content-->
+        <div class="row h-100">
+            <div class="col-lg-8 col-md-12">
+                
+
+<article class="post-text h-entry hentry postpage " itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Design a Camera with Python and PyRayT: Part One</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard p-author h-card"><span class="byline-name fn p-name" itemprop="author">
+                    Ryan Frazier
+            </span></p>
+            <p class="dateline">
+            <a href="." rel="bookmark">
+            <time class="published dt-published" datetime="2021-08-05T21:04:29-04:00" itemprop="datePublished" title="2021-08-05 21:04">2021-08-05 21:04</time></a>
+            </p>
+            
+        </div>
+        
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<p>Have you ever cut open a camera lens to look at what's inside? I don't blame you if you haven't, lenses are ridiculously expensive and it's a one way operation. However, if you look at a <a class="reference external" href="https://www.ephotozine.com/article/this-cutaway-diagram-shows-the-inside-of-a-dslr-30546">picture of a cross-section</a>, you'd see that the "lens" is actually made of upwards of a dozen individual lenses, each one doing its part to create a clear, error free image. Typically, understanding what's going on in the camera lens requires exhaustive calculations or expensive lens design software costing upwards of $10,000 for a single user. My annoyance at this price barrier (as somebody who uses those tools professionally) is what sparked me to create <a class="reference external" href="https://github.com/rfrazier716/PyRayT">PyRayT</a>, a free and open source generic ray tracer that pairs with the <a class="reference external" href="https://scipy.org/install.html">Scientific Python stack</a>.</p>
+<p>To celebrate <a class="reference external" href="https://pyrayt.readthedocs.io/en/latest/release.html#v0-3-0">PyRayT's v0.3.0 release</a>, I'm going to walk through how it can be used to design and optimize a multi-lens camera. This first part of the series will cover why lenses need to be so intricate, and what happens if you tried to make a camera out of a single lens instead.</p>
+<div class="contents alert alert-primary ml-0 topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#why-are-camera-lenses-so-complex" id="id2">Why Are Camera Lenses so Complex?</a></p></li>
+<li><p><a class="reference internal" href="#getting-up-and-running-with-pyrayt" id="id3">Getting Up and Running with PyRayT</a></p></li>
+<li>
+<p><a class="reference internal" href="#creating-a-simple-camera" id="id4">Creating a Simple Camera</a></p>
+<ul>
+<li><p><a class="reference internal" href="#thin-lenses" id="id5">Thin Lenses</a></p></li>
+<li><p><a class="reference internal" href="#apertures-and-baffles" id="id6">Apertures and Baffles</a></p></li>
+<li><p><a class="reference internal" href="#our-first-ray-trace" id="id7">Our First Ray Trace</a></p></li>
+</ul>
+</li>
+<li>
+<p><a class="reference internal" href="#characterizing-lens-performance" id="id8">Characterizing Lens Performance</a></p>
+<ul>
+<li><p><a class="reference internal" href="#spherical-aberrations" id="id9">Spherical Aberrations</a></p></li>
+<li><p><a class="reference internal" href="#chromatic-aberrations" id="id10">Chromatic Aberrations</a></p></li>
+<li><p><a class="reference internal" href="#coma-aberrations" id="id11">Coma Aberrations</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#next-steps" id="id12">Next Steps</a></p></li>
+</ul>
+</div>
+<div class="contents alert alert-primary ml-0 topic" id="quick-links">
+<p class="topic-title">Quick Links</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#why-are-camera-lenses-so-complex" id="id13">Why Are Camera Lenses so Complex?</a></p></li>
+<li><p><a class="reference internal" href="#getting-up-and-running-with-pyrayt" id="id14">Getting Up and Running with PyRayT</a></p></li>
+<li>
+<p><a class="reference internal" href="#creating-a-simple-camera" id="id15">Creating a Simple Camera</a></p>
+<ul>
+<li><p><a class="reference internal" href="#thin-lenses" id="id16">Thin Lenses</a></p></li>
+<li><p><a class="reference internal" href="#apertures-and-baffles" id="id17">Apertures and Baffles</a></p></li>
+<li><p><a class="reference internal" href="#our-first-ray-trace" id="id18">Our First Ray Trace</a></p></li>
+</ul>
+</li>
+<li>
+<p><a class="reference internal" href="#characterizing-lens-performance" id="id19">Characterizing Lens Performance</a></p>
+<ul>
+<li><p><a class="reference internal" href="#spherical-aberrations" id="id20">Spherical Aberrations</a></p></li>
+<li><p><a class="reference internal" href="#chromatic-aberrations" id="id21">Chromatic Aberrations</a></p></li>
+<li><p><a class="reference internal" href="#coma-aberrations" id="id22">Coma Aberrations</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#next-steps" id="id23">Next Steps</a></p></li>
+</ul>
+</div>
+<section id="why-are-camera-lenses-so-complex"><h2><a class="toc-backref" href="#id13">Why Are Camera Lenses so Complex?</a></h2>
+<p>If you rack your brain to recall highschool physics there's probably two things you remember about lenses:</p>
+<ol class="arabic simple">
+<li><p>A ray parallel to the optical axis converges onto the focal point.</p></li>
+<li><p>A ray going through the center of the lens is unmodified.</p></li>
+</ol>
+<p>With these rules you can trace simple diagrams showing how object images are formed by lenses.</p>
+<div class="figure mb-4">
+    <div class="figure-image">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Lens3.svg/1920px-Lens3.svg.png" alt="Thin lens ray trace">
+</div>
+    <div class="figure-caption text-center">
+        Source: <a href="https://en.wikipedia.org/wiki/Lens#Imaging_properties">Wikipedia</a>
+    </div>
+</div>
+<p>Notice how in the above image every point in the object corresponds to exactly one point in the image, so in theory a single lens camera should be able to capture perfect reproductions of objects we want to image. Why then, does a picture from that camera end up looking like the one below?</p>
+<div class="figure mb-4 container">
+    <div class="figure-image row mb-2">
+        <div class="col-md-6 col-sm-12 mb-2">
+            <img src="https://www.opticsthewebsite.com/Content/images/aber/USAF512.png" alt="Ideal Image">
+</div>
+        <div class="col-md-6 col-sm-12">
+            <img src="https://www.opticsthewebsite.com/Content/images/aber/USAF512_largeap4.png" alt="Distorted Image">
+</div>
+    </div>
+    <div class="figure-caption text-center">
+        An ideal image (left) and the resulting image as captured by a simple camera (right)
+        <br>
+        Source: <a href="https://www.opticsthewebsite.com/SeidelSimulation">www.opticsthewebsite.com</a>
+    </div>
+</div>
+<p>These distortions between the object and image, called <a class="reference external" href="https://en.wikipedia.org/wiki/Optical_aberration">optical aberrations</a>, are caused by  <a class="reference external" href="https://en.wikipedia.org/wiki/Taylor_series">higher order terms</a> that are typically ignored when calculating lenses by hand using the <a class="reference external" href="https://en.wikipedia.org/wiki/Paraxial_approximation">paraxial approximation</a>.</p>
+<p>The goal of any camera design is to minimize these aberrations to the extent  that they are not noticed by the end user. A single lens only has so many variables about it you can change, but adding multiple lenses to a system gives optical engineers additional degrees of freedom for the minimization (often by minimizing <a class="reference external" href="https://www.opticsthewebsite.com/Aberrations">Siedel Aberration Coefficients</a>, which are beyond the scope of the article).</p>
+<p>So how bad could a single lens imager really be? And how do you improve the quality with additional lenses? Let's answer the first question by quantifing common aberrations for a single lens system.</p>
+</section><section id="getting-up-and-running-with-pyrayt"><h2><a class="toc-backref" href="#id14">Getting Up and Running with PyRayT</a></h2>
+<p>As mentioned above, hand calculations for lenses rely on approximations that don't capture aberrations. Fortunately, numeric ray tracers don't suffer from the same limitations which is why they're so valuable for accurate lens design. Since this article is about showcasing features of <a class="reference external" href="https://github.com/rfrazier716/PyRayT">PyRayT</a>, that's the ray tracer we'll be using. You can install the latest stable package from pip.</p>
+<pre class="code shell"><a id="rest_code_d96e53ca2ac449b4b871e647f3a8f3c4-1" name="rest_code_d96e53ca2ac449b4b871e647f3a8f3c4-1"></a>py -m pip install pyrayt
+</pre>
+<p>You can also check out the <a class="reference external" href="https://pyrayt.readthedocs.io/en/latest/tutorial.html">Getting Started Guide</a> and list of <a class="reference external" href="https://pyrayt.readthedocs.io/en/latest/reference/components.html">built-in optical components</a> for a general overview.</p>
+</section><section id="creating-a-simple-camera"><h2><a class="toc-backref" href="#id15">Creating a Simple Camera</a></h2>
+<p>To design our single-lens camera we only need two specs: <a class="reference external" href="https://en.wikipedia.org/wiki/Optical_power">system power</a> and f/# (<a class="reference external" href="https://en.wikipedia.org/wiki/F-number">F-number</a>). We want the system to have a focal length of 50mm, and since a lens' power is the inverse of focal length, our system power is 0.02. Our f/# will be 2.4, meaning the focal length should be 2.4x larger than the entrance aperture.</p>
+<section id="thin-lenses"><h3><a class="toc-backref" href="#id16">Thin Lenses</a></h3>
+<p>Our lens is the only component that contributes to system power, so the power of the lens has to equal the desired power of our system. To calculate lens power we'll use the <a class="reference external" href="https://en.wikipedia.org/wiki/Lens#Lensmaker's_equation">lensmaker's equation</a>.</p>
+<div class="math">
+\begin{equation*}
+P_{lens} = (n_{lens} -1)[\frac{1}{R_1}-\frac{1}{R_2}+\frac{(n_{lens}-1)d}{n R_1 R_2}]
+\end{equation*}
+</div>
+<p>Since we're doing the calculation by hand we'll make a couple approximations to simplify things: (1) the radii of curvature are equal and opposite (resulting in a biconvex lens), and (2) the thickness is small enough that we can discard the final term. Later we'll numerically optimize the entire system to correct for focus, but these approximations give us a good starting point.</p>
+<p>The simplified equation then becomes:</p>
+<div class="math">
+\begin{equation*}
+R_{lens} =\frac{2(n_{lens} -1)}{P_{lens}}
+\end{equation*}
+</div>
+<p>Since the refractive index of most glasses is ~1.5, this means that our radius of curvature for a biconvex lens is equal to the <em>inverse of the lenses power</em>, which is also the focal length of the system!</p>
+<p>Now we can construct our lens and visualize it with the <code>draw</code> function in the <code>tinygfx</code> package (installed as part of the PyRayT distribution).</p>
+<pre class="code python"><a id="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-1" name="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-1"></a><span class="c1"># import the Ray Tracer Package</span>
+<a id="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-2" name="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-2"></a><span class="kn">import</span> <span class="nn">pyrayt</span>
+<a id="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-3" name="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-3"></a><span class="kn">import</span> <span class="nn">pyrayt.materials</span> <span class="k">as</span> <span class="nn">matl</span>
+<a id="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-4" name="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-4"></a><span class="kn">from</span> <span class="nn">tinygfx.g3d.renderers</span> <span class="kn">import</span> <span class="n">draw</span>
+<a id="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-5" name="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-5"></a>
+<a id="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-6" name="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-6"></a><span class="c1"># All spatial units are mm</span>
+<a id="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-7" name="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-7"></a><span class="n">lens_diameter</span> <span class="o">=</span> <span class="mi">30</span>
+<a id="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-8" name="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-8"></a><span class="n">lens_thickness</span> <span class="o">=</span> <span class="mi">5</span>
+<a id="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-9" name="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-9"></a><span class="n">system_focus</span> <span class="o">=</span> <span class="mi">50</span> <span class="c1"># The focus of the system</span>
+<a id="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-10" name="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-10"></a><span class="n">f_num</span> <span class="o">=</span> <span class="mf">2.4</span> <span class="c1"># f-number of system</span>
+<a id="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-11" name="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-11"></a>
+<a id="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-12" name="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-12"></a><span class="c1"># Creating a simple Lens</span>
+<a id="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-13" name="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-13"></a><span class="n">lens_material</span> <span class="o">=</span> <span class="n">matl</span><span class="o">.</span><span class="n">glass</span><span class="p">[</span><span class="s2">"ideal"</span><span class="p">]</span>
+<a id="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-14" name="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-14"></a><span class="n">lens_radius</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">lens_material</span><span class="o">.</span><span class="n">index_at</span><span class="p">(</span><span class="mf">0.633</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">system_focus</span>
+<a id="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-15" name="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-15"></a><span class="n">lens</span> <span class="o">=</span> <span class="n">pyrayt</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">thick_lens</span><span class="p">(</span>
+<a id="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-16" name="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-16"></a>    <span class="n">r1</span><span class="o">=</span><span class="n">lens_radius</span><span class="p">,</span>
+<a id="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-17" name="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-17"></a>    <span class="n">r2</span><span class="o">=-</span><span class="n">lens_radius</span><span class="p">,</span>
+<a id="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-18" name="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-18"></a>    <span class="n">thickness</span><span class="o">=</span><span class="n">lens_thickness</span><span class="p">,</span>
+<a id="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-19" name="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-19"></a>    <span class="n">aperture</span><span class="o">=</span><span class="n">lens_diameter</span><span class="p">,</span>
+<a id="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-20" name="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-20"></a>    <span class="n">material</span><span class="o">=</span><span class="n">lens_material</span><span class="p">)</span>
+<a id="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-21" name="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-21"></a>
+<a id="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-22" name="rest_code_0b151573f4ad4c3fb06f8803ea97e4b7-22"></a><span class="n">draw</span><span class="p">(</span><span class="n">lens</span><span class="p">)</span>
+</pre>
+<img alt="/images/camera_design_with_pyrayt/biconvex_lens.png" class="align-center" src="../../images/camera_design_with_pyrayt/biconvex_lens.png"><p>A lens is not too impressive by itself. Let's add the remaining parts of our system so we can start running ray traces!</p>
+</section><section id="apertures-and-baffles"><h3><a class="toc-backref" href="#id17">Apertures and Baffles</a></h3>
+<p>There's two more pieces we need in order to make the camera: an aperture to block rays that exceed our f/# and an imager placed on our camera's focal plane. From a modeling perspective both will be accomplished with variations of PyRayT's <code>baffle</code>. Baffle's are 2D planes that absorb all light incident on them, perfect for modeling sensors as well as ideal beam-stops. For the imager we create a square baffle the same size as our lens and move it to the focal plane.</p>
+<pre class="code python"><a id="rest_code_0a528096a53940209e7cc75be4100ac3-1" name="rest_code_0a528096a53940209e7cc75be4100ac3-1"></a><span class="n">imager</span> <span class="o">=</span> <span class="n">components</span><span class="o">.</span><span class="n">baffle</span><span class="p">((</span><span class="n">lens_diameter</span><span class="p">,</span> <span class="n">lens_diameter</span><span class="p">))</span><span class="o">.</span><span class="n">move_x</span><span class="p">(</span><span class="n">system_focus</span><span class="p">)</span>
+</pre>
+<p>Our aperture can be thought of as a "baffle with a hole", where the hole is large enough to only let in rays with a cone angle specified by our f/#. <code>pyrayt</code> and <code>tinygfx</code> create arbitrary shapes via <a class="reference external" href="../efficient-csg/">constructive solids</a> meaning an aperture is a baffle with the center shape subtracted from it. The convenience function <code>aperture</code> does just this, creating a baffle with an arbitrarily shaped hole in the middle.</p>
+<p>The diameter of the aperture that gives us the desired f/# depends on where in the system the aperture is located. If we place it half-way between the lens and the focal plane, the diameter of the opening has to be:</p>
+<div class="math">
+\begin{equation*}
+d_{ap}=\frac{1}{2*P_{sys}}*\frac{1}{f_\#}
+\end{equation*}
+</div>
+<pre class="code python"><a id="rest_code_989cf2577fd84786beb279c72bb5ad49-1" name="rest_code_989cf2577fd84786beb279c72bb5ad49-1"></a><span class="n">aperture_position</span> <span class="o">=</span> <span class="n">system_focus</span> <span class="o">/</span> <span class="mi">2</span>
+<a id="rest_code_989cf2577fd84786beb279c72bb5ad49-2" name="rest_code_989cf2577fd84786beb279c72bb5ad49-2"></a><span class="n">aperture_diameter</span> <span class="o">=</span> <span class="n">aperture_position</span> <span class="o">/</span> <span class="n">f_num</span>
+<a id="rest_code_989cf2577fd84786beb279c72bb5ad49-3" name="rest_code_989cf2577fd84786beb279c72bb5ad49-3"></a>
+<a id="rest_code_989cf2577fd84786beb279c72bb5ad49-4" name="rest_code_989cf2577fd84786beb279c72bb5ad49-4"></a><span class="n">aperture</span> <span class="o">=</span> <span class="n">components</span><span class="o">.</span><span class="n">aperture</span><span class="p">(</span>
+<a id="rest_code_989cf2577fd84786beb279c72bb5ad49-5" name="rest_code_989cf2577fd84786beb279c72bb5ad49-5"></a>    <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">lens_diameter</span><span class="p">,</span> <span class="n">lens_diameter</span><span class="p">),</span> <span class="c1"># make a square baffle</span>
+<a id="rest_code_989cf2577fd84786beb279c72bb5ad49-6" name="rest_code_989cf2577fd84786beb279c72bb5ad49-6"></a>    <span class="n">aperture_size</span><span class="o">=</span><span class="n">aperture_diameter</span> <span class="c1"># put a circular opening in the center</span>
+<a id="rest_code_989cf2577fd84786beb279c72bb5ad49-7" name="rest_code_989cf2577fd84786beb279c72bb5ad49-7"></a>    <span class="p">)</span><span class="o">.</span><span class="n">move_x</span><span class="p">(</span><span class="n">aperture_position</span><span class="p">)</span>
+</pre></section><section id="our-first-ray-trace"><h3><a class="toc-backref" href="#id18">Our First Ray Trace</a></h3>
+<p>With our components defined we're ready to simulate. The only thing we need is a test source that generates rays to trace through the system. For that we'll use PyRayT's <code>LineOfRays</code> which generates a set of linearly spaced rays projected towards the +x axis. The last step is to load all the components into a <code>RayTracer</code> object and run the <code>trace</code> function.</p>
+<div class="class alert alert-success pb-0 docutils container">
+<div class="alert-header">
+<i class="fas fa-info-circle"></i> Note
+</div>
+<hr class="mt-0 mb-1">
+<p>Almost all of the sources used to characterize our system will be parallel bundles of rays at various angles. This is because we're assuming the camera is <a class="reference external" href="https://en.wikipedia.org/wiki/Infinity_focus">focused at infinity</a>, where any angular deviation between sets of rays originating from the same point are effectively zero.</p>
+</div>
+<pre class="code python"><a id="rest_code_106bb61dbfb94f9e8c95ff881eb96347-1" name="rest_code_106bb61dbfb94f9e8c95ff881eb96347-1"></a><span class="c1"># Create a Parallel ray set</span>
+<a id="rest_code_106bb61dbfb94f9e8c95ff881eb96347-2" name="rest_code_106bb61dbfb94f9e8c95ff881eb96347-2"></a><span class="n">source</span> <span class="o">=</span> <span class="n">components</span><span class="o">.</span><span class="n">LineOfRays</span><span class="p">(</span><span class="mf">0.8</span><span class="o">*</span><span class="n">lens_diameter</span><span class="p">,</span> <span class="n">wavelength</span> <span class="o">=</span> <span class="mf">0.633</span><span class="p">)</span><span class="o">.</span><span class="n">move_x</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">)</span>
+<a id="rest_code_106bb61dbfb94f9e8c95ff881eb96347-3" name="rest_code_106bb61dbfb94f9e8c95ff881eb96347-3"></a>
+<a id="rest_code_106bb61dbfb94f9e8c95ff881eb96347-4" name="rest_code_106bb61dbfb94f9e8c95ff881eb96347-4"></a><span class="n">tracer</span> <span class="o">=</span> <span class="n">pyrayt</span><span class="o">.</span><span class="n">RayTracer</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="p">[</span><span class="n">lens</span><span class="p">,</span> <span class="n">aperture</span><span class="p">,</span> <span class="n">imager</span><span class="p">])</span>
+<a id="rest_code_106bb61dbfb94f9e8c95ff881eb96347-5" name="rest_code_106bb61dbfb94f9e8c95ff881eb96347-5"></a><span class="n">tracer</span><span class="o">.</span><span class="n">set_rays_per_source</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span>
+<a id="rest_code_106bb61dbfb94f9e8c95ff881eb96347-6" name="rest_code_106bb61dbfb94f9e8c95ff881eb96347-6"></a><span class="n">results</span> <span class="o">=</span> <span class="n">tracer</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span>
+</pre>
+<p>The results of a trace is a <a class="reference external" href="https://pandas.pydata.org/">Pandas</a> dataframe which stores information about the ray at every intersection of the simulation. However, for now we'd rather just visualize the ray trace, which is done with the <code>show</code> function.</p>
+<pre class="code python"><a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-1" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-1"></a><span class="c1"># import matplotlib so we can manipulate the axis</span>
+<a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-2" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-2"></a><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-3" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-3"></a>
+<a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-4" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-4"></a><span class="k">def</span> <span class="nf">init_figure</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">]:</span>
+<a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-5" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-5"></a>    <span class="sd">"""</span>
+<a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-6" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-6"></a><span class="sd">    Convenience function to generate an axis with a set size</span>
+<a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-7" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-7"></a><span class="sd">    """</span>
+<a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-8" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-8"></a>    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+<a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-9" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-9"></a>    <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+<a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-10" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-10"></a>    <span class="n">axis</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-11" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-11"></a>    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">axis</span>
+<a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-12" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-12"></a>
+<a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-13" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-13"></a><span class="c1"># set up the figure and axis</span>
+<a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-14" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-14"></a><span class="n">fig</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">init_figure</span><span class="p">()</span>
+<a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-15" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-15"></a><span class="n">axis</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"distance (mm)"</span><span class="p">)</span>
+<a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-16" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-16"></a><span class="n">axis</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"distance (mm)"</span><span class="p">)</span>
+<a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-17" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-17"></a>
+<a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-18" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-18"></a>
+<a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-19" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-19"></a><span class="c1"># display the ray trace</span>
+<a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-20" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-20"></a><span class="n">tracer</span><span class="o">.</span><span class="n">show</span><span class="p">(</span>
+<a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-21" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-21"></a>    <span class="n">ray_width</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+<a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-22" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-22"></a>    <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span>
+<a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-23" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-23"></a>    <span class="n">view</span><span class="o">=</span><span class="s1">'xy'</span><span class="p">)</span>
+<a id="rest_code_2c218a8dbda54ad5a458fc9e5a189306-24" name="rest_code_2c218a8dbda54ad5a458fc9e5a189306-24"></a><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre>
+<img alt="/images/camera_design_with_pyrayt/single_lens_raytrace.png" class="align-center" src="../../images/camera_design_with_pyrayt/single_lens_raytrace.png"><p>Looks like our lens is doing its job! All rays that transmit through the aperture are focused to an approximate point at the focal distance, and any ray angle that exceeds our f/# is blocked. Unfortunately since the aperture and imager are 2D objects, they don't show up in the ray trace, but we know that they are there because rays terminate on their surfaces.</p>
+</section></section><section id="characterizing-lens-performance"><h2><a class="toc-backref" href="#id19">Characterizing Lens Performance</a></h2>
+<p>A picture may be worth 1000 words, but when it comes to analyzing our lens' performance data is key. Using the results dataframe we can explore the <a class="reference external" href="https://pyrayt.readthedocs.io/en/latest/generated/pyrayt.html?highlight=RaySet#pyrayt._pyrayt.RaySet">RaySet</a> metadata of each ray as they travel through the system, and we'll use that information to see how our single lens design holds up against common imaging aberrations: <a class="reference external" href="https://en.wikipedia.org/wiki/Spherical_aberration">spherical</a>, <a class="reference external" href="https://en.wikipedia.org/wiki/Chromatic_aberration">chromatic</a>, and <a class="reference external" href="https://en.wikipedia.org/wiki/Coma_(optics)">coma</a>. As mentioned above, characterizing the system with Seidel coefficients is beyond the scope of the article, instead we'll use <a class="reference external" href="https://matplotlib.org/">Matplotlib</a> to generate plots of the system focus across different parameters.</p>
+<section id="spherical-aberrations"><h3><a class="toc-backref" href="#id20">Spherical Aberrations</a></h3>
+<p>Spherical lenses don't actually focus light to a perfect point. In fact, the focal point is a function of the radius where the light enters the lens (in our case the position on the y-axis where the ray originates). We can easily visualize the spherical aberrations by creating a helper function that generates a set of rays along the y-axis, and calculates where each ray intercepts the x-axis.</p>
+<pre class="code python"><a id="rest_code_c81774193fe149babab63cc85fa3bc1c-1" name="rest_code_c81774193fe149babab63cc85fa3bc1c-1"></a><span class="k">def</span> <span class="nf">spherical_aberration</span><span class="p">(</span><span class="n">system</span><span class="p">,</span> <span class="n">ray_origin</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">max_radius</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">sample_points</span><span class="o">=</span><span class="mi">11</span><span class="p">):</span>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-2" name="rest_code_c81774193fe149babab63cc85fa3bc1c-2"></a>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-3" name="rest_code_c81774193fe149babab63cc85fa3bc1c-3"></a>    <span class="c1"># the souce is a line of rays only on the +y axis. It's slightly shifted so zero is not a point</span>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-4" name="rest_code_c81774193fe149babab63cc85fa3bc1c-4"></a>    <span class="c1"># as it would focus at infinity</span>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-5" name="rest_code_c81774193fe149babab63cc85fa3bc1c-5"></a>    <span class="n">source</span> <span class="o">=</span> <span class="n">pyrayt</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">LineOfRays</span><span class="p">(</span><span class="mf">0.9</span><span class="o">*</span><span class="n">max_radius</span><span class="p">)</span><span class="o">.</span><span class="n">move_x</span><span class="p">(</span><span class="n">ray_origin</span><span class="p">)</span><span class="o">.</span><span class="n">move_y</span><span class="p">(</span><span class="n">max_radius</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-6" name="rest_code_c81774193fe149babab63cc85fa3bc1c-6"></a>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-7" name="rest_code_c81774193fe149babab63cc85fa3bc1c-7"></a>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-8" name="rest_code_c81774193fe149babab63cc85fa3bc1c-8"></a>    <span class="n">tracer</span> <span class="o">=</span> <span class="n">pyrayt</span><span class="o">.</span><span class="n">RayTracer</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">system</span><span class="p">)</span>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-9" name="rest_code_c81774193fe149babab63cc85fa3bc1c-9"></a>    <span class="n">tracer</span><span class="o">.</span><span class="n">set_rays_per_source</span><span class="p">(</span><span class="n">sample_points</span><span class="p">)</span>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-10" name="rest_code_c81774193fe149babab63cc85fa3bc1c-10"></a>    <span class="n">results</span> <span class="o">=</span> <span class="n">tracer</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-11" name="rest_code_c81774193fe149babab63cc85fa3bc1c-11"></a>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-12" name="rest_code_c81774193fe149babab63cc85fa3bc1c-12"></a>    <span class="c1"># Since we don't have the actual imager as a variable in the function</span>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-13" name="rest_code_c81774193fe149babab63cc85fa3bc1c-13"></a>    <span class="c1"># assume it is the last thing a ray intersect with, meaning the rays that hit it have the</span>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-14" name="rest_code_c81774193fe149babab63cc85fa3bc1c-14"></a>    <span class="c1"># highest generation</span>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-15" name="rest_code_c81774193fe149babab63cc85fa3bc1c-15"></a>    <span class="n">imager_rays</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">results</span><span class="p">[</span><span class="s1">'generation'</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s1">'generation'</span><span class="p">])]</span>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-16" name="rest_code_c81774193fe149babab63cc85fa3bc1c-16"></a>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-17" name="rest_code_c81774193fe149babab63cc85fa3bc1c-17"></a>    <span class="c1"># Intercept is calculated using the tilt for each ray, with is a normalized vector representing</span>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-18" name="rest_code_c81774193fe149babab63cc85fa3bc1c-18"></a>    <span class="c1"># the direction the ray is travelling</span>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-19" name="rest_code_c81774193fe149babab63cc85fa3bc1c-19"></a>    <span class="n">intercept</span> <span class="o">=</span> <span class="o">-</span><span class="n">imager_rays</span><span class="p">[</span><span class="s1">'x_tilt'</span><span class="p">]</span><span class="o">*</span><span class="n">imager_rays</span><span class="p">[</span><span class="s1">'y0'</span><span class="p">]</span><span class="o">/</span><span class="n">imager_rays</span><span class="p">[</span><span class="s1">'y_tilt'</span><span class="p">]</span> <span class="o">+</span> <span class="n">imager_rays</span><span class="p">[</span><span class="s1">'x0'</span><span class="p">]</span>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-20" name="rest_code_c81774193fe149babab63cc85fa3bc1c-20"></a>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-21" name="rest_code_c81774193fe149babab63cc85fa3bc1c-21"></a>    <span class="c1"># the original radii</span>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-22" name="rest_code_c81774193fe149babab63cc85fa3bc1c-22"></a>    <span class="n">radii</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s1">'generation'</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">imager_rays</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]))][</span><span class="s1">'y0'</span><span class="p">]</span>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-23" name="rest_code_c81774193fe149babab63cc85fa3bc1c-23"></a>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-24" name="rest_code_c81774193fe149babab63cc85fa3bc1c-24"></a>    <span class="c1"># create a new dataframe with the aberration metrics</span>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-25" name="rest_code_c81774193fe149babab63cc85fa3bc1c-25"></a>    <span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'radius'</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">radii</span><span class="p">),</span> <span class="s1">'focus'</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">intercept</span><span class="p">)})</span>
+<a id="rest_code_c81774193fe149babab63cc85fa3bc1c-26" name="rest_code_c81774193fe149babab63cc85fa3bc1c-26"></a>    <span class="k">return</span> <span class="n">results</span>
+</pre>
+<img alt="/images/camera_design_with_pyrayt/spherical_aberration_chart_single_lens.png" class="align-center" src="../../images/camera_design_with_pyrayt/spherical_aberration_chart_single_lens.png" style="width: 600px;"><p>Using the function on our single-lens system yields the above plot, showing that the focal length of the lens is changing by almost 10% based on the radius alone! This aberration would cause our single-lens images to come out "blurry" even when the imager is aligned to the focal plane.</p>
+<figure class="align-center"><img alt="https://www.opticsthewebsite.com/Content/images/aber/USAF512_largeap3.png" src="https://www.opticsthewebsite.com/Content/images/aber/USAF512_largeap3.png" style="width: 300px;"><figcaption><p>An image suffering from spherical aberrations. Source: <a class="reference external" href="https://www.opticsthewebsite.com/SeidelSimulation">www.opticsthewebsite.com</a></p>
+</figcaption></figure><p>Speaking of the focal plane, we also see that the focus of our lens is ~52mm instead of the 50 we calculated, due the the thick lens portion of the lensmaker's equation we chose to ignore.</p>
+</section><section id="chromatic-aberrations"><h3><a class="toc-backref" href="#id21">Chromatic Aberrations</a></h3>
+<p>Unlike spherical aberrations, chromatic aberrations <em>are</em> explained by the lensmaker's equation: the focal point of the lens depends on the refractive index of the lens' material. Real materials don't have a constant refractive index; instead, the refractive index is a function of wavelength. This effect, called <a class="reference external" href="https://en.wikipedia.org/wiki/Dispersion_(optics)">dispersion</a>, is more often associated with the reason prisms split white light into a rainbow of colors. In our case it means our lens will have a wavelength dependent focus.</p>
+<p>The same way we wrote a function to characterize spherical aberrations, we can write one to quantify chromatic aberration:</p>
+<pre class="code python"><a id="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-1" name="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-1"></a><span class="k">def</span> <span class="nf">chromatic_abberation</span><span class="p">(</span><span class="n">system</span><span class="p">,</span> <span class="n">ray_origin</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">test_radius</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">wavelengths</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<a id="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-2" name="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-2"></a>    <span class="c1"># create a set of sources for every wavelength of light</span>
+<a id="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-3" name="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-3"></a>    <span class="n">sources</span> <span class="o">=</span> <span class="p">[</span>
+<a id="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-4" name="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-4"></a>        <span class="n">pyrayt</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">LineOfRays</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">wavelength</span> <span class="o">=</span> <span class="n">wave</span><span class="p">)</span>
+<a id="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-5" name="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-5"></a>        <span class="o">.</span><span class="n">move_y</span><span class="p">(</span><span class="n">test_radius</span><span class="p">)</span>
+<a id="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-6" name="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-6"></a>        <span class="o">.</span><span class="n">move_x</span><span class="p">(</span><span class="n">ray_origin</span><span class="p">)</span>
+<a id="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-7" name="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-7"></a>        <span class="k">for</span> <span class="n">wave</span> <span class="ow">in</span> <span class="n">wavelengths</span><span class="p">]</span>
+<a id="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-8" name="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-8"></a>
+<a id="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-9" name="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-9"></a>    <span class="c1"># Create the ray tracer and propagate</span>
+<a id="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-10" name="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-10"></a>    <span class="n">tracer</span> <span class="o">=</span> <span class="n">pyrayt</span><span class="o">.</span><span class="n">RayTracer</span><span class="p">(</span><span class="n">sources</span><span class="p">,</span> <span class="n">system</span><span class="p">)</span>
+<a id="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-11" name="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-11"></a>    <span class="n">tracer</span><span class="o">.</span><span class="n">set_rays_per_source</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<a id="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-12" name="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-12"></a>    <span class="n">results</span> <span class="o">=</span> <span class="n">tracer</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span>
+<a id="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-13" name="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-13"></a>
+<a id="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-14" name="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-14"></a>    <span class="c1">#filter the rays that intersect the imager</span>
+<a id="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-15" name="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-15"></a>    <span class="n">imager_rays</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">results</span><span class="p">[</span><span class="s1">'generation'</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s1">'generation'</span><span class="p">])]</span>
+<a id="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-16" name="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-16"></a>
+<a id="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-17" name="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-17"></a>    <span class="c1"># calculate intercept of the imager rays with the x-axis and form into a dataframe</span>
+<a id="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-18" name="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-18"></a>    <span class="n">intercept</span> <span class="o">=</span> <span class="o">-</span><span class="n">imager_rays</span><span class="p">[</span><span class="s1">'x_tilt'</span><span class="p">]</span><span class="o">*</span><span class="n">imager_rays</span><span class="p">[</span><span class="s1">'y0'</span><span class="p">]</span><span class="o">/</span><span class="n">imager_rays</span><span class="p">[</span><span class="s1">'y_tilt'</span><span class="p">]</span> <span class="o">+</span> <span class="n">imager_rays</span><span class="p">[</span><span class="s1">'x0'</span><span class="p">]</span>
+<a id="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-19" name="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-19"></a>    <span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'wavelength'</span><span class="p">:</span> <span class="n">imager_rays</span><span class="p">[</span><span class="s1">'wavelength'</span><span class="p">],</span> <span class="s1">'focus'</span><span class="p">:</span> <span class="n">intercept</span><span class="p">})</span>
+<a id="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-20" name="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-20"></a>
+<a id="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-21" name="rest_code_ecc9ca1e4c5c4268ad7486831134c95b-21"></a>    <span class="k">return</span> <span class="n">results</span>
+</pre>
+<p>If we run this function on our current system the results will say that every wavelength has the exact same focus! This is because we made the lens out of an "ideal" glass with a refractive index (n) of 1.5. Let's replace our lens with one made of a popular <a class="reference external" href="https://en.wikipedia.org/wiki/Crown_glass_(optics)">crown glass</a> instead:</p>
+<pre class="code python"><a id="rest_code_34cf7d96a6f54bd987000e396d99403c-1" name="rest_code_34cf7d96a6f54bd987000e396d99403c-1"></a><span class="n">lens_material</span> <span class="o">=</span> <span class="n">matl</span><span class="o">.</span><span class="n">glass</span><span class="p">[</span><span class="s2">"BK7"</span><span class="p">]</span> <span class="c1"># Update this line of the lens definition</span>
+</pre>
+<p>Running the function on our newly dispersive system shows a focal length shift of ~1mm (2%) across the visible spectrum.</p>
+<img alt="/images/camera_design_with_pyrayt/chromatic_aberration_chart_single_lens.png" class="align-center" src="../../images/camera_design_with_pyrayt/chromatic_aberration_chart_single_lens.png" style="width: 600px;"><p>An image taken with this lens would result in sharp edges in our photos having a 'rainbow' effect. Interestingly, this aberration is sometimes sought after for artistic effect, going as far as being including as a graphics setting in id's <a class="reference external" href="https://en.wikipedia.org/wiki/Doom_(2016_video_game)">2016 Doom reboot</a>.</p>
+<figure class="align-center"><img alt="https://upload.wikimedia.org/wikipedia/commons/6/66/Chromatic_aberration_%28comparison%29.jpg" src="https://upload.wikimedia.org/wikipedia/commons/6/66/Chromatic_aberration_%28comparison%29.jpg" style="width: 300px;"><figcaption><p>An image with and without chromatic aberration. Source: <a class="reference external" href="https://en.wikipedia.org/wiki/Chromatic_aberration">wikipedia.org</a></p>
+</figcaption></figure></section><section id="coma-aberrations"><h3><a class="toc-backref" href="#id22">Coma Aberrations</a></h3>
+<p>The last aberration we'll quantify is <a class="reference external" href="https://en.wikipedia.org/wiki/Coma_(optics)">coma</a>. Instead of being a change in focal length, coma is a change mangification vs. angle of incidence on the system. The name comes from the fact that a point imaged with a system suffering from coma looks like the <a class="reference external" href="https://en.wikipedia.org/wiki/Coma_(cometary)">coma of a comet</a>.</p>
+<p>The easiest way to visualize coma is to plot a <code>LineOfRays</code> hitting the lens at non-normal incidence. In a coma free imager, the distribution of ray-imager intersections should be symmetrically distributed about the central ray.</p>
+<p>While we <em>could</em> generate three sources at three distinct angles and run a single ray trace, we're instead going to leverage PyRayT's <a class="reference external" href="https://pyrayt.readthedocs.io/en/latest/generated/pyrayt.html?highlight=pin#pyrayt._pyrayt.pin">pin</a> function to manipulate the angle of the lens. Since the position of the lens is a property of the lens itself, updating the position without remembering to undo it later will effect calculations down the line. the <code>pin</code> <a class="reference external" href="https://realpython.com/python-with-statement/">context manager</a> takes care of this for us by undoing any transformations of pinned objects when the context manager exits.</p>
+<p>The main advantage of rotating the lens instead of the source is that the incoming rays stay perpendicular to the imager, and nominally centered about y=0.</p>
+<pre class="code python"><a id="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-1" name="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-1"></a><span class="c1"># Create the system</span>
+<a id="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-2" name="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-2"></a><span class="n">source</span> <span class="o">=</span> <span class="n">pyrayt</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">LineOfRays</span><span class="p">(</span><span class="mf">0.9</span> <span class="o">*</span> <span class="n">lens_diameter</span><span class="p">)</span><span class="o">.</span><span class="n">move_x</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">)</span>
+<a id="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-3" name="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-3"></a><span class="n">tracer</span> <span class="o">=</span> <span class="n">pyrayt</span><span class="o">.</span><span class="n">RayTracer</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="p">[</span><span class="n">lens</span><span class="p">,</span> <span class="n">imager</span><span class="p">])</span>
+<a id="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-4" name="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-4"></a><span class="n">tracer</span><span class="o">.</span><span class="n">set_rays_per_source</span><span class="p">(</span><span class="mi">1001</span><span class="p">)</span>
+<a id="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-5" name="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-5"></a><span class="n">angles</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<a id="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-6" name="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-6"></a><span class="n">fig</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">init_figure</span><span class="p">()</span>
+<a id="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-7" name="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-7"></a>
+<a id="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-8" name="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-8"></a><span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">angle</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">angles</span><span class="p">):</span>
+<a id="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-9" name="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-9"></a>    <span class="k">with</span> <span class="n">pyrayt</span><span class="o">.</span><span class="n">pin</span><span class="p">(</span><span class="n">lens</span><span class="p">):</span>
+<a id="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-10" name="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-10"></a>        <span class="c1"># pin the lens in place so its rotation resets between iterations</span>
+<a id="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-11" name="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-11"></a>        <span class="n">lens</span><span class="o">.</span><span class="n">rotate_z</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+<a id="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-12" name="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-12"></a>        <span class="n">results</span> <span class="o">=</span> <span class="n">tracer</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span>
+<a id="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-13" name="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-13"></a>    <span class="n">imager_rays</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">results</span><span class="p">[</span><span class="s1">'generation'</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s1">'generation'</span><span class="p">])]</span>
+<a id="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-14" name="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-14"></a>    <span class="n">axis</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">imager_rays</span><span class="p">[</span><span class="s1">'y1'</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">angle</span><span class="si">}</span><span class="s2">-degree incidence"</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<a id="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-15" name="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-15"></a>
+<a id="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-16" name="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-16"></a><span class="c1"># plot labels</span>
+<a id="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-17" name="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-17"></a><span class="n">axis</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"position along Y-axis (mm)"</span><span class="p">)</span>
+<a id="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-18" name="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-18"></a><span class="n">axis</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"density (AU)"</span><span class="p">)</span>
+<a id="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-19" name="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-19"></a><span class="n">axis</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s2">"Focal Spot Distribution vs. Angle of Incidence"</span><span class="p">)</span>
+<a id="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-20" name="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-20"></a>
+<a id="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-21" name="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-21"></a><span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<a id="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-22" name="rest_code_20ce5f6252964cf19cf6a6d9019bbba3-22"></a><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre>
+<img alt="/images/camera_design_with_pyrayt/coma_raytrace.png" class="align-center" src="../../images/camera_design_with_pyrayt/coma_raytrace.png" style="width: 600px;"><img alt="/images/camera_design_with_pyrayt/coma_histogram.png" class="align-center" src="../../images/camera_design_with_pyrayt/coma_histogram.png" style="width: 600px;"><p>Just looking at the ray trace we can see the angled rays don't come to any central focus, and the histogram has a strong skew towards the -y axis. Like spherical aberrations, coma will cause our images to blur; however, the distortion is worse the further you are from the center of the imager, with the middle of the image remaining sharp.</p>
+<figure class="align-center"><img alt="https://www.opticsthewebsite.com/Content/images/aber/USAF512_largeap4.png" src="https://www.opticsthewebsite.com/Content/images/aber/USAF512_largeap4.png" style="width: 300px;"><figcaption><p>An image suffering from coma aberrations. Source: <a class="reference external" href="https://www.opticsthewebsite.com/SeidelSimulation">www.opticsthewebsite.com</a></p>
+</figcaption></figure></section></section><section id="next-steps"><h2><a class="toc-backref" href="#id23">Next Steps</a></h2>
+<p>This wraps up the first part of our camera design. It might not seem like much, but understanding the limitations of a simple system helps justify why we go through the process of desiging a complex one. The full <a class="reference external" href="https://gist.github.com/rfrazier716/211516bfba7a3795c3f5d00b5e5fe53b">Jupyter notebook for the design is on GitHub</a>, and next post I'll show how with just one additional lens, we can drastically minimize all three of the above aberrations to help our camera generate a cleaner final image! In the mean time feel free to explore the design and see how much optimization you can do with just one lens:</p>
+<ul class="simple">
+<li><p>What about the design changes if you pick a different material?</p></li>
+<li><p>If you break the symmetry between the front and back surface can you reduce aberrations?</p></li>
+<li><p>Is there a way to reduce chromatic aberration only by changing the physical dimensions (not material) of the lens?</p></li>
+</ul></section>
+</div>
+    </div>
+    
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="../rust-fizzbuzz/" rel="prev" title="Writing an (Overly) Idiomatic Fizzbuzz with Rust">Previous post</a>
+            </li>
+        </ul></nav></aside><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha384-3lJUsx1TJHt7BA4udB5KPnDrlkO8T6J6v/op7ui0BbCjvZ9WqV4Xm6DTP6kQ/iBH" crossorigin="anonymous"></script><script type="text/x-mathjax-config">
+        MathJax.Hub.Config({tex2jax: {inlineMath: [['$latex ','$'], ['\\(','\\)']]}});
+        </script></article>
+</div>
+            <div class="col-lg-4 col-md-12">
+    <!-- Begin Mailchimp Signup Form -->
+<div id="mc_embed_signup" class="alert alert-info mc-signup">
+<h2>Get Notified of New Content!</h2>
+<div class="mc-signup-blurb">
+All my ramblings straight to your Inbox
+</div>
+<hr>
+<form action="https://fotonixx.us6.list-manage.com/subscribe/post?u=ed786630410d3ae8cc7b82748&amp;id=7b2d390e9d" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+        <div class="form-group">
+            <input type="email" class="form-control" id="mce-EMAIL" name="EMAIL" aria-describedby="emailHelp" placeholder="Email...">
+</div>
+        <div id="mce-responses" class="clear">
+            <div class="response" id="mce-error-response" style="display:none"></div>
+            <div class="response" id="mce-success-response" style="display:none"></div>
+        </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_ed786630410d3ae8cc7b82748_7b2d390e9d" tabindex="-1" value=""></div>
+        <button type="submit" class="btn btn-primary btn-block">subscribe</button>
+        <div class="spam-callout">
+        🔒 No spam. Unsubscribe any time. 📧
+        </div>
+    </form>
+</div>
+<!--End mc_embed_signup-->
+
+                <div class="sticky-top" id="sticky-right" style="top: 1rem">
+        <div class="w-100" id="quick-nav"></div>
+    <script>
+        document.getElementById('quick-nav').appendChild(
+        document.getElementById('quick-links')
+        );
+    </script><div class="addthis_inline_share_toolbox mx-auto"></div>
+
+                </div>
+            </div>
+        </div>
+        <div class="container">
+        </div>
+        <!--End of body content-->
+
+        <footer id="footer">
+            
+Contents © 2021         <a href="mailto:ryan@fotonixx.com">Ryan Frazier</a> 
+- Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+
+<span class="follow-icons">
+
+  <a href="mailto:ryan@fotonixx.com" class="fas fa-envelope-square fa-2x follow-icon"></a>
+  <a href="https://github.com/rfrazier716" class="fab fa-github-square fa-2x follow-icon"></a>
+  <a href="https://www.instagram.com/fotonix716/" class="fab fa-instagram-square fa-2x follow-icon"></a>
+  <a href="https://twitter.com/FotonixAndGizmo" class="fab fa-twitter-square fa-2x follow-icon"></a>
+</span>
+
+            
+        </footer>
+</div>
+</div>
+
+        <script src="../../assets/js/all-nocdn.js"></script><script src="https://kit.fontawesome.com/b9c0b6e7c8.js" crossorigin="anonymous"></script><!-- Go to www.addthis.com/dashboard to customize your tools --><script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-603c029f21971de0"></script><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element){var i=element.getElementsByTagName('img')[0];return i===undefined?'':i.alt;}});
+    </script>
+</body>
+</html>
