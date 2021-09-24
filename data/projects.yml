@@ -19,7 +19,7 @@ projects:
       
 - name: Warp CRUD
   image: https://rustacean.net/assets/rustacean-orig-noshadow.png
-  url: https://github.com/rfrazier716/warp_crud
+  url: https://warp-crud-b45vr.ondigitalocean.app/
   blurb: >
     My first foray into back-end programming with a webserver written in Rust. This Project is a basic REST API to perform CRUD operations on a MongoDB database.
   icons:
@@ -29,7 +29,7 @@ projects:
     - img: https://circleci.com/gh/rfrazier716/warp_crud.svg?style=shield
       url: https://app.circleci.com/pipelines/github/rfrazier716/warp_crud
 
-- name: Fotonixx.com
+- name: Fotonix and Gizmos
   image: /images/site_logo.svg
   url: https://www.fotonixx.com
   blurb: >
