@@ -91,7 +91,8 @@ bg-dark
 <p>What I do have, however, is a desire to set up a site to share my various projects/software, or at least document it so I don't forget what I was working on 6 months down the road. It needed to be easy to set up, free to host, and give me full control to customize the site and add features as needed (just because I don't currently know web design doesn't mean I won't try to pick it up down the road).</p>
 <p>Enter Nikola! I first heard about this at the end of a Real Python podcast where it was described as a quick start static website generator using Python and restructured text. This sounded like a great way to dip my toe into making a website that was somewhere between using an online suite and hand-writing HTML. I know I could have started a blog on Wordpress or Medium, abstracted away all the details, and potentially have had a prettier blog in less time, but where's the fun in that! the fact that Nikola was based around Python was also attractive. I'm a big advocate for Python, it's become my go-to programming language at work (previously it was Mathematica as well as a lot of LabView but that's a topic for a different day) and anywhere I can use it to round out my programming capabilities I'm happy to give it a try.</p>
 <p>At work I maintain a data analysis library for our group, which includes writing and hosting documentation on our internal GitLab, so I was already familiar with .rst files. In fact, Nikola feels like an extension of using Sphinx but with more control over the structure over the final site. As an added bonus, it has built in hooks to deploy to github pages, checking the box for "free to host".</p>
-<section id="some-quick-tips"><h2>Some Quick Tips</h2>
+<div class="section" id="some-quick-tips">
+<h2>Some Quick Tips</h2>
 <p><a class="reference external" href="https://getnikola.com/handbook.html">The Nikola Handbook</a> was a great resource, and I'm not going to bother rewriting that whole page as my own getting started guide. That being said, there were a couple snags I ran into trying to get the site looking how I wanted and up on GitHub, some of it may have been my own fault for not reading the handbook closely enough, but I included a few of the more subtle ones below for reference.</p>
 <dl class="simple">
 <dt>A Virtual Environment Helps, But an Environment Manager is Probably Overkill</dt>
@@ -104,32 +105,32 @@ bg-dark
 <dd>
 <p>Almost immediately after building the site and opening it in a browser, I wanted to customize the navigation bar links at the top of the page. Nikola's documentation has a section for this, but something that wasn't listed is that any internal links need to be start with a '/' or they'll be handled as relative links to whatever page you're on. This resulted in my links working from the homepage, but if I navigated to a different page the they would break.</p>
 <p>In retrospect this is pretty obvious, but it still tripped me up for a solid 20 minutes more than necessary.</p>
-<pre class="code python"><a id="rest_code_91dd303becd6474ab196e19deadd4368-1" name="rest_code_91dd303becd6474ab196e19deadd4368-1"></a><span class="n">NAVIGATION_LINKS</span> <span class="o">=</span> <span class="p">{</span>
-<a id="rest_code_91dd303becd6474ab196e19deadd4368-2" name="rest_code_91dd303becd6474ab196e19deadd4368-2"></a>    <span class="n">DEFAULT_LANG</span><span class="p">:</span> <span class="p">(</span>
-<a id="rest_code_91dd303becd6474ab196e19deadd4368-3" name="rest_code_91dd303becd6474ab196e19deadd4368-3"></a>        <span class="p">(</span><span class="s1">'/'</span><span class="p">,</span> <span class="s1">'Home'</span><span class="p">),</span>
-<a id="rest_code_91dd303becd6474ab196e19deadd4368-4" name="rest_code_91dd303becd6474ab196e19deadd4368-4"></a>        <span class="p">(</span><span class="s1">'/pages/projects/'</span><span class="p">,</span> <span class="s2">"Projects"</span><span class="p">),</span>
-<a id="rest_code_91dd303becd6474ab196e19deadd4368-5" name="rest_code_91dd303becd6474ab196e19deadd4368-5"></a>        <span class="p">((</span>
-<a id="rest_code_91dd303becd6474ab196e19deadd4368-6" name="rest_code_91dd303becd6474ab196e19deadd4368-6"></a>            <span class="p">(</span><span class="s2">"/archive.html"</span><span class="p">,</span> <span class="s2">"All"</span><span class="p">),</span> <span class="c1"># This link will work from any page</span>
-<a id="rest_code_91dd303becd6474ab196e19deadd4368-7" name="rest_code_91dd303becd6474ab196e19deadd4368-7"></a>            <span class="p">(</span><span class="s2">"archive.html"</span><span class="p">,</span> <span class="s2">"All"</span><span class="p">),</span> <span class="c1"># This link will break if you're not on the homepage</span>
-<a id="rest_code_91dd303becd6474ab196e19deadd4368-8" name="rest_code_91dd303becd6474ab196e19deadd4368-8"></a>            <span class="p">(</span><span class="s2">"/categories/cat_programming/"</span><span class="p">,</span> <span class="s2">"Programming"</span><span class="p">),</span>
-<a id="rest_code_91dd303becd6474ab196e19deadd4368-9" name="rest_code_91dd303becd6474ab196e19deadd4368-9"></a>            <span class="p">(</span><span class="s2">"/categories/cat_gaming/"</span><span class="p">,</span> <span class="s2">"Video Games"</span><span class="p">),</span>
-<a id="rest_code_91dd303becd6474ab196e19deadd4368-10" name="rest_code_91dd303becd6474ab196e19deadd4368-10"></a>            <span class="p">(</span><span class="s2">"/categories/cat_misc/"</span><span class="p">,</span> <span class="s2">"Misc"</span><span class="p">),</span>
-<a id="rest_code_91dd303becd6474ab196e19deadd4368-11" name="rest_code_91dd303becd6474ab196e19deadd4368-11"></a>        <span class="p">),</span>
-<a id="rest_code_91dd303becd6474ab196e19deadd4368-12" name="rest_code_91dd303becd6474ab196e19deadd4368-12"></a>        <span class="s2">"Blog"</span><span class="p">),</span>
-<a id="rest_code_91dd303becd6474ab196e19deadd4368-13" name="rest_code_91dd303becd6474ab196e19deadd4368-13"></a>        <span class="p">(</span><span class="s1">'/pages/about'</span><span class="p">,</span> <span class="s2">"About"</span><span class="p">),</span>
-<a id="rest_code_91dd303becd6474ab196e19deadd4368-14" name="rest_code_91dd303becd6474ab196e19deadd4368-14"></a>        <span class="p">(</span><span class="s2">"/categories/"</span><span class="p">,</span> <span class="s2">"Tags"</span><span class="p">),</span>
-<a id="rest_code_91dd303becd6474ab196e19deadd4368-15" name="rest_code_91dd303becd6474ab196e19deadd4368-15"></a>    <span class="p">),</span>
-<a id="rest_code_91dd303becd6474ab196e19deadd4368-16" name="rest_code_91dd303becd6474ab196e19deadd4368-16"></a><span class="p">}</span>
+<pre class="code python"><a name="rest_code_ac9333e12d914443b374ffd15d289ce5-1"></a><span class="n">NAVIGATION_LINKS</span> <span class="o">=</span> <span class="p">{</span>
+<a name="rest_code_ac9333e12d914443b374ffd15d289ce5-2"></a>    <span class="n">DEFAULT_LANG</span><span class="p">:</span> <span class="p">(</span>
+<a name="rest_code_ac9333e12d914443b374ffd15d289ce5-3"></a>        <span class="p">(</span><span class="s1">'/'</span><span class="p">,</span> <span class="s1">'Home'</span><span class="p">),</span>
+<a name="rest_code_ac9333e12d914443b374ffd15d289ce5-4"></a>        <span class="p">(</span><span class="s1">'/pages/projects/'</span><span class="p">,</span> <span class="s2">"Projects"</span><span class="p">),</span>
+<a name="rest_code_ac9333e12d914443b374ffd15d289ce5-5"></a>        <span class="p">((</span>
+<a name="rest_code_ac9333e12d914443b374ffd15d289ce5-6"></a>            <span class="p">(</span><span class="s2">"/archive.html"</span><span class="p">,</span> <span class="s2">"All"</span><span class="p">),</span> <span class="c1"># This link will work from any page</span>
+<a name="rest_code_ac9333e12d914443b374ffd15d289ce5-7"></a>            <span class="p">(</span><span class="s2">"archive.html"</span><span class="p">,</span> <span class="s2">"All"</span><span class="p">),</span> <span class="c1"># This link will break if you're not on the homepage</span>
+<a name="rest_code_ac9333e12d914443b374ffd15d289ce5-8"></a>            <span class="p">(</span><span class="s2">"/categories/cat_programming/"</span><span class="p">,</span> <span class="s2">"Programming"</span><span class="p">),</span>
+<a name="rest_code_ac9333e12d914443b374ffd15d289ce5-9"></a>            <span class="p">(</span><span class="s2">"/categories/cat_gaming/"</span><span class="p">,</span> <span class="s2">"Video Games"</span><span class="p">),</span>
+<a name="rest_code_ac9333e12d914443b374ffd15d289ce5-10"></a>            <span class="p">(</span><span class="s2">"/categories/cat_misc/"</span><span class="p">,</span> <span class="s2">"Misc"</span><span class="p">),</span>
+<a name="rest_code_ac9333e12d914443b374ffd15d289ce5-11"></a>        <span class="p">),</span>
+<a name="rest_code_ac9333e12d914443b374ffd15d289ce5-12"></a>        <span class="s2">"Blog"</span><span class="p">),</span>
+<a name="rest_code_ac9333e12d914443b374ffd15d289ce5-13"></a>        <span class="p">(</span><span class="s1">'/pages/about'</span><span class="p">,</span> <span class="s2">"About"</span><span class="p">),</span>
+<a name="rest_code_ac9333e12d914443b374ffd15d289ce5-14"></a>        <span class="p">(</span><span class="s2">"/categories/"</span><span class="p">,</span> <span class="s2">"Tags"</span><span class="p">),</span>
+<a name="rest_code_ac9333e12d914443b374ffd15d289ce5-15"></a>    <span class="p">),</span>
+<a name="rest_code_ac9333e12d914443b374ffd15d289ce5-16"></a><span class="p">}</span>
 </pre>
 </dd>
 <dt>You Can Hide the "Source" Link That Shows Up on the Top Right of Your Pages</dt>
 <dd>
 <p>By default each page and blog post will have a hyperlink to the source in the top right corner. Since the site is hosted from a public repository and anybody who wants to can look at the source, I wanted to disable that feature. Turns out it's also an option in the conf.py called <code class="docutils literal">SHOW_SOURCELINK</code>, and needs to be set to False.</p>
-<pre class="code python"><a id="rest_code_a5aa79ec723e44269b0878332d391464-1" name="rest_code_a5aa79ec723e44269b0878332d391464-1"></a><span class="c1"># Show link to source for the posts?</span>
-<a id="rest_code_a5aa79ec723e44269b0878332d391464-2" name="rest_code_a5aa79ec723e44269b0878332d391464-2"></a><span class="n">SHOW_SOURCELINK</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># Set this to False to disable source links</span>
-<a id="rest_code_a5aa79ec723e44269b0878332d391464-3" name="rest_code_a5aa79ec723e44269b0878332d391464-3"></a><span class="c1"># Copy the source files for your pages?</span>
-<a id="rest_code_a5aa79ec723e44269b0878332d391464-4" name="rest_code_a5aa79ec723e44269b0878332d391464-4"></a><span class="c1"># Setting it to False implies SHOW_SOURCELINK = False</span>
-<a id="rest_code_a5aa79ec723e44269b0878332d391464-5" name="rest_code_a5aa79ec723e44269b0878332d391464-5"></a><span class="n">COPY_SOURCES</span> <span class="o">=</span> <span class="kc">False</span>
+<pre class="code python"><a name="rest_code_180b7785b91a48a8b0ca1407b4de644b-1"></a><span class="c1"># Show link to source for the posts?</span>
+<a name="rest_code_180b7785b91a48a8b0ca1407b4de644b-2"></a><span class="n">SHOW_SOURCELINK</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># Set this to False to disable source links</span>
+<a name="rest_code_180b7785b91a48a8b0ca1407b4de644b-3"></a><span class="c1"># Copy the source files for your pages?</span>
+<a name="rest_code_180b7785b91a48a8b0ca1407b4de644b-4"></a><span class="c1"># Setting it to False implies SHOW_SOURCELINK = False</span>
+<a name="rest_code_180b7785b91a48a8b0ca1407b4de644b-5"></a><span class="n">COPY_SOURCES</span> <span class="o">=</span> <span class="kc">False</span>
 </pre>
 </dd>
 <dt>You're Allowed to Add Build Directories To Your .gitignore</dt>
@@ -137,7 +138,8 @@ bg-dark
 <p>This is not Nikola specific but more about deploying pages with Nikola and GitHub pages. My thought process was "well the site will be deployed on github, so I guess I need to include all the build files in version control. This was a mental clash with everything I'd been taught about git, specifically that any autogenerated code should be added to your .gitignore file. Turns out Nikola already handles this with the github deploy commands (again configurable in the conf.py). I haven't dug into exactly what's happening under the hood, but my guess is it's creating a git subtree from the output directory, and pushing that newly created subtree branch to github. This let me use the .gitignore like I was used to, since all the build code exists in its own branch.</p>
 <p>The handbook says that you need to set your deploy branch to 'Master' in for user pages, but it works with any branch name as long as you update the <a class="reference external" href="https://docs.github.com/en/github/working-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site">publishing source</a> accordingly in the repository settings. For my repository I use a branch called 'deploy' which lets me keep my source code in the protected 'main' branch.</p>
 </dd>
-</dl></section>
+</dl>
+</div>
 </div>
     </div>
             <ul itemprop="keywords" class="tags">
@@ -193,7 +195,7 @@ All my ramblings straight to your Inbox
 
         <footer id="footer">
             
-Contents © 2021         <a href="mailto:ryan@fotonixx.com">Ryan Frazier</a> 
+Contents © 2022         <a href="mailto:ryan@fotonixx.com">Ryan Frazier</a> 
 - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
 
 <span class="follow-icons">
@@ -209,7 +211,13 @@ Contents © 2021         <a href="mailto:ryan@fotonixx.com">Ryan Frazier</a>
 </div>
 </div>
 
-        <script src="../../assets/js/all-nocdn.js"></script><script src="https://kit.fontawesome.com/b9c0b6e7c8.js" crossorigin="anonymous"></script><!-- Go to www.addthis.com/dashboard to customize your tools --><script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-603c029f21971de0"></script><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css">
+        <script src="../../assets/js/all-nocdn.js"></script><!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-4XNP4N4HTY"></script><script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-4XNP4N4HTY');
+</script><script src="https://kit.fontawesome.com/b9c0b6e7c8.js" crossorigin="anonymous"></script><!-- Go to www.addthis.com/dashboard to customize your tools --><script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-603c029f21971de0"></script><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script><script>
     baguetteBox.run('div#content', {
         ignoreClass: 'islink',
