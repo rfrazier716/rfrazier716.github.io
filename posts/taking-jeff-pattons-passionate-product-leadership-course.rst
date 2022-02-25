@@ -1,5 +1,5 @@
 .. title: Taking Jeff Patton's Product Leadership Course
-.. slug: taking-jeff-pattons-passionate-product-leadership-course
+.. slug: jpat-product-leadership-review
 .. date: 2022-02-24 19:38:17 UTC-05:00
 .. tags: scrum, agile, product owner, product management, story mapping
 .. category:
