@@ -157,6 +157,7 @@ Where You will Play and How you Will Win
 There’s a slew of books on product strategy; one of the more famous is Richard Rumelt’s Good Strategy/Bad Strategy [LINK http://goodbadstrategy.com/]. While I like the book, especially the concept of a strategic kernel, I’ll be the first to admit that it is **dense** and can be a slog to get through.
 
 Jeff offered a “cheat sheet” phrase for thinking of strategy: Where you’ll play and how you’ll win.
+
 * Where You’ll Play - Your strategy should identify and focus on a specific market, user persona, and problems you’re addressing.
 * How You’ll Win - You need to understand how your solution is better than alternatives, including desired outcomes and metrics.
 
