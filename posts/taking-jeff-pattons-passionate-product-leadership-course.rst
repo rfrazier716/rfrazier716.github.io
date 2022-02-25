@@ -1,17 +1,17 @@
 .. title: Taking Jeff Patton's Product Leadership Course
 .. slug: taking-jeff-pattons-passionate-product-leadership-course
 .. date: 2022-02-24 19:38:17 UTC-05:00
-.. tags: 
-.. category: 
-.. link: 
-.. description: 
+.. tags:
+.. category:
+.. link:
+.. description:
 .. type: text
 
 Around 2010 I remember watching an Intel Commercial featuring Ajay Bhatt [LINK https://www.youtube.com/watch?v=0QYcgwjUlWo], co-inventor of the USB. As he walks through a crowd of fawning coworkers to get his morning coffee, the tagline pops up: “Our Rockstars Aren’t Like You’re Rockstars.” Despite working in the semiconductor industry, my list of rockstars has never included Ajay. Instead, it’s filled with the likes of John Carmack and Michael Abrash, pioneers in computer graphics and virtual reality, one of my core passions.
 
 As I discovered a new passion in Product Management, my list of rockstars grew to include product leaders who created the concepts and processes I use daily. In February, I was lucky enough to take a Product Leadership Course from one of these Leaders, Jeff Patton, author of User Story Mapping. While labeled as a Certified Scrum Product Owner (CSPO) course, the class introduced many areas of product thinking, covering everything from strategy to delivery. As many CSPO courses get a bad rap as cash grabs, I wanted to capture my thoughts on the course and key takeaways I learned.
 
-.. contents:: 
+.. contents::
     :depth: 3
     :class: alert alert-primary ml-0
 
@@ -35,7 +35,7 @@ If you want to get a feel for Jeff’s lecturing style, watch his REConf 2019 ta
 
 Class Summary
 ==============
-Jumping into the Zoom meeting on day one of the four-day course, I wasn’t sure what to expect. Since the pandemic, I’ve been in my fair share of virtual training sessions, and a majority of them are little more than the presenter going through a checklist of discussion topics while deflecting questions that disagree with their main points. However, as soon as I connected to Jeff’s meeting, I knew it would be different. Instead of a premade slide deck, His screen showed a birds-eye video feed of his desk, with sticky notes and a hand-written message welcoming everybody to the class. This format was standard throughout the entire training, with Jeff discussing topics while simultaneously drawing pictures and diagrams to explain them. It made everything more engaging than a slide deck while allowing him to hop into quick tangents as participants asked questions. 
+Jumping into the Zoom meeting on day one of the four-day course, I wasn’t sure what to expect. Since the pandemic, I’ve been in my fair share of virtual training sessions, and a majority of them are little more than the presenter going through a checklist of discussion topics while deflecting questions that disagree with their main points. However, as soon as I connected to Jeff’s meeting, I knew it would be different. Instead of a premade slide deck, His screen showed a birds-eye video feed of his desk, with sticky notes and a hand-written message welcoming everybody to the class. This format was standard throughout the entire training, with Jeff discussing topics while simultaneously drawing pictures and diagrams to explain them. It made everything more engaging than a slide deck while allowing him to hop into quick tangents as participants asked questions.
 
 The outline on the course website is largely accurate[LINK https://www.jpattonassociates.com/services/ppl-online-course/#21st-century-tech-product-development-concepts-and-practice], with our four days touching the following topics
 
@@ -50,7 +50,7 @@ Additionally, there are a couple of things to note about the sessions:
     Interlaced throughout the training were sets of collaborative group activities. In fact, from day two onward, everybody was clustered into mini product teams tackling various tech products (our team focused on the Target app and the challenges shoppers face when items from their grocery orders are out of stock). With the aid of some very well-designed Mural boards, we were immediately able to practice newly learned concepts. The small group size meant open conversations and exposure to different perspectives.
 
 * Managing software Delivery is a small portion of the actual class
-    Again, this is a product leadership class, not just an agile delivery class. This course will not teach you how to write intricate, verbose requirement docs that you can cleanly hand off. Instead, it will stress that the solution to many of the points of frustration a PM faces is to continually talk to customers, involve software and stakeholders early and often, and have regular, open conversations to ensure everybody is aligned. 
+    Again, this is a product leadership class, not just an agile delivery class. This course will not teach you how to write intricate, verbose requirement docs that you can cleanly hand off. Instead, it will stress that the solution to many of the points of frustration a PM faces is to continually talk to customers, involve software and stakeholders early and often, and have regular, open conversations to ensure everybody is aligned.
 
 Office hours, held at the end of each lesson, provided a great time to discuss in detail any of the day’s topics, especially if you have specific questions on how to apply them with your organization or product. I made a point to hang back every day, not just to ask my question but to learn about the challenges and insights other participants face when adopting a product mindset. Jeff scanned any sketches from the office hour and added them to our class Mural board.
 
@@ -58,24 +58,14 @@ I walked out of the training with roughly ten pages of notes, almost all of whic
 
 Is the Class Worth Taking?
 ===========================
-The value of the class is entirely dependent on what you want to get out of it. For me, even though I had already implemented many of these ideas, it was worth it to learn the concepts from Jeff first hand, ask questions related to my specific products, and clarify some vague topics from his book. I plan to take advantage of the alumni policy and audit the course in the future. 
+The value of the class is entirely dependent on what you want to get out of it. For me, even though I had already implemented many of these ideas, it was worth it to learn the concepts from Jeff first hand, ask questions related to my specific products, and clarify some vague topics from his book. I plan to take advantage of the alumni policy and audit the course in the future.
 
 If you adopt product thinking in your company, bring your entire team, so everybody gets direct experience (including SWE, UX, and Leadership)! As great as Jeff’s drawings are, they are very context heavy. If you take one to your team later and go, “See, this is what we need to do!” You’ll likely get blank stares and confusion.
 
 Learnings and Takeaways
 ########################
 
-.. container::
-    class: alert alert-success pb-0
-
-    .. raw:: html
-
-        <div class="alert-header">
-        <i class="fas fa-info-circle"></i> Note
-        </div>
-        <hr class="mt-0 mb-1">
-
-        These are my notes and takeaways from the course, grouped roughly by concepts. You’ll notice I omitted things like “build-measure-learn” or “what is a story map” because I was already familiar with them. I strongly recommend coming into the class having read up on certain topics so you can focus on subtle details.
+These are my own notes and takeaways from the course, grouped roughly by concepts. **They only cover a small fraction of everything that was covered during the training.** You’ll notice I omitted things like “build-measure-learn” or “what is a story map” because I was already familiar with them. I strongly recommend coming into the class having read up on certain topics so you can focus on subtle details.
 
 Focusing On Outcomes
 =====================
@@ -105,11 +95,11 @@ Jeff references this four-quadrant graph regularly throughout the course to desc
 
 The bottom-left quadrant stood out to me: Sense, Listen, and Learn. Effectively, you have three main sensing channels that result in new product opportunities:
 
-* Tactical - Composed of metrics, observations, and customer interactions, this is the most obvious way to improve your project. 
+* Tactical - Composed of metrics, observations, and customer interactions, this is the most obvious way to improve your project.
 * Strategic - Your product has a vision, and it (hopefully) has a strategy to achieve that vision. This channel involves opportunities that help you hit that strategic goal.
 * Technological - It’s essential to be aware of new technologies that can improve your product as well as the technical debt you currently carry.
 
-You need to maintain all three channels for a healthy product multiple times. For an analogy, imagine the human body and the following sensing channels: hunger, tiredness, and thirst. You can sleep as much as you want, but if you don't sleep or eat you'll eventually crash!
+You need to maintain all three channels for a healthy product. For an analogy, imagine the human body and the following sensing channels: hunger, tiredness, and thirst. You can sleep as much as you want, but if you don't sleep or eat you'll eventually crash!
 
 Products Composed of Products
 ``````````````````````````````
@@ -144,7 +134,11 @@ A persona is an extensive (and time-consuming) distillation of customer research
 
 * About (Descriptors) - This can cover demographics, education, skills, and job roles
 * Behavior (Verbs) - What are some things this persona does? In our persona, “Susie” was responsible for sourcing the weekly snacks for her kid’s soccer team.
-* Motivations - What are the pains and problems this persona experiences, what are some rewards? 
+* Motivations - What are the pains and problems this persona experiences, what are some rewards?
+
+.. image:: https://uc0aab162bdc546afcd7eb870fe8.previews.dropboxusercontent.com/p/thumb/ABfykBSrRdzVx9XpwCJLFkZashIh3QfjQYn1OCLr81IDF9PKtkME77urmIg1LOE4Egc4ahHFWJUwphWaNF3-S-kaxW56PZXF7YyrtLmfruHN0bhXKfgdnOz64dH226ihb8cGaqUAZk0uGb-Cebtkj29ihiE5bR8nomoRlrJkL9wmJ2Yc_1bEgGLD4OOomF3k3gagBmAgDW4jb7OuLRiYZrPUItQ4l2PKD1LhDfHLHOjsdNYSRHffxGrNGFWB2bHSk4D1uArJdiTN50ks_rxtUHKqOpTNe0soO9dh-0B7UhG8aqn86Xeee2jGMkGvt9iotdPJA6Je8ZkutvbZBypuxRIrzZWadfbbVzeH6wAZPzrhXA/p.jpeg
+    :width: 400 px
+    :align: center
 
 I liked the mantra “Differences that make a difference.” aka differences in personas should affect how that persona would use your product.
 
@@ -153,14 +147,14 @@ Personifying a Service
 
 The classic user story template goes: “As XXX, I want to YYY so that ZZZ,” and Jeff would be the first to tell you that template is more of a guideline than anything. But during office hours, somebody asked: “Bots consume our APIs; how do we write user stories around them?” The answer: anthropomorphic personification (something I’ve only ever heard of in the context of Discworld).
 
-Effectively, the bot takes the user's role,  and you personify it as though it was a living thing (“as a logger I want to query data YYY so that ZZZ.” It may work for you, it may not, but I thought it was a clever observation regardless.
+Effectively, the bot takes the user's role,  and you personify it as though it was a living thing. It may work for you, it may not, but I thought it was a clever observation regardless.
 
 Strategy
 =========
 
 Where You will Play and How you Will Win
 `````````````````````````````````````````
-There’s a slew of books on product strategy you can read; one of the more famous is Richard Rumelt’s Good Strategy/Bad Strategy [LINK http://goodbadstrategy.com/]. While I like the book, especially the concept of a strategic kernel, I’ll be the first to admit that it is **dense** and can be a slog to get through.
+There’s a slew of books on product strategy; one of the more famous is Richard Rumelt’s Good Strategy/Bad Strategy [LINK http://goodbadstrategy.com/]. While I like the book, especially the concept of a strategic kernel, I’ll be the first to admit that it is **dense** and can be a slog to get through.
 
 Jeff offered a “cheat sheet” phrase for thinking of strategy: Where you’ll play and how you’ll win.
 * Where You’ll Play - Your strategy should identify and focus on a specific market, user persona, and problems you’re addressing.
@@ -173,7 +167,7 @@ For Additional Reading
 
 Customers Solve Business Problems; Product Teams Solve Customer Opportunities.
 ```````````````````````````````````````````````````````````````````````````````
-I loved this comment Jeff raised while we were discussing objectives and strategy. Your organization probably has goals: earn $XXX in revenue, increase the sign-up rate by Y%, etc. The thing is, product teams cannot directly solve those problems. I’m not going to open my wallet and hand money to the CEO. Likewise, unless I plan to go the route of Wells Fargo [LINK https://en.wikipedia.org/wiki/Wells_Fargo_account_fraud_scandal ], I don’t have direct control over how many people sign up for a service. 
+I loved this comment Jeff raised while we were discussing objectives and strategy. Your organization probably has goals: earn $XXX in revenue, increase the sign-up rate by Y%, etc. The thing is, product teams cannot directly solve those problems. I’m not going to open my wallet and hand money to the CEO. Likewise, unless I plan to go the route of Wells Fargo [LINK https://en.wikipedia.org/wiki/Wells_Fargo_account_fraud_scandal ], I don’t have direct control over how many people sign up for a service.
 
 Instead, a Product team’s job is to solve customer opportunities. When we solve a customer opportunity, we hypothesize that doing so will have a business impact, but we’re still addressing business goals through the customers. Opportunity Solution Trees are a great way to connect customer opportunities to business outcomes visually.
 
@@ -185,7 +179,7 @@ Since a product team should focus on addressing user opportunities, it makes sen
 #. Assuming you perform continuous discovery/regular user interviews, build an Opportunity-Solutions Tree (OST) around that metric. Prioritize this opportunity space (see chapter 7 of Continuous Discovery Habits) and hone in on one target opportunity.
 #. Rewrite the opportunity as a quote from your target person. Humanizing the challenge helps to give it more context.
 #. Write an ambitious statement that describes solving the opportunity. Make sure you capture the desired outcome and not a specific feature.
-#. Identify 2-4 metrics that would show you are making progress towards solving the problem and their values that would indicate success. These are your Key Results. 
+#. Identify 2-4 metrics that would show you are making progress towards solving the problem and their values that would indicate success. These are your Key Results.
 
 Discovery and Delivery
 =======================
@@ -194,11 +188,35 @@ Opportunity Canvas
 ```````````````````
 Opportunity Canvases are a structured format to vet opportunities and see assumptions. I haven’t adopted it personally but may give it a test-run in the future.
 
+.. image:: https://uc48768adca1f7d5d338a145107b.previews.dropboxusercontent.com/p/thumb/ABevUPWDsaTLYv52FLUUq5vaRPFJ06EW16HWCHvTFKlI-arUOTKZlDn2beXJ7gJqcZpvLCSFrhcgVrJpKg-q7U93hWnjpXwVjDQ3qQYztBRGM75AD4C71KJ4JytqgdFnVXMDZqqU4zytiNafQPdv9p-ItcYrI1KslEYUUG3wYfZyJt53ysYVmXXbTWqGCp3JaduvFJ6fKNZFA6ZYm4cUdBViRy7DBlnBzAkIDWn9R5dDwnrA0pGXSciUfHgTyRrUs9F3S3g8KziFEzKIhItZWOJqTmkcWyi_I-iMzrLCBndeWcwdj9Omfo_RK3-82zcjX04_H_6tXzq7qAnFwzA0X4_fwS5c4hTTJR2EGwe3wORhcg/p.jpeg
+    :width: 400
+    :align: center
+
 The Next Best Test
 ```````````````````
 Tests and experiments build confidence that your features provide actual user value, but they rarely need high-fidelity prototypes or shippable code. Experiments aim to test assumptions and progress you around the build-measure-learn loop as rapidly as possible. Disqualifying multiple ideas with short experiments is better than creating an expensive prototype of your first solution.
 
-Below is Jeff’s recommended order of experiments to help rapidly build the confidence or kill a solution. Notice that the first question you should always answer is “Are we solving a meaningful customer problem.”
+.. class:: table table-striped table-sm w-85 mx-auto 
+
++---------------------------------------------------------+--------------------------------------+
+|              What are we trying to Learn?               | What is the fastest way to learn it? |
++=========================================================+======================================+
+| Are we solving a meaningful customer problem?           | * Talk to users                      |
+|                                                         | * Surveys, metrics, observations     |
++---------------------------------------------------------+--------------------------------------+
+| When a user sees the solution will they want to try it? | * Smoke Test/ Landing Page Test      |
+|                                                         | * Interview + Prototype              |
++---------------------------------------------------------+--------------------------------------+
+| Can we build our solution predictably?                  | * Talk to Developers                 |
+|                                                         | * Spike                              |
++---------------------------------------------------------+--------------------------------------+
+| Can users easily learn to use it?                       | * Usability Test                     |
++---------------------------------------------------------+--------------------------------------+
+| Will users Keep using it and really get value?          | * Built it, **Not** to scale         |
+|                                                         | * A/B Testing                        |
++---------------------------------------------------------+--------------------------------------+
+
+The above table outlines Jeff’s recommended order of experiments to help rapidly build the confidence or kill a solution. Notice that the first question you should always answer is “Are we solving a meaningful customer problem.”
 
 For Additional Reading
     * Testing with Humans
@@ -214,17 +232,22 @@ Testing Feasibility
     To answer “can we build it,” your prototype should be highly functional but doesn’t need to have accurate data or be visually appealing.
 
 Testing Usability
-    Usability needs to have high functional and data fidelity. Notice that it does not need to be visual. Over-prioritization of visual fidelity is a common hurdle we run into relying on tools like Figma: they look like the final product, but if the product has something like drag and drop interfaces or a drawing engine, Figma falls short. 
-    
+    Usability needs to have high functional and data fidelity. Notice that it does not need to be visual. Over-prioritization of visual fidelity is a common hurdle we run into relying on tools like Figma: they look like the final product, but if the product has something like drag and drop interfaces or a drawing engine, Figma falls short.
+
 Notice that the interviewers run a usability test for a network mapping software using paper, stickers, and transparency in the video below. This prototype is highly functional and has accurate data (enabling the testee to use it realistically) but does not visually resemble the final product!
 
 Shrink Your Releases by prioritizing people, not features
 ``````````````````````````````````````````````````````````
 We almost ran out of time for the activity that spawned this takeaway! We revisited the famous “getting ready for work” story maps we’d created earlier in the week on the last day. As a team, Jeff challenged us to update the map, assuming you had slept late and only had 15 minutes to get ready. He challenged each group to remove unnecessary stories or add alternatives to hit the deadline.
 
-[TODO: Add a photo to break this up]
+The assignment isn’t difficult when you fly solo, but since our entire team was working on one story map, there were tasks (get kids ready for school, feed the dog) that made it in even though I would not need to do them.
 
-The assignment isn’t difficult when you fly solo, but since our entire team was working on one story map, there were tasks (get kids ready for school, feed the dog) that made it in even though I would not need to do them. Jeff asked after we regrouped if anybody had irrelevant stories on their map. He then suggested, “Wouldn’t it be easy just to ignore people who have dogs or kids and focus on solving the problem well for one persona?” This point ties through to planning a product release strategy! The goal of your roadmap should be to release early, often, and provide value for a specific persona. If a release roadmap is bloated or top-heavy, the best way to clean it up is to focus on one persona and delay implementing steps/features that are irrelevant to that persona. 
+.. figure:: /images/product_leadership/condensed_story_map.png
+    :align: center
+
+    Despite my having neither children nor pets, they both made it into my teams "critical" story map
+
+Jeff asked after we regrouped if anybody had irrelevant stories on their map. He then suggested, “Wouldn’t it be easy just to ignore people who have dogs or kids and focus on solving the problem well for one persona?” This point ties through to planning a product release strategy! The goal of your roadmap should be to release early, often, and provide value for a specific persona. **If a release roadmap is bloated or top-heavy, the best way to clean it up is to focus on one persona and delay implementing steps/features that are irrelevant to that persona.**
 
 Release Strategy vs. Development Strategy
 ``````````````````````````````````````````
@@ -237,10 +260,10 @@ Development strategy lies in the domain of software engineers and agile delivery
 
 Release to Earn vs. Release to Learn
 `````````````````````````````````````
-Release to Earn is what it sounds like, production-ready that earns your company revenue. However, release to learn is software that is “Just enough to fulfill the narrative but far from feature complete.” Release to learn often involves A/B testing or releasing to a subset of users. 
+Release to Earn is what it sounds like, production-ready that earns your company revenue. However, release to learn is software that is “Just enough to fulfill the narrative but far from feature complete.” Release to learn often involves A/B testing or releasing to a subset of users.
 
 The concept is covered extensively in “The Lean Startup.” However, it’s worth noting to emphasize that delivery can be part of your discovery work while still providing incremental value to (a subset) users! It also ties back to release strategy: every release should be identified as a “release to learn” or “release to earn” release with hypothesized outcomes.
 
- 
+
 
 
