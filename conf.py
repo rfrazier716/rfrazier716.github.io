@@ -1164,6 +1164,10 @@ MARKDOWN_EXTENSIONS = ['markdown.extensions.fenced_code', 'markdown.extensions.c
 # the default right now)
 # (translatable)
 SOCIAL_BUTTONS_CODE = """
+
+<script src="https://cdn.lr-in.com/LogRocket.min.js" crossorigin="anonymous"></script>
+<script>window.LogRocket && window.LogRocket.init('4wqulp/ryan-test');</script>
+
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4XNP4N4HTY"></script>
 <script>
