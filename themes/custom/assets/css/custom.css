@@ -186,3 +186,11 @@ figure figcaption{
     color: #868e96;
     margin-top: 0.5rem;
 }
+
+.entry-subtitle{
+    color: var(--dark-gray);
+}
+
+.entry-title{
+    color: var(-dark);
+}

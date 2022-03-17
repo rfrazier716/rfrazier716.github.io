@@ -4,7 +4,13 @@
 
 {% macro html_title() %}
 {% if title and not post.meta('hidetitle') %}
-    <h1 class="p-name entry-title" itemprop="headline name"><a href="{{ post.permalink() }}" class="u-url">{{ post.title()|e }}</a></h1>
+    <h1 class="p-name entry-title" itemprop="headline name">{{ post.title()|e }}</h1>
+{% endif %}
+{% endmacro %}
+
+{% macro html_subtitle() %}
+{% if title and not post.meta('hidetitle') and post.description() %}
+    <h2 class="p-name entry-subtitle">{{ post.description()|e }}</h2>
 {% endif %}
 {% endmacro %}
 
@@ -30,6 +36,7 @@
 {% macro html_post_header() %}
     <header>
         {{ html_title() }}
+        {{ html_subtitle() }}
         <div class="metadata">
             <p class="byline author vcard p-author h-card"><span class="byline-name fn p-name" itemprop="author">
                 {% if author_pages_generated and multiple_authors_per_post %}
