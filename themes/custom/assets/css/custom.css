@@ -191,6 +191,33 @@ figure figcaption{
     color: var(--dark-gray);
 }
 
-.entry-title{
-    color: var(-dark);
+p.byline::before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: "\f007" !important;
+  }
+
+p.dateline::before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: "\f017" !important;
+  }
+
+.metadata {
+    color: var(--gray);
+}
+
+.metadata p{
+    margin-right: 1rem;
+}
+
+.metadata .tags{
+    text-align: left;
+    margin-left: 0px;
+}
+
+.metadata .tags::before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: "\f02c";
 }
