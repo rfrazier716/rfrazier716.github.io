@@ -10,7 +10,7 @@
 
 {% macro html_subtitle() %}
 {% if title and not post.meta('hidetitle') and post.description() %}
-    <h2 class="p-name entry-subtitle">{{ post.description()|e }}</h2>
+    <h3 class="p-name entry-subtitle">{{ post.description()|e }}</h3>
 {% endif %}
 {% endmacro %}
 
