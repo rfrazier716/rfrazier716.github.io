@@ -7,11 +7,15 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <sitemap>
   <loc>https://www.fotonixx.com/categories/agile.xml</loc>
-  <lastmod>2022-03-05T18:53:00Z</lastmod>
+  <lastmod>2022-03-17T17:36:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/analysis.xml</loc>
   <lastmod>2021-05-31T16:54:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://www.fotonixx.com/categories/cat_product.xml</loc>
+  <lastmod>2022-03-17T17:33:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/cat_programming.xml</loc>
@@ -59,11 +63,11 @@
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/product-management.xml</loc>
-  <lastmod>2022-03-05T18:53:00Z</lastmod>
+  <lastmod>2022-03-17T17:36:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/product-owner.xml</loc>
-  <lastmod>2022-03-05T18:53:00Z</lastmod>
+  <lastmod>2022-03-17T17:36:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/pyrayt.xml</loc>
@@ -91,11 +95,11 @@
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/scrum.xml</loc>
-  <lastmod>2022-03-05T18:53:00Z</lastmod>
+  <lastmod>2022-03-17T17:36:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/story-mapping.xml</loc>
-  <lastmod>2022-03-05T18:53:00Z</lastmod>
+  <lastmod>2022-03-17T17:36:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/categories/video-games.xml</loc>
@@ -103,14 +107,14 @@
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/galleries/rss.xml</loc>
-  <lastmod>2022-03-07T21:34:00Z</lastmod>
+  <lastmod>2022-03-17T16:45:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/rss.xml</loc>
-  <lastmod>2022-03-05T18:53:00Z</lastmod>
+  <lastmod>2022-03-17T17:33:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://www.fotonixx.com/sitemap.xml</loc>
-  <lastmod>2022-03-07T21:34:00Z</lastmod>
+  <lastmod>2022-03-17T17:36:00Z</lastmod>
  </sitemap>
 </sitemapindex>
