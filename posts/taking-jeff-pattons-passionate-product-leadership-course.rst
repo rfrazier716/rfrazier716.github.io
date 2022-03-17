@@ -2,9 +2,9 @@
 .. slug: jpat-product-leadership-review
 .. date: 2022-02-24 19:38:17 UTC-05:00
 .. tags: scrum, agile, product owner, product management, story mapping
-.. category:
+.. category: Product
 .. link:
-.. description:
+.. description: I'll never draw stick figures the same way again
 .. type: text
 .. previewimage: /images/product_leadership/preview_image.png
 
