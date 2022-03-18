@@ -45,6 +45,8 @@
                     {% endfor %}
                 {% elif author_pages_generated %}
                     <a class="u-url" href="{{ _link('author', post.author()) }}">{{ post.author()|e }}</a>
+                {% elif post.author() == "Ryan Frazier" %}
+                    <a class="u-url" href="/about">{{ post.author()|e }}</a>
                 {% else %}
                     {{ post.author()|e }}
                 {% endif %}
